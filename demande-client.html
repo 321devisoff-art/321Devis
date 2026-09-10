@@ -115,6 +115,12 @@
         }
 
 
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+
         .confirmation {
             display: none;
             margin-top: 25px;
@@ -142,6 +148,27 @@
             margin-top: 15px;
             color: #4b5563;
             line-height: 1.5;
+        }
+
+
+        .erreur {
+            display: none;
+            margin-top: 25px;
+            padding: 15px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            color: #991b1b;
+            line-height: 1.5;
+        }
+
+
+        .chargement {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            color: #4b5563;
+            font-size: 14px;
         }
 
     </style>
@@ -316,11 +343,31 @@
 
         <!-- ENVOI -->
 
-        <button onclick="envoyerDemande()">
+        <button
+            id="boutonEnvoi"
+            onclick="envoyerDemande()"
+        >
 
             Envoyer ma demande
 
         </button>
+
+
+        <div
+            class="chargement"
+            id="chargement"
+        >
+            Enregistrement de votre demande…
+        </div>
+
+
+        <!-- ERREUR -->
+
+        <div
+            class="erreur"
+            id="erreur"
+        >
+        </div>
 
 
         <!-- CONFIRMATION -->
@@ -349,8 +396,8 @@
 
             <p class="information">
 
-                L'entreprise peut maintenant consulter
-                votre demande et préparer votre devis.
+                Votre demande est maintenant enregistrée.
+                L'entreprise pourra la consulter et préparer votre devis.
 
             </p>
 
@@ -366,7 +413,169 @@
 
 
     /*
-     * Génération d'un numéro de demande
+     * =====================================================
+     * CONFIGURATION SUPABASE
+     * =====================================================
+     */
+
+    const SUPABASE_URL =
+        "https://ywmuiqavjdzuaittqesc.supabase.co";
+
+
+    const SUPABASE_KEY =
+        "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+
+    /*
+     * =====================================================
+     * REQUÊTE SUPABASE
+     * =====================================================
+     */
+
+    async function appelerSupabase(
+        table,
+        options
+    ) {
+
+        const url =
+            SUPABASE_URL +
+            "/rest/v1/" +
+            table;
+
+
+        const reponse =
+            await fetch(
+                url,
+                {
+                    ...options,
+
+                    headers: {
+
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            SUPABASE_KEY,
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Prefer":
+                            "return=representation",
+
+                        ...(options.headers || {})
+
+                    }
+
+                }
+            );
+
+
+        const texte =
+            await reponse.text();
+
+
+        let donnees =
+            null;
+
+
+        try {
+
+            donnees =
+                texte
+                    ? JSON.parse(texte)
+                    : null;
+
+        } catch (erreur) {
+
+            donnees =
+                texte;
+
+        }
+
+
+        if (!reponse.ok) {
+
+            console.error(
+                "Erreur Supabase :",
+                donnees
+            );
+
+
+            throw new Error(
+                obtenirMessageErreurSupabase(
+                    donnees,
+                    reponse.status
+                )
+            );
+
+        }
+
+
+        return donnees;
+
+    }
+
+
+    /*
+     * =====================================================
+     * MESSAGE D'ERREUR SUPABASE
+     * =====================================================
+     */
+
+    function obtenirMessageErreurSupabase(
+        erreur,
+        statutHTTP
+    ) {
+
+        if (
+            erreur &&
+            erreur.message
+        ) {
+
+            return erreur.message;
+
+        }
+
+
+        if (
+            erreur &&
+            erreur.error_description
+        ) {
+
+            return erreur.error_description;
+
+        }
+
+
+        if (
+            erreur &&
+            erreur.hint
+        ) {
+
+            return erreur.hint;
+
+        }
+
+
+        return (
+            "Erreur Supabase (HTTP " +
+            statutHTTP +
+            ")."
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * GÉNÉRATION NUMÉRO DEMANDE
+     * =====================================================
+     *
+     * Pour le prototype, on conserve le compteur local.
+     * Nous remplacerons plus tard cela par une génération
+     * serveur afin d'éviter tout risque de doublon.
      */
 
     function genererNumeroDemande() {
@@ -404,10 +613,287 @@
 
 
     /*
-     * Envoi de la demande
+     * =====================================================
+     * ENREGISTRER LE CLIENT
+     * =====================================================
      */
 
-    function envoyerDemande() {
+    async function enregistrerClient(
+        nom,
+        telephone,
+        email,
+        adresse
+    ) {
+
+        const resultat =
+            await appelerSupabase(
+                "clients",
+                {
+                    method: "POST",
+
+                    body:
+                        JSON.stringify(
+                            {
+                                nom:
+                                    nom,
+
+                                email:
+                                    email ||
+                                    null,
+
+                                telephone:
+                                    telephone,
+
+                                adresse:
+                                    adresse
+                            }
+                        )
+                }
+            );
+
+
+        if (
+            !Array.isArray(resultat) ||
+            !resultat[0] ||
+            !resultat[0].id
+        ) {
+
+            throw new Error(
+                "Le client n'a pas pu être enregistré."
+            );
+
+        }
+
+
+        return resultat[0];
+
+    }
+
+
+    /*
+     * =====================================================
+     * ENREGISTRER LA DEMANDE
+     * =====================================================
+     */
+
+    async function enregistrerDemande(
+        numeroDemande,
+        clientId,
+        typeTravaux,
+        description,
+        adresse,
+        quantite
+    ) {
+
+        /*
+         * Notre table actuelle ne possède pas encore
+         * de colonne "type_travaux" ni "quantite".
+         *
+         * Nous conservons donc ces informations dans
+         * le champ description pour ne rien perdre.
+         */
+
+        const descriptionComplete =
+            "Type de travaux : " +
+            typeTravaux +
+            "\n\n" +
+            "Quantité estimée : " +
+            quantite +
+            "\n\n" +
+            "Description :\n" +
+            description;
+
+
+        const resultat =
+            await appelerSupabase(
+                "demandes",
+                {
+                    method: "POST",
+
+                    body:
+                        JSON.stringify(
+                            {
+                                numero:
+                                    numeroDemande,
+
+                                client_id:
+                                    clientId,
+
+                                description:
+                                    descriptionComplete,
+
+                                adresse:
+                                    adresse,
+
+                                urgence:
+                                    null,
+
+                                statut:
+                                    "Nouvelle",
+
+                                created_at:
+                                    new Date().toISOString()
+                            }
+                        )
+                }
+            );
+
+
+        if (
+            !Array.isArray(resultat) ||
+            !resultat[0]
+        ) {
+
+            throw new Error(
+                "La demande n'a pas pu être enregistrée."
+            );
+
+        }
+
+
+        return resultat[0];
+
+    }
+
+
+    /*
+     * =====================================================
+     * COPIE LOCALE TEMPORAIRE
+     * =====================================================
+     *
+     * On conserve une copie locale pendant la transition.
+     * Elle sera supprimée lorsque toutes les pages utiliseront
+     * Supabase.
+     */
+
+    function sauvegarderCopieLocale(
+        numeroDemande,
+        nom,
+        telephone,
+        email,
+        adresse,
+        typeTravaux,
+        description,
+        quantite
+    ) {
+
+        const nouvelleDemande = {
+
+            numero:
+                numeroDemande,
+
+            date:
+                new Date().toISOString(),
+
+            statut:
+                "Nouvelle",
+
+            client: {
+
+                nom:
+                    nom,
+
+                telephone:
+                    telephone,
+
+                email:
+                    email,
+
+                adresse:
+                    adresse
+
+            },
+
+            typeTravaux:
+                typeTravaux,
+
+            description:
+                description,
+
+            quantite:
+                quantite
+
+        };
+
+
+        let demandesExistantes =
+            [];
+
+
+        try {
+
+            demandesExistantes =
+                JSON.parse(
+                    localStorage.getItem(
+                        "demandes321Devis"
+                    )
+                ) || [];
+
+        } catch (erreur) {
+
+            demandesExistantes =
+                [];
+
+        }
+
+
+        demandesExistantes.push(
+            nouvelleDemande
+        );
+
+
+        localStorage.setItem(
+            "demandes321Devis",
+            JSON.stringify(
+                demandesExistantes
+            )
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * ENVOI DE LA DEMANDE
+     * =====================================================
+     */
+
+    async function envoyerDemande() {
+
+        const bouton =
+            document.getElementById(
+                "boutonEnvoi"
+            );
+
+
+        const chargement =
+            document.getElementById(
+                "chargement"
+            );
+
+
+        const confirmation =
+            document.getElementById(
+                "confirmation"
+            );
+
+
+        const erreurElement =
+            document.getElementById(
+                "erreur"
+            );
+
+
+        /*
+         * Masquer les anciens messages
+         */
+
+        erreurElement.style.display =
+            "none";
+
+
+        confirmation.style.display =
+            "none";
 
 
         /*
@@ -474,6 +960,7 @@
             );
 
             return;
+
         }
 
 
@@ -484,6 +971,7 @@
             );
 
             return;
+
         }
 
 
@@ -494,6 +982,7 @@
             );
 
             return;
+
         }
 
 
@@ -504,6 +993,7 @@
             );
 
             return;
+
         }
 
 
@@ -514,11 +1004,14 @@
             );
 
             return;
+
         }
 
 
         if (
-            !Number.isFinite(quantite) ||
+            !Number.isFinite(
+                quantite
+            ) ||
             quantite <= 0
         ) {
 
@@ -527,6 +1020,7 @@
             );
 
             return;
+
         }
 
 
@@ -539,111 +1033,161 @@
 
 
         /*
-         * Création de la demande
+         * Mise en mode chargement
          */
 
-        const nouvelleDemande = {
-
-            numero:
-                numeroDemande,
-
-            date:
-                new Date().toISOString(),
-
-            statut:
-                "Nouvelle",
-
-            client: {
-
-                nom:
-                    nom,
-
-                telephone:
-                    telephone,
-
-                email:
-                    email,
-
-                adresse:
-                    adresse
-
-            },
-
-            typeTravaux:
-                typeTravaux,
-
-            description:
-                description,
-
-            quantite:
-                quantite
-
-        };
-
-
-        /*
-         * Récupération des demandes existantes
-         */
-
-        const demandesExistantes =
-            JSON.parse(
-                localStorage.getItem(
-                    "demandes321Devis"
-                )
-            ) || [];
-
-
-        /*
-         * Ajout de la nouvelle demande
-         */
-
-        demandesExistantes.push(
-            nouvelleDemande
-        );
-
-
-        /*
-         * Sauvegarde
-         */
-
-        localStorage.setItem(
-            "demandes321Devis",
-            JSON.stringify(
-                demandesExistantes
-            )
-        );
-
-
-        /*
-         * Confirmation au client
-         */
-
-        document.getElementById(
-            "numeroDemande"
-        ).textContent =
-            numeroDemande;
-
-
-        document.getElementById(
-            "confirmation"
-        ).style.display =
-            "block";
-
-
-        /*
-         * Désactivation du bouton
-         */
-
-        document.querySelector(
-            "button"
-        ).disabled =
+        bouton.disabled =
             true;
 
 
-        document.querySelector(
-            "button"
-        ).textContent =
-            "Demande envoyée";
+        bouton.textContent =
+            "Enregistrement…";
+
+
+        chargement.style.display =
+            "block";
+
+
+        try {
+
+
+            /*
+             * 1. Création du client
+             */
+
+            const client =
+                await enregistrerClient(
+                    nom,
+                    telephone,
+                    email,
+                    adresse
+                );
+
+
+            /*
+             * 2. Création de la demande
+             */
+
+            await enregistrerDemande(
+                numeroDemande,
+                client.id,
+                typeTravaux,
+                description,
+                adresse,
+                quantite
+            );
+
+
+            /*
+             * 3. Copie locale temporaire
+             */
+
+            sauvegarderCopieLocale(
+                numeroDemande,
+                nom,
+                telephone,
+                email,
+                adresse,
+                typeTravaux,
+                description,
+                quantite
+            );
+
+
+            /*
+             * 4. Confirmation
+             */
+
+            document.getElementById(
+                "numeroDemande"
+            ).textContent =
+                numeroDemande;
+
+
+            confirmation.style.display =
+                "block";
+
+
+            chargement.style.display =
+                "none";
+
+
+            bouton.textContent =
+                "Demande envoyée";
+
+
+        } catch (erreur) {
+
+
+            console.error(
+                "Erreur lors de l'envoi :",
+                erreur
+            );
+
+
+            chargement.style.display =
+                "none";
+
+
+            erreurElement.innerHTML =
+                "<strong>La demande n'a pas pu être envoyée.</strong><br><br>" +
+                echapperHTML(
+                    erreur.message
+                ) +
+                "<br><br>" +
+                "Vérifie la connexion à Supabase et les règles RLS.";
+
+
+            erreurElement.style.display =
+                "block";
+
+
+            bouton.disabled =
+                false;
+
+
+            bouton.textContent =
+                "Réessayer";
+
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * SÉCURITÉ AFFICHAGE
+     * =====================================================
+     */
+
+    function echapperHTML(
+        valeur
+    ) {
+
+        return String(
+            valeur ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
 
     }
 
