@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Validation des devis — 321Devis</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f4f6;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+
+        .navigation {
+            margin-bottom: 30px;
+        }
+
+
+        .navigation a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+
+        .bloc {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+
+        .liste-vide {
+            padding: 25px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+
+        .carte-devis {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+
+        .carte-devis h3 {
+            margin-top: 0;
+        }
+
+
+        .infos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+
+        .info {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+
+        .btn-ouvrir {
+            background: #2563eb;
+        }
+
+
+        .btn-valider {
+            background: #059669;
+        }
+
+
+        .btn-supprimer {
+            background: #dc2626;
+        }
+
+
+        .btn-retour {
+            background: #6b7280;
+        }
+
+
+        .editeur {
+            display: none;
+        }
+
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+
+        th {
+            background: #111827;
+            color: white;
+            text-align: left;
+        }
+
+
+        .droite {
+            text-align: right;
+        }
+
+
+        .totaux {
+            width: 350px;
+            max-width: 100%;
+            margin-left: auto;
+            margin-top: 25px;
+        }
+
+
+        .ligne-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        .total-final {
+            font-size: 20px;
+            font-weight: bold;
+            border-top: 2px solid #111827;
+            padding-top: 12px;
+        }
+
+
+        .statut {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+
+        .statut-valide {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+
+        .erreur {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+
+            .infos {
+                grid-template-columns: 1fr;
+            }
+
+
+            table {
+                font-size: 13px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <h1>
+        321Devis
+    </h1>
+
+
+    <p>
+        Validation des devis
+    </p>
+
+
+    <div class="navigation">
+
+        <a href="index.html">
+            ← Tableau de bord
+        </a>
+
+        <a href="historique.html">
+            Historique
+        </a>
+
+        <a href="demande-client.html">
+            Nouvelle demande client
+        </a>
+
+    </div>
+
+
+    <!-- LISTE DES BROUILLONS -->
+
+    <div class="bloc">
+
+        <h2>
+            Devis à vérifier
+        </h2>
+
+
+        <div id="listeBrouillons"></div>
+
+    </div>
+
+
+    <!-- ÉDITEUR -->
+
+    <div
+        class="bloc editeur"
+        id="editeur"
+    >
+
+        <h2>
+            Vérification du devis
+        </h2>
+
+
+        <p>
+            Numéro :
+            <strong id="numeroDevis"></strong>
+        </p>
+
+
+        <p>
+            Client :
+            <strong id="nomClient"></strong>
+        </p>
+
+
+        <p>
+            Statut :
+            <span
+                class="statut"
+                id="statutDevis"
+            ></span>
+        </p>
+
+
+        <h3>
+            Informations client
+        </h3>
+
+
+        <label for="telephone">
+            Téléphone
+        </label>
+
+        <input
+            type="text"
+            id="telephone"
+        >
+
+
+        <label for="email">
+            E-mail
+        </label>
+
+        <input
+            type="email"
+            id="email"
+        >
+
+
+        <label for="adresse">
+            Adresse
+        </label>
+
+        <input
+            type="text"
+            id="adresse"
+        >
+
+
+        <h3>
+            Prestations
+        </h3>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Prestation
+                    </th>
+
+                    <th class="droite">
+                        Quantité
+                    </th>
+
+                    <th class="droite">
+                        Prix unitaire HT
+                    </th>
+
+                    <th class="droite">
+                        Total HT
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="lignesDevis"></tbody>
+
+        </table>
+
+
+        <div class="totaux">
+
+            <div class="ligne-total">
+
+                <span>
+                    Total HT
+                </span>
+
+                <strong>
+                    <span id="totalHT"></span> €
+                </strong>
+
+            </div>
+
+
+            <div class="ligne-total">
+
+                <span>
+                    TVA (20 %)
+                </span>
+
+                <strong>
+                    <span id="tva"></span> €
+                </strong>
+
+            </div>
+
+
+            <div class="ligne-total total-final">
+
+                <span>
+                    Total TTC
+                </span>
+
+                <strong>
+                    <span id="totalTTC"></span> €
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <br>
+
+
+        <button
+            class="btn-valider"
+            onclick="validerDevis()"
+        >
+            ✓ Valider le devis
+        </button>
+
+
+        <button
+            class="btn-ouvrir"
+            onclick="ouvrirDevisProfessionnel()"
+        >
+            Voir le devis professionnel
+        </button>
+
+
+        <button
+            class="btn-retour"
+            onclick="fermerEditeur()"
+        >
+            Retour à la liste
+        </button>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    /*
+     * Récupération des devis
+     */
+
+    let devis =
+        JSON.parse(
+            localStorage.getItem(
+                "devis321Devis"
+            )
+        ) || [];
+
+
+    let devisActuel = null;
+
+
+    /*
+     * Affichage des brouillons
+     */
+
+    function afficherBrouillons() {
+
+        const zone =
+            document.getElementById(
+                "listeBrouillons"
+            );
+
+
+        zone.innerHTML = "";
+
+
+        const brouillons =
+            devis.filter(
+                function(devisItem) {
+
+                    return (
+                        devisItem.statut ===
+                        "Brouillon - validation requise"
+                    );
+
+                }
+            );
+
+
+        if (brouillons.length === 0) {
+
+            zone.innerHTML = `
+                <div class="liste-vide">
+                    Aucun devis en attente de validation.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /*
+         * Les plus récents en premier
+         */
+
+        brouillons.reverse();
+
+
+        brouillons.forEach(
+            function(devisItem) {
+
+                const carte =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                carte.className =
+                    "carte-devis";
+
+
+                carte.innerHTML = `
+
+                    <h3>
+                        ${devisItem.numero}
+                    </h3>
+
+                    <div class="infos">
+
+                        <div class="info">
+
+                            <strong>
+                                Client
+                            </strong>
+
+                            <br>
+
+                            ${devisItem.client.nom}
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <strong>
+                                Total TTC
+                            </strong>
+
+                            <br>
+
+                            ${Number(
+                                devisItem.totalTTC
+                            ).toFixed(2)} €
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <strong>
+                                Statut
+                            </strong>
+
+                            <br>
+
+                            <span class="statut">
+                                À valider
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="btn-ouvrir"
+                        onclick="ouvrirValidation('${devisItem.numero}')"
+                    >
+                        Vérifier le devis
+                    </button>
+
+                    <button
+                        class="btn-supprimer"
+                        onclick="supprimerBrouillon('${devisItem.numero}')"
+                    >
+                        Supprimer
+                    </button>
+
+                `;
+
+
+                zone.appendChild(
+                    carte
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+     * Ouverture d'un brouillon
+     */
+
+    function ouvrirValidation(numero) {
+
+        devisActuel =
+            devis.find(
+                function(devisItem) {
+
+                    return (
+                        devisItem.numero === numero
+                    );
+
+                }
+            );
+
+
+        if (!devisActuel) {
+
+            alert(
+                "Devis introuvable."
+            );
+
+            return;
+        }
+
+
+        document.getElementById(
+            "editeur"
+        ).style.display =
+            "block";
+
+
+        document.getElementById(
+            "numeroDevis"
+        ).textContent =
+            devisActuel.numero;
+
+
+        document.getElementById(
+            "nomClient"
+        ).textContent =
+            devisActuel.client.nom;
+
+
+        document.getElementById(
+            "statutDevis"
+        ).textContent =
+            devisActuel.statut;
+
+
+        document.getElementById(
+            "telephone"
+        ).value =
+            devisActuel.client.telephone;
+
+
+        document.getElementById(
+            "email"
+        ).value =
+            devisActuel.client.email;
+
+
+        document.getElementById(
+            "adresse"
+        ).value =
+            devisActuel.client.adresse;
+
+
+        afficherLignes();
+
+
+        window.scrollTo({
+            top: document.getElementById(
+                "editeur"
+            ).offsetTop,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    /*
+     * Affichage des lignes
+     */
+
+    function afficherLignes() {
+
+        const tableau =
+            document.getElementById(
+                "lignesDevis"
+            );
+
+
+        tableau.innerHTML = "";
+
+
+        devisActuel.lignes.forEach(
+            function(ligne, index) {
+
+                const tr =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                tr.innerHTML = `
+
+                    <td>
+
+                        <input
+                            type="text"
+                            value="${ligne.description}"
+                            onchange="modifierDescription(${index}, this.value)"
+                        >
+
+                    </td>
+
+
+                    <td class="droite">
+
+                        <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            value="${ligne.quantite}"
+                            onchange="modifierQuantite(${index}, this.value)"
+                            style="width:100px;"
+                        >
+
+                    </td>
+
+
+                    <td class="droite">
+
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value="${ligne.prixUnitaireHT}"
+                            onchange="modifierPrix(${index}, this.value)"
+                            style="width:120px;"
+                        >
+
+                    </td>
+
+
+                    <td class="droite">
+
+                        ${Number(
+                            ligne.totalHT
+                        ).toFixed(2)} €
+
+                    </td>
+
+
+                    <td>
+
+                        <button
+                            class="btn-supprimer"
+                            onclick="supprimerLigne(${index})"
+                        >
+                            Supprimer
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                tableau.appendChild(tr);
+
+            }
+        );
+
+
+        calculerTotaux();
+
+    }
+
+
+    /*
+     * Modification description
+     */
+
+    function modifierDescription(
+        index,
+        valeur
+    ) {
+
+        devisActuel
+            .lignes[index]
+            .description =
+            valeur.trim();
+
+
+        sauvegarderCalculer();
+
+    }
+
+
+    /*
+     * Modification quantité
+     */
+
+    function modifierQuantite(
+        index,
+        valeur
+    ) {
+
+        const quantite =
+            Number(valeur);
+
+
+        if (
+            !Number.isFinite(quantite) ||
+            quantite <= 0
+        ) {
+
+            alert(
+                "Quantité invalide."
+            );
+
+            afficherLignes();
+
+            return;
+        }
+
+
+        devisActuel
+            .lignes[index]
+            .quantite =
+            quantite;
+
+
+        sauvegarderCalculer();
+
+    }
+
+
+    /*
+     * Modification prix
+     */
+
+    function modifierPrix(
+        index,
+        valeur
+    ) {
+
+        const prix =
+            Number(valeur);
+
+
+        if (
+            !Number.isFinite(prix) ||
+            prix < 0
+        ) {
+
+            alert(
+                "Prix invalide."
+            );
+
+            afficherLignes();
+
+            return;
+        }
+
+
+        devisActuel
+            .lignes[index]
+            .prixUnitaireHT =
+            prix;
+
+
+        sauvegarderCalculer();
+
+    }
+
+
+    /*
+     * Suppression d'une ligne
+     */
+
+    function supprimerLigne(index) {
+
+        const confirmation =
+            confirm(
+                "Supprimer cette prestation du devis ?"
+            );
+
+
+        if (!confirmation) {
+            return;
+        }
+
+
+        devisActuel.lignes.splice(
+            index,
+            1
+        );
+
+
+        sauvegarderCalculer();
+
+    }
+
+
+    /*
+     * Recalcul des montants
+     */
+
+    function calculerTotaux() {
+
+        let totalHT = 0;
+
+
+        devisActuel.lignes.forEach(
+            function(ligne) {
+
+                ligne.totalHT =
+                    Number(
+                        ligne.quantite
+                    ) *
+                    Number(
+                        ligne.prixUnitaireHT
+                    );
+
+
+                totalHT +=
+                    ligne.totalHT;
+
+            }
+        );
+
+
+        devisActuel.totalHT =
+            totalHT;
+
+
+        devisActuel.tva =
+            totalHT * 0.20;
+
+
+        devisActuel.totalTTC =
+            totalHT +
+            devisActuel.tva;
+
+
+        document.getElementById(
+            "totalHT"
+        ).textContent =
+            devisActuel.totalHT.toFixed(2);
+
+
+        document.getElementById(
+            "tva"
+        ).textContent =
+            devisActuel.tva.toFixed(2);
+
+
+        document.getElementById(
+            "totalTTC"
+        ).textContent =
+            devisActuel.totalTTC.toFixed(2);
+
+    }
+
+
+    /*
+     * Sauvegarde après modification
+     */
+
+    function sauvegarderCalculer() {
+
+        calculerTotaux();
+
+
+        const index =
+            devis.findIndex(
+                function(devisItem) {
+
+                    return (
+                        devisItem.numero ===
+                        devisActuel.numero
+                    );
+
+                }
+            );
+
+
+        if (index === -1) {
+
+            alert(
+                "Impossible de sauvegarder le devis."
+            );
+
+            return;
+        }
+
+
+        devis[index] =
+            devisActuel;
+
+
+        localStorage.setItem(
+            "devis321Devis",
+            JSON.stringify(devis)
+        );
+
+
+        afficherLignes();
+
+    }
+
+
+    /*
+     * Validation finale
+     */
+
+    function validerDevis() {
+
+        if (
+            !devisActuel ||
+            devisActuel.lignes.length === 0
+        ) {
+
+            alert(
+                "Le devis doit contenir au moins une prestation."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Mise à jour des coordonnées
+         */
+
+        devisActuel.client.telephone =
+            document
+                .getElementById("telephone")
+                .value
+                .trim();
+
+
+        devisActuel.client.email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+
+        devisActuel.client.adresse =
+            document
+                .getElementById("adresse")
+                .value
+                .trim();
+
+
+        /*
+         * Statut
+         */
+
+        devisActuel.statut =
+            "Validé";
+
+
+        devisActuel.dateValidation =
+            new Date().toISOString();
+
+
+        /*
+         * Recalcul final
+         */
+
+        calculerTotaux();
+
+
+        /*
+         * Sauvegarde
+         */
+
+        const index =
+            devis.findIndex(
+                function(devisItem) {
+
+                    return (
+                        devisItem.numero ===
+                        devisActuel.numero
+                    );
+
+                }
+            );
+
+
+        if (index === -1) {
+
+            alert(
+                "Impossible de trouver le devis."
+            );
+
+            return;
+        }
+
+
+        devis[index] =
+            devisActuel;
+
+
+        localStorage.setItem(
+            "devis321Devis",
+            JSON.stringify(devis)
+        );
+
+
+        document.getElementById(
+            "statutDevis"
+        ).textContent =
+            "Validé";
+
+
+        document.getElementById(
+            "statutDevis"
+        ).classList.add(
+            "statut-valide"
+        );
+
+
+        alert(
+            "Devis validé avec succès !\n\n" +
+            "Numéro : " +
+            devisActuel.numero
+        );
+
+
+        afficherBrouillons();
+
+    }
+
+
+    /*
+     * Ouvrir la version professionnelle
+     */
+
+    function ouvrirDevisProfessionnel() {
+
+        if (!devisActuel) {
+
+            alert(
+                "Sélectionne d'abord un devis."
+            );
+
+            return;
+        }
+
+
+        window.location.href =
+            "voir-devis.html?numero=" +
+            encodeURIComponent(
+                devisActuel.numero
+            );
+
+    }
+
+
+    /*
+     * Retour à la liste
+     */
+
+    function fermerEditeur() {
+
+        document.getElementById(
+            "editeur"
+        ).style.display =
+            "none";
+
+
+        devisActuel =
+            null;
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    /*
+     * Suppression d'un brouillon
+     */
+
+    function supprimerBrouillon(numero) {
+
+        const confirmation =
+            confirm(
+                "Voulez-vous supprimer définitivement ce brouillon ?"
+            );
+
+
+        if (!confirmation) {
+            return;
+        }
+
+
+        const index =
+            devis.findIndex(
+                function(devisItem) {
+
+                    return (
+                        devisItem.numero === numero
+                    );
+
+                }
+            );
+
+
+        if (index === -1) {
+
+            alert(
+                "Devis introuvable."
+            );
+
+            return;
+        }
+
+
+        devis.splice(
+            index,
+            1
+        );
+
+
+        localStorage.setItem(
+            "devis321Devis",
+            JSON.stringify(devis)
+        );
+
+
+        afficherBrouillons();
+
+    }
+
+
+    /*
+     * Chargement initial
+     */
+
+    afficherBrouillons();
+
+</script>
+
+
+</body>
+
+</html>

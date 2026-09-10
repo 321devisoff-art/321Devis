@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>321Devis - Catalogue</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header p {
+            margin-bottom: 0;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 15px;
+        }
+
+        input {
+            width: 250px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #2563eb;
+            color: white;
+        }
+
+        button.supprimer {
+            background: #dc2626;
+        }
+
+        button.modifier {
+            background: #6b7280;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        .navigation {
+            margin-bottom: 20px;
+        }
+
+        .navigation a {
+            text-decoration: none;
+            color: #2563eb;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>321Devis</h1>
+    <p>1, 2, 3… votre devis est prêt.</p>
+</header>
+
+<main>
+
+    <div class="navigation">
+        <a href="index.html">← Tableau de bord</a>
+        <a href="nouveau-devis.html">Nouveau devis</a>
+    </div>
+
+    <div class="box">
+
+        <h2>Catalogue des prestations</h2>
+
+        <p>
+            Ajoute ici les prestations et les prix utilisés par l'entreprise.
+        </p>
+
+        <input
+            type="text"
+            id="designation"
+            placeholder="Ex : Recherche de fuite"
+        >
+
+        <input
+            type="number"
+            id="prix"
+            placeholder="Prix HT"
+            step="0.01"
+        >
+
+        <select id="unite">
+            <option value="forfait">Forfait</option>
+            <option value="heure">Heure</option>
+            <option value="unité">Unité</option>
+            <option value="m²">m²</option>
+        </select>
+
+        <button onclick="ajouterPrestation()">
+            + Ajouter
+        </button>
+
+    </div>
+
+    <div class="box">
+
+        <h2>Prestations enregistrées</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Prestation</th>
+                    <th>Prix HT</th>
+                    <th>Unité</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="listePrestations"></tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+<script>
+
+    let catalogue = JSON.parse(localStorage.getItem("catalogue321Devis")) || [];
+
+    // Si le catalogue est vide, on ajoute nos 5 prestations de départ
+    if (catalogue.length === 0) {
+
+        catalogue = [
+            {
+                designation: "Déplacement",
+                prix: 45,
+                unite: "forfait"
+            },
+            {
+                designation: "Main-d'œuvre",
+                prix: 65,
+                unite: "heure"
+            },
+            {
+                designation: "Recherche de fuite",
+                prix: 90,
+                unite: "forfait"
+            },
+            {
+                designation: "Remplacement siphon",
+                prix: 25,
+                unite: "unité"
+            },
+            {
+                designation: "Débouchage canalisation",
+                prix: 120,
+                unite: "forfait"
+            }
+        ];
+
+        sauvegarder();
+    }
+
+    function sauvegarder() {
+        localStorage.setItem(
+            "catalogue321Devis",
+            JSON.stringify(catalogue)
+        );
+    }
+
+    function afficherCatalogue() {
+
+        const liste = document.getElementById("listePrestations");
+
+        liste.innerHTML = "";
+
+        catalogue.forEach((prestation, index) => {
+
+            const ligne = document.createElement("tr");
+
+            ligne.innerHTML = `
+                <td>${prestation.designation}</td>
+
+                <td>
+                    ${prestation.prix.toFixed(2)} €
+                </td>
+
+                <td>
+                    ${prestation.unite}
+                </td>
+
+                <td>
+
+                    <button
+                        class="modifier"
+                        onclick="modifierPrestation(${index})">
+                        Modifier
+                    </button>
+
+                    <button
+                        class="supprimer"
+                        onclick="supprimerPrestation(${index})">
+                        Supprimer
+                    </button>
+
+                </td>
+            `;
+
+            liste.appendChild(ligne);
+        });
+    }
+
+    function ajouterPrestation() {
+
+        const designation =
+            document.getElementById("designation").value.trim();
+
+        const prix =
+            parseFloat(document.getElementById("prix").value);
+
+        const unite =
+            document.getElementById("unite").value;
+
+        if (designation === "") {
+            alert("Entre le nom de la prestation.");
+            return;
+        }
+
+        if (isNaN(prix) || prix < 0) {
+            alert("Entre un prix HT valide.");
+            return;
+        }
+
+        catalogue.push({
+            designation: designation,
+            prix: prix,
+            unite: unite
+        });
+
+        sauvegarder();
+
+        document.getElementById("designation").value = "";
+        document.getElementById("prix").value = "";
+
+        afficherCatalogue();
+    }
+
+    function supprimerPrestation(index) {
+
+        const confirmation =
+            confirm("Supprimer cette prestation ?");
+
+        if (!confirmation) {
+            return;
+        }
+
+        catalogue.splice(index, 1);
+
+        sauvegarder();
+
+        afficherCatalogue();
+    }
+
+    function modifierPrestation(index) {
+
+        const prestation = catalogue[index];
+
+        const nouveauNom =
+            prompt(
+                "Nom de la prestation :",
+                prestation.designation
+            );
+
+        if (nouveauNom === null || nouveauNom.trim() === "") {
+            return;
+        }
+
+        const nouveauPrix =
+            prompt(
+                "Prix HT :",
+                prestation.prix
+            );
+
+        if (nouveauPrix === null) {
+            return;
+        }
+
+        const prix = parseFloat(nouveauPrix);
+
+        if (isNaN(prix) || prix < 0) {
+            alert("Prix invalide.");
+            return;
+        }
+
+        prestation.designation = nouveauNom.trim();
+        prestation.prix = prix;
+
+        sauvegarder();
+
+        afficherCatalogue();
+    }
+
+    afficherCatalogue();
+
+</script>
+
+</body>
+</html>

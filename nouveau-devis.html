@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Nouveau devis — 321Devis</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+
+        .navigation {
+            margin-bottom: 25px;
+        }
+
+
+        .navigation a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+
+        .bloc {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+        }
+
+
+        input,
+        select {
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            width: 300px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+        }
+
+
+        button.supprimer {
+            background: #dc2626;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+
+        th {
+            background: #eef2f7;
+        }
+
+
+        .totaux {
+            max-width: 350px;
+            margin-left: auto;
+        }
+
+
+        .totaux p {
+            display: flex;
+            justify-content: space-between;
+        }
+
+
+        .total-final {
+            font-size: 20px;
+            border-top: 2px solid #222;
+            padding-top: 10px;
+        }
+
+
+        .info-tva {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <h1>
+        321Devis
+    </h1>
+
+
+    <p>
+        1, 2, 3… votre devis est prêt.
+    </p>
+
+
+    <div class="navigation">
+
+        <a href="index.html">
+            ← Tableau de bord
+        </a>
+
+        <a href="catalogue.html">
+            Catalogue
+        </a>
+
+        <a href="parametres.html">
+            Paramètres
+        </a>
+
+    </div>
+
+
+    <h2>
+        Nouveau devis
+    </h2>
+
+
+    <!-- INFORMATIONS CLIENT -->
+
+    <div class="bloc">
+
+        <h3>
+            Informations du client
+        </h3>
+
+
+        <label>
+            Nom du client :
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="nomClient"
+        >
+
+        <br>
+
+
+        <label>
+            Téléphone :
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="telephone"
+        >
+
+        <br>
+
+
+        <label>
+            E-mail :
+        </label>
+
+        <br>
+
+        <input
+            type="email"
+            id="email"
+        >
+
+        <br>
+
+
+        <label>
+            Adresse :
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="adresse"
+        >
+
+    </div>
+
+
+    <!-- AJOUT PRESTATION -->
+
+    <div class="bloc">
+
+        <h3>
+            Ajouter une prestation
+        </h3>
+
+
+        <label>
+            Prestation du catalogue :
+        </label>
+
+        <br>
+
+
+        <select id="prestation">
+
+            <option value="">
+                -- Choisir une prestation --
+            </option>
+
+        </select>
+
+
+        <br>
+
+
+        <label>
+            Quantité :
+        </label>
+
+        <br>
+
+
+        <input
+            type="number"
+            id="quantite"
+            value="1"
+            min="1"
+            step="1"
+        >
+
+
+        <br>
+
+
+        <label>
+            Prix unitaire HT :
+        </label>
+
+        <br>
+
+
+        <input
+            type="number"
+            id="prix"
+            value="0"
+            readonly
+        >
+
+        €
+
+
+        <br>
+
+        <span class="info-tva">
+            Le prix est récupéré automatiquement depuis
+            le catalogue de l'entreprise.
+        </span>
+
+
+        <br><br>
+
+
+        <button onclick="ajouterLigne()">
+
+            + Ajouter la prestation
+
+        </button>
+
+    </div>
+
+
+    <!-- PRESTATIONS -->
+
+    <div class="bloc">
+
+        <h3>
+            Prestations du devis
+        </h3>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Description
+                    </th>
+
+                    <th>
+                        Quantité
+                    </th>
+
+                    <th>
+                        Prix unitaire HT
+                    </th>
+
+                    <th>
+                        Total HT
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="lignesDevis"></tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- TOTAUX -->
+
+    <div class="bloc totaux">
+
+        <h3>
+            Totaux
+        </h3>
+
+
+        <p>
+
+            <span>
+                Total HT :
+            </span>
+
+            <strong>
+                <span id="totalHT">
+                    0.00
+                </span> €
+            </strong>
+
+        </p>
+
+
+        <p>
+
+            <span id="libelleTVA">
+                TVA (20 %) :
+            </span>
+
+            <strong>
+                <span id="tva">
+                    0.00
+                </span> €
+            </strong>
+
+        </p>
+
+
+        <p class="total-final">
+
+            <span>
+                Total TTC :
+            </span>
+
+            <strong>
+                <span id="totalTTC">
+                    0.00
+                </span> €
+            </strong>
+
+        </p>
+
+    </div>
+
+
+    <button onclick="creerDevis()">
+
+        Créer le devis
+
+    </button>
+
+
+    <script>
+
+
+        /*
+         * Récupération du catalogue
+         */
+
+        let catalogue =
+            JSON.parse(
+                localStorage.getItem(
+                    "catalogue321Devis"
+                )
+            ) || [];
+
+
+        /*
+         * Récupération des paramètres
+         * de l'entreprise
+         */
+
+        const parametresEntreprise =
+            JSON.parse(
+                localStorage.getItem(
+                    "parametres321Devis"
+                )
+            ) || {};
+
+
+        /*
+         * Taux de TVA
+         *
+         * Si aucun taux n'est enregistré,
+         * on utilise 20 % par défaut.
+         */
+
+        const tauxTVA =
+            Number.isFinite(
+                Number(
+                    parametresEntreprise.tauxTVA
+                )
+            )
+                ? Number(
+                    parametresEntreprise.tauxTVA
+                )
+                : 20;
+
+
+        let totalHT = 0;
+
+
+        /*
+         * Mise à jour du libellé TVA
+         */
+
+        document.getElementById(
+            "libelleTVA"
+        ).textContent =
+            "TVA (" +
+            tauxTVA.toFixed(2).replace(".00", "") +
+            " %) :";
+
+
+        /*
+         * Chargement du catalogue
+         */
+
+        function chargerCatalogue() {
+
+            const select =
+                document.getElementById(
+                    "prestation"
+                );
+
+
+            select.innerHTML =
+                `
+                <option value="">
+                    -- Choisir une prestation --
+                </option>
+                `;
+
+
+            catalogue.forEach(
+                function(prestation, index) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        index;
+
+
+                    option.textContent =
+                        prestation.designation +
+                        " — " +
+                        Number(
+                            prestation.prix
+                        ).toFixed(2) +
+                        " € HT / " +
+                        prestation.unite;
+
+
+                    select.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Choix d'une prestation
+         */
+
+        document
+            .getElementById("prestation")
+            .addEventListener(
+                "change",
+                function() {
+
+                    const index =
+                        this.value;
+
+
+                    const champPrix =
+                        document.getElementById(
+                            "prix"
+                        );
+
+
+                    if (index === "") {
+
+                        champPrix.value =
+                            0;
+
+                        return;
+                    }
+
+
+                    const prestation =
+                        catalogue[index];
+
+
+                    champPrix.value =
+                        Number(
+                            prestation.prix
+                        ).toFixed(2);
+
+                }
+            );
+
+
+        /*
+         * Ajouter une ligne
+         */
+
+        function ajouterLigne() {
+
+            const select =
+                document.getElementById(
+                    "prestation"
+                );
+
+
+            const index =
+                select.value;
+
+
+            const quantite =
+                Number(
+                    document.getElementById(
+                        "quantite"
+                    ).value
+                );
+
+
+            if (index === "") {
+
+                alert(
+                    "Merci de choisir une prestation."
+                );
+
+                return;
+            }
+
+
+            if (
+                !Number.isFinite(quantite) ||
+                quantite <= 0
+            ) {
+
+                alert(
+                    "La quantité doit être supérieure à 0."
+                );
+
+                return;
+            }
+
+
+            const prestation =
+                catalogue[index];
+
+
+            const prix =
+                Number(
+                    prestation.prix
+                );
+
+
+            const totalLigne =
+                quantite * prix;
+
+
+            const ligne =
+                document.createElement(
+                    "tr"
+                );
+
+
+            ligne.innerHTML = `
+
+                <td>
+                    ${prestation.designation}
+                </td>
+
+                <td>
+                    ${quantite}
+                </td>
+
+                <td>
+                    ${prix.toFixed(2)} €
+                </td>
+
+                <td>
+                    ${totalLigne.toFixed(2)} €
+                </td>
+
+                <td>
+
+                    <button
+                        class="supprimer"
+                        onclick="supprimerLigne(
+                            this,
+                            ${totalLigne}
+                        )"
+                    >
+                        Supprimer
+                    </button>
+
+                </td>
+
+            `;
+
+
+            document
+                .getElementById(
+                    "lignesDevis"
+                )
+                .appendChild(
+                    ligne
+                );
+
+
+            totalHT +=
+                totalLigne;
+
+
+            calculerTotaux();
+
+
+            /*
+             * Réinitialisation
+             */
+
+            select.value =
+                "";
+
+
+            document.getElementById(
+                "quantite"
+            ).value =
+                1;
+
+
+            document.getElementById(
+                "prix"
+            ).value =
+                0;
+
+        }
+
+
+        /*
+         * Suppression d'une ligne
+         */
+
+        function supprimerLigne(
+            bouton,
+            montant
+        ) {
+
+            bouton
+                .parentElement
+                .parentElement
+                .remove();
+
+
+            totalHT -=
+                montant;
+
+
+            /*
+             * Évite les petites erreurs
+             * de calcul flottant.
+             */
+
+            if (
+                Math.abs(totalHT) <
+                0.000001
+            ) {
+
+                totalHT =
+                    0;
+
+            }
+
+
+            calculerTotaux();
+
+        }
+
+
+        /*
+         * Calcul HT / TVA / TTC
+         */
+
+        function calculerTotaux() {
+
+            const montantTVA =
+                totalHT *
+                tauxTVA /
+                100;
+
+
+            const montantTTC =
+                totalHT +
+                montantTVA;
+
+
+            document.getElementById(
+                "totalHT"
+            ).textContent =
+                totalHT.toFixed(2);
+
+
+            document.getElementById(
+                "tva"
+            ).textContent =
+                montantTVA.toFixed(2);
+
+
+            document.getElementById(
+                "totalTTC"
+            ).textContent =
+                montantTTC.toFixed(2);
+
+        }
+
+
+        /*
+         * Création du devis
+         */
+
+        function creerDevis() {
+
+            const nomClient =
+                document
+                    .getElementById(
+                        "nomClient"
+                    )
+                    .value
+                    .trim();
+
+
+            if (nomClient === "") {
+
+                alert(
+                    "Merci d'indiquer le nom du client."
+                );
+
+                return;
+            }
+
+
+            if (totalHT <= 0) {
+
+                alert(
+                    "Ajoutez au moins une prestation."
+                );
+
+                return;
+            }
+
+
+            /*
+             * Récupération des lignes
+             */
+
+            const lignes = [];
+
+
+            const lignesHTML =
+                document.querySelectorAll(
+                    "#lignesDevis tr"
+                );
+
+
+            lignesHTML.forEach(
+                function(ligne) {
+
+                    const cellules =
+                        ligne.querySelectorAll(
+                            "td"
+                        );
+
+
+                    if (
+                        cellules.length >= 4
+                    ) {
+
+                        lignes.push({
+
+                            description:
+                                cellules[0]
+                                    .textContent
+                                    .trim(),
+
+                            quantite:
+                                Number(
+                                    cellules[1]
+                                        .textContent
+                                        .trim()
+                                ),
+
+                            prixUnitaireHT:
+                                parseFloat(
+                                    cellules[2]
+                                        .textContent
+                                        .replace(
+                                            "€",
+                                            ""
+                                        )
+                                        .trim()
+                                ),
+
+                            totalHT:
+                                parseFloat(
+                                    cellules[3]
+                                        .textContent
+                                        .replace(
+                                            "€",
+                                            ""
+                                        )
+                                        .trim()
+                                )
+
+                        });
+
+                    }
+
+                }
+            );
+
+
+            /*
+             * Génération du numéro
+             */
+
+            let compteur =
+                Number(
+                    localStorage.getItem(
+                        "compteurDevis321Devis"
+                    )
+                ) || 0;
+
+
+            compteur++;
+
+
+            localStorage.setItem(
+                "compteurDevis321Devis",
+                compteur
+            );
+
+
+            const numeroDevis =
+                "DEV-" +
+                new Date().getFullYear() +
+                "-" +
+                String(
+                    compteur
+                ).padStart(
+                    4,
+                    "0"
+                );
+
+
+            /*
+             * Calcul final avec le taux configuré
+             */
+
+            const montantTVA =
+                totalHT *
+                tauxTVA /
+                100;
+
+
+            const montantTTC =
+                totalHT +
+                montantTVA;
+
+
+            /*
+             * Création du devis
+             */
+
+            const nouveauDevis = {
+
+                numero:
+                    numeroDevis,
+
+                date:
+                    new Date().toISOString(),
+
+                client: {
+
+                    nom:
+                        nomClient,
+
+                    telephone:
+                        document
+                            .getElementById(
+                                "telephone"
+                            )
+                            .value
+                            .trim(),
+
+                    email:
+                        document
+                            .getElementById(
+                                "email"
+                            )
+                            .value
+                            .trim(),
+
+                    adresse:
+                        document
+                            .getElementById(
+                                "adresse"
+                            )
+                            .value
+                            .trim()
+
+                },
+
+
+                lignes:
+                    lignes,
+
+
+                totalHT:
+                    totalHT,
+
+
+                tauxTVA:
+                    tauxTVA,
+
+
+                tva:
+                    montantTVA,
+
+
+                totalTTC:
+                    montantTTC
+
+            };
+
+
+            /*
+             * Récupération des devis
+             */
+
+            const devisExistants =
+                JSON.parse(
+                    localStorage.getItem(
+                        "devis321Devis"
+                    )
+                ) || [];
+
+
+            /*
+             * Ajout du devis
+             */
+
+            devisExistants.push(
+                nouveauDevis
+            );
+
+
+            /*
+             * Sauvegarde
+             */
+
+            localStorage.setItem(
+                "devis321Devis",
+                JSON.stringify(
+                    devisExistants
+                )
+            );
+
+
+            /*
+             * Confirmation
+             */
+
+            alert(
+                "Devis créé avec succès !\n\n" +
+                "Numéro : " +
+                numeroDevis +
+                "\n" +
+                "Client : " +
+                nomClient +
+                "\n" +
+                "TVA : " +
+                tauxTVA +
+                " %\n" +
+                "Total TTC : " +
+                montantTTC.toFixed(2) +
+                " €"
+            );
+
+
+            /*
+             * Retour au tableau de bord
+             */
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        /*
+         * Chargement initial
+         */
+
+        chargerCatalogue();
+
+
+        /*
+         * Calcul initial
+         */
+
+        calculerTotaux();
+
+    </script>
+
+
+</body>
+
+</html>

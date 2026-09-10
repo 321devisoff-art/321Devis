@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Devis — 321Devis</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #e9edf2;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+
+        .actions {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+
+        .actions a,
+        .actions button {
+            display: inline-block;
+            padding: 11px 16px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+
+        .btn-retour {
+            background: #6b7280;
+            color: white;
+        }
+
+
+        .btn-imprimer {
+            background: #2563eb;
+            color: white;
+        }
+
+
+        .devis {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 55px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
+        }
+
+
+        .entete {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #111827;
+        }
+
+
+        .entreprise {
+            flex: 1;
+        }
+
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            border: 2px solid #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2563eb;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+
+        .entreprise h1 {
+            margin: 0 0 8px 0;
+            font-size: 28px;
+            color: #111827;
+        }
+
+
+        .entreprise .slogan {
+            margin: 0 0 18px 0;
+            color: #6b7280;
+        }
+
+
+        .entreprise p {
+            margin: 5px 0;
+            color: #374151;
+        }
+
+
+        .bloc-numero {
+            min-width: 240px;
+            text-align: right;
+        }
+
+
+        .type-document {
+            display: inline-block;
+            padding: 7px 14px;
+            background: #2563eb;
+            color: white;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+
+
+        .bloc-numero p {
+            margin: 6px 0;
+        }
+
+
+        .titre-document {
+            margin: 30px 0;
+        }
+
+
+        .titre-document h2 {
+            margin: 0 0 8px 0;
+            font-size: 28px;
+        }
+
+
+        .titre-document p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+
+        .blocs-informations {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+
+        .carte-information {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fafafa;
+        }
+
+
+        .carte-information h3 {
+            margin: 0 0 14px 0;
+            font-size: 14px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+
+        .carte-information p {
+            margin: 6px 0;
+            line-height: 1.45;
+        }
+
+
+        .tableau-devis {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+
+        .tableau-devis th {
+            padding: 13px 12px;
+            background: #111827;
+            color: white;
+            font-size: 13px;
+            text-align: left;
+        }
+
+
+        .tableau-devis td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+
+        .tableau-devis tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+
+        .col-quantite,
+        .col-prix,
+        .col-total {
+            text-align: right !important;
+            white-space: nowrap;
+        }
+
+
+        .zone-totaux {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+
+        .totaux {
+            width: 320px;
+        }
+
+
+        .ligne-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+
+        .ligne-total span:first-child {
+            color: #4b5563;
+        }
+
+
+        .ligne-total strong {
+            color: #111827;
+        }
+
+
+        .ligne-total-final {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 15px;
+            background: #111827;
+            color: white;
+            border-radius: 6px;
+            font-size: 18px;
+        }
+
+
+        .ligne-total-final strong {
+            color: white;
+        }
+
+
+        .section {
+            margin-top: 45px;
+        }
+
+
+        .section h3 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+
+
+        .conditions {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 18px;
+            background: #fafafa;
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+
+        .acceptation {
+            margin-top: 35px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+
+        .zone-signature {
+            min-height: 150px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+
+        .zone-signature h3 {
+            margin-top: 0;
+            font-size: 15px;
+        }
+
+
+        .ligne-signature {
+            margin-top: 80px;
+            border-top: 1px solid #9ca3af;
+            padding-top: 8px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+
+        .footer {
+            margin-top: 45px;
+            padding-top: 20px;
+            border-top: 1px solid #d1d5db;
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+
+        .erreur {
+            max-width: 700px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
+        }
+
+
+        .erreur h1 {
+            margin-top: 0;
+        }
+
+
+        .erreur a {
+            color: #2563eb;
+        }
+
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 10px;
+            }
+
+
+            .devis {
+                padding: 25px;
+            }
+
+
+            .entete {
+                flex-direction: column;
+            }
+
+
+            .bloc-numero {
+                text-align: left;
+            }
+
+
+            .blocs-informations,
+            .acceptation {
+                grid-template-columns: 1fr;
+            }
+
+
+            .zone-totaux {
+                justify-content: stretch;
+            }
+
+
+            .totaux {
+                width: 100%;
+            }
+
+        }
+
+
+        @media print {
+
+            @page {
+                size: A4;
+                margin: 12mm;
+            }
+
+
+            body {
+                background: white;
+                padding: 0;
+            }
+
+
+            .actions {
+                display: none !important;
+            }
+
+
+            .devis {
+                max-width: none;
+                width: 100%;
+                margin: 0;
+                padding: 10mm;
+                box-shadow: none;
+            }
+
+
+            .tableau-devis tr {
+                page-break-inside: avoid;
+            }
+
+
+            .section,
+            .acceptation,
+            .footer {
+                page-break-inside: avoid;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="actions">
+
+        <a
+            href="historique.html"
+            class="btn-retour"
+        >
+            ← Retour à l'historique
+        </a>
+
+
+        <button
+            class="btn-imprimer"
+            onclick="window.print()"
+        >
+            Imprimer / Enregistrer en PDF
+        </button>
+
+    </div>
+
+
+    <div class="devis">
+
+
+        <!-- EN-TÊTE ENTREPRISE -->
+
+        <div class="entete">
+
+
+            <div class="entreprise">
+
+                <div class="logo">
+                    321
+                </div>
+
+
+                <h1 id="nomEntreprise">
+                    Votre entreprise
+                </h1>
+
+
+                <p class="slogan">
+                    1, 2, 3… votre devis est prêt.
+                </p>
+
+
+                <p id="adresseEntreprise"></p>
+
+                <p id="villeEntreprise"></p>
+
+                <p id="telephoneEntreprise"></p>
+
+                <p id="emailEntreprise"></p>
+
+                <p id="siteEntreprise"></p>
+
+            </div>
+
+
+            <div class="bloc-numero">
+
+                <div class="type-document">
+                    DEVIS
+                </div>
+
+
+                <p>
+                    <strong>
+                        N° :
+                    </strong>
+
+                    <span id="numeroDevis"></span>
+                </p>
+
+
+                <p>
+                    <strong>
+                        Date :
+                    </strong>
+
+                    <span id="dateDevis"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="titre-document">
+
+            <h2>
+                Proposition commerciale
+            </h2>
+
+            <p>
+                Nous vous remercions pour votre demande.
+            </p>
+
+        </div>
+
+
+        <!-- INFORMATIONS -->
+
+        <div class="blocs-informations">
+
+
+            <div class="carte-information">
+
+                <h3>
+                    Émetteur
+                </h3>
+
+
+                <p>
+                    <strong id="nomEntrepriseCarte">
+                    </strong>
+                </p>
+
+
+                <p id="adresseEntrepriseCarte"></p>
+
+                <p id="villeEntrepriseCarte"></p>
+
+                <p>
+                    SIRET :
+                    <span id="siretEntreprise"></span>
+                </p>
+
+                <p>
+                    TVA :
+                    <span id="tvaEntreprise"></span>
+                </p>
+
+            </div>
+
+
+            <div class="carte-information">
+
+                <h3>
+                    Client
+                </h3>
+
+
+                <p>
+                    <strong id="nomClient"></strong>
+                </p>
+
+
+                <p id="adresseClient"></p>
+
+                <p id="telephoneClient"></p>
+
+                <p id="emailClient"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLEAU -->
+
+        <table class="tableau-devis">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Désignation
+                    </th>
+
+                    <th class="col-quantite">
+                        Qté
+                    </th>
+
+                    <th class="col-prix">
+                        Prix unitaire HT
+                    </th>
+
+                    <th class="col-total">
+                        Total HT
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="lignesDevis"></tbody>
+
+        </table>
+
+
+        <!-- TOTALS -->
+
+        <div class="zone-totaux">
+
+            <div class="totaux">
+
+
+                <div class="ligne-total">
+
+                    <span>
+                        Total HT
+                    </span>
+
+                    <strong>
+                        <span id="totalHT"></span> €
+                    </strong>
+
+                </div>
+
+
+                <div class="ligne-total">
+
+                    <span>
+                        TVA
+                    </span>
+
+                    <strong>
+                        <span id="tva"></span> €
+                    </strong>
+
+                </div>
+
+
+                <div class="ligne-total-final">
+
+                    <span>
+                        Total TTC
+                    </span>
+
+                    <strong>
+                        <span id="totalTTC"></span> €
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONDITIONS -->
+
+        <div class="section">
+
+            <h3>
+                Conditions
+            </h3>
+
+
+            <div class="conditions">
+
+                <p>
+                    Validité du devis : à renseigner.
+                </p>
+
+
+                <p>
+                    Délai d'intervention : à convenir avec le client.
+                </p>
+
+
+                <p>
+                    Les travaux seront réalisés selon les prestations
+                    détaillées dans le présent devis.
+                </p>
+
+
+                <p>
+                    Toute prestation supplémentaire fera l'objet
+                    d'une validation préalable.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SIGNATURE -->
+
+        <div class="section">
+
+            <h3>
+                Acceptation du devis
+            </h3>
+
+
+            <p>
+                Bon pour accord.
+            </p>
+
+
+            <div class="acceptation">
+
+
+                <div class="zone-signature">
+
+                    <h3>
+                        Le client
+                    </h3>
+
+
+                    <p>
+                        Nom :
+                        <span id="nomSignature"></span>
+                    </p>
+
+
+                    <div class="ligne-signature">
+                        Signature
+                    </div>
+
+                </div>
+
+
+                <div class="zone-signature">
+
+                    <h3>
+                        L'entreprise
+                    </h3>
+
+
+                    <p>
+                        <span id="entrepriseSignature"></span>
+                    </p>
+
+
+                    <div class="ligne-signature">
+                        Signature et cachet
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            <p>
+                Document généré avec 321Devis.
+            </p>
+
+
+            <p>
+                Ce document est basé sur les informations
+                enregistrées dans les paramètres de l'entreprise.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+
+
+        /*
+         * Numéro du devis dans l'URL
+         */
+
+        const parametres =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const numero =
+            parametres.get("numero");
+
+
+        /*
+         * Devis enregistrés
+         */
+
+        const devis =
+            JSON.parse(
+                localStorage.getItem(
+                    "devis321Devis"
+                )
+            ) || [];
+
+
+        /*
+         * Paramètres de l'entreprise
+         */
+
+        const entreprise =
+            JSON.parse(
+                localStorage.getItem(
+                    "parametres321Devis"
+                )
+            ) || null;
+
+
+        /*
+         * Recherche du devis
+         */
+
+        const devisSelectionne =
+            devis.find(
+                function(devisItem) {
+
+                    return (
+                        devisItem.numero === numero
+                    );
+
+                }
+            );
+
+
+        /*
+         * Vérification du devis
+         */
+
+        if (!devisSelectionne) {
+
+            document.body.innerHTML = `
+
+                <div class="erreur">
+
+                    <h1>
+                        Devis introuvable
+                    </h1>
+
+                    <p>
+                        Le devis demandé n'existe pas
+                        dans ce navigateur.
+                    </p>
+
+                    <p>
+                        <a href="historique.html">
+                            Retour à l'historique
+                        </a>
+                    </p>
+
+                </div>
+
+            `;
+
+        } else {
+
+
+            /*
+             * Informations du devis
+             */
+
+            document.getElementById(
+                "numeroDevis"
+            ).textContent =
+                devisSelectionne.numero;
+
+
+            const date =
+                new Date(
+                    devisSelectionne.date
+                );
+
+
+            document.getElementById(
+                "dateDevis"
+            ).textContent =
+                date.toLocaleDateString(
+                    "fr-FR"
+                );
+
+
+            /*
+             * Informations client
+             */
+
+            document.getElementById(
+                "nomClient"
+            ).textContent =
+                devisSelectionne.client.nom;
+
+
+            document.getElementById(
+                "nomSignature"
+            ).textContent =
+                devisSelectionne.client.nom;
+
+
+            document.getElementById(
+                "adresseClient"
+            ).textContent =
+                devisSelectionne.client.adresse;
+
+
+            document.getElementById(
+                "telephoneClient"
+            ).textContent =
+                devisSelectionne.client.telephone;
+
+
+            document.getElementById(
+                "emailClient"
+            ).textContent =
+                devisSelectionne.client.email;
+
+
+            /*
+             * Informations entreprise
+             */
+
+            if (entreprise) {
+
+                document.getElementById(
+                    "nomEntreprise"
+                ).textContent =
+                    entreprise.nom;
+
+
+                document.getElementById(
+                    "nomEntrepriseCarte"
+                ).textContent =
+                    entreprise.nom;
+
+
+                document.getElementById(
+                    "entrepriseSignature"
+                ).textContent =
+                    entreprise.nom;
+
+
+                document.getElementById(
+                    "adresseEntreprise"
+                ).textContent =
+                    entreprise.adresse;
+
+
+                document.getElementById(
+                    "adresseEntrepriseCarte"
+                ).textContent =
+                    entreprise.adresse;
+
+
+                document.getElementById(
+                    "villeEntreprise"
+                ).textContent =
+                    entreprise.codePostal +
+                    " " +
+                    entreprise.ville;
+
+
+                document.getElementById(
+                    "villeEntrepriseCarte"
+                ).textContent =
+                    entreprise.codePostal +
+                    " " +
+                    entreprise.ville;
+
+
+                document.getElementById(
+                    "telephoneEntreprise"
+                ).textContent =
+                    "Téléphone : " +
+                    entreprise.telephone;
+
+
+                document.getElementById(
+                    "emailEntreprise"
+                ).textContent =
+                    "E-mail : " +
+                    entreprise.email;
+
+
+                if (entreprise.site !== "") {
+
+                    document.getElementById(
+                        "siteEntreprise"
+                    ).textContent =
+                        entreprise.site;
+
+                }
+
+
+                document.getElementById(
+                    "siretEntreprise"
+                ).textContent =
+                    entreprise.siret;
+
+
+                document.getElementById(
+                    "tvaEntreprise"
+                ).textContent =
+                    entreprise.tva ||
+                    "Non renseignée";
+
+            }
+
+
+            /*
+             * Prestations
+             */
+
+            const tableau =
+                document.getElementById(
+                    "lignesDevis"
+                );
+
+
+            devisSelectionne.lignes.forEach(
+                function(ligne) {
+
+                    const tr =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    tr.innerHTML = `
+
+                        <td>
+                            ${ligne.description}
+                        </td>
+
+                        <td class="col-quantite">
+                            ${ligne.quantite}
+                        </td>
+
+                        <td class="col-prix">
+                            ${Number(
+                                ligne.prixUnitaireHT
+                            ).toFixed(2)} €
+                        </td>
+
+                        <td class="col-total">
+                            ${Number(
+                                ligne.totalHT
+                            ).toFixed(2)} €
+                        </td>
+
+                    `;
+
+
+                    tableau.appendChild(tr);
+
+                }
+            );
+
+
+            /*
+             * Totaux
+             */
+
+            document.getElementById(
+                "totalHT"
+            ).textContent =
+                Number(
+                    devisSelectionne.totalHT
+                ).toFixed(2);
+
+
+            document.getElementById(
+                "tva"
+            ).textContent =
+                Number(
+                    devisSelectionne.tva
+                ).toFixed(2);
+
+
+            document.getElementById(
+                "totalTTC"
+            ).textContent =
+                Number(
+                    devisSelectionne.totalTTC
+                ).toFixed(2);
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

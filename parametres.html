@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Paramètres — 321Devis</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f4f6;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+
+        .header h1 {
+            margin: 0 0 8px 0;
+        }
+
+
+        .header p {
+            margin: 0;
+            color: #d1d5db;
+        }
+
+
+        .navigation {
+            margin-bottom: 25px;
+        }
+
+
+        .navigation a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+
+        .bloc {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+
+        .bloc h2 {
+            margin-top: 0;
+        }
+
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+
+        .aide {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+
+        .avertissement {
+            margin-top: 10px;
+            padding: 12px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 6px;
+            color: #9a3412;
+            font-size: 13px;
+        }
+
+
+        button {
+            margin-top: 25px;
+            padding: 13px 18px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        .message {
+            display: none;
+            margin-top: 20px;
+            padding: 14px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 6px;
+            color: #065f46;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="header">
+
+        <h1>
+            321Devis
+        </h1>
+
+        <p>
+            Paramètres de votre entreprise
+        </p>
+
+    </div>
+
+
+    <div class="navigation">
+
+        <a href="index.html">
+            ← Tableau de bord
+        </a>
+
+        <a href="catalogue.html">
+            Catalogue
+        </a>
+
+    </div>
+
+
+    <div class="bloc">
+
+        <h2>
+            Informations de l'entreprise
+        </h2>
+
+        <p>
+            Ces informations seront utilisées
+            automatiquement sur vos devis.
+        </p>
+
+
+        <label for="nomEntreprise">
+            Nom de l'entreprise *
+        </label>
+
+        <input
+            type="text"
+            id="nomEntreprise"
+            placeholder="Ex : Plomberie Dupont"
+        >
+
+
+        <label for="adresseEntreprise">
+            Adresse *
+        </label>
+
+        <input
+            type="text"
+            id="adresseEntreprise"
+            placeholder="Ex : 10 rue de Paris"
+        >
+
+
+        <label for="codePostal">
+            Code postal *
+        </label>
+
+        <input
+            type="text"
+            id="codePostal"
+            placeholder="Ex : 59000"
+        >
+
+
+        <label for="ville">
+            Ville *
+        </label>
+
+        <input
+            type="text"
+            id="ville"
+            placeholder="Ex : Lille"
+        >
+
+
+        <label for="telephoneEntreprise">
+            Téléphone *
+        </label>
+
+        <input
+            type="text"
+            id="telephoneEntreprise"
+            placeholder="Ex : 06 00 00 00 00"
+        >
+
+
+        <label for="emailEntreprise">
+            E-mail *
+        </label>
+
+        <input
+            type="email"
+            id="emailEntreprise"
+            placeholder="contact@entreprise.fr"
+        >
+
+
+        <label for="siret">
+            SIRET *
+        </label>
+
+        <input
+            type="text"
+            id="siret"
+            placeholder="Ex : 123 456 789 00012"
+        >
+
+
+        <p class="aide">
+            Le SIRET doit être celui de l'entreprise.
+        </p>
+
+
+        <label for="tva">
+            Numéro de TVA intracommunautaire
+        </label>
+
+        <input
+            type="text"
+            id="tva"
+            placeholder="Ex : FR12345678901"
+        >
+
+
+        <p class="aide">
+            Facultatif pour le moment.
+        </p>
+
+
+        <label for="tauxTVA">
+            Taux de TVA appliqué (%) *
+        </label>
+
+        <input
+            type="number"
+            id="tauxTVA"
+            min="0"
+            max="100"
+            step="0.01"
+            placeholder="Ex : 20"
+        >
+
+
+        <p class="aide">
+            Ce taux sera utilisé pour calculer la TVA
+            sur les nouveaux devis.
+        </p>
+
+
+        <div class="avertissement">
+
+            Vérifie que le taux renseigné correspond bien
+            à la situation fiscale de l'entreprise et aux
+            prestations concernées.
+
+        </div>
+
+
+        <label for="site">
+            Site internet
+        </label>
+
+        <input
+            type="text"
+            id="site"
+            placeholder="Ex : www.monentreprise.fr"
+        >
+
+
+        <button onclick="sauvegarderParametres()">
+            Enregistrer les informations
+        </button>
+
+
+        <div
+            class="message"
+            id="message"
+        >
+            Informations enregistrées avec succès.
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    /*
+     * Chargement des paramètres existants
+     */
+
+    const parametresEntreprise =
+        JSON.parse(
+            localStorage.getItem(
+                "parametres321Devis"
+            )
+        ) || {};
+
+
+    document.getElementById(
+        "nomEntreprise"
+    ).value =
+        parametresEntreprise.nom || "";
+
+
+    document.getElementById(
+        "adresseEntreprise"
+    ).value =
+        parametresEntreprise.adresse || "";
+
+
+    document.getElementById(
+        "codePostal"
+    ).value =
+        parametresEntreprise.codePostal || "";
+
+
+    document.getElementById(
+        "ville"
+    ).value =
+        parametresEntreprise.ville || "";
+
+
+    document.getElementById(
+        "telephoneEntreprise"
+    ).value =
+        parametresEntreprise.telephone || "";
+
+
+    document.getElementById(
+        "emailEntreprise"
+    ).value =
+        parametresEntreprise.email || "";
+
+
+    document.getElementById(
+        "siret"
+    ).value =
+        parametresEntreprise.siret || "";
+
+
+    document.getElementById(
+        "tva"
+    ).value =
+        parametresEntreprise.tva || "";
+
+
+    document.getElementById(
+        "tauxTVA"
+    ).value =
+        parametresEntreprise.tauxTVA !== undefined
+            ? parametresEntreprise.tauxTVA
+            : 20;
+
+
+    document.getElementById(
+        "site"
+    ).value =
+        parametresEntreprise.site || "";
+
+
+    /*
+     * Sauvegarde des paramètres
+     */
+
+    function sauvegarderParametres() {
+
+
+        const nom =
+            document
+                .getElementById("nomEntreprise")
+                .value
+                .trim();
+
+
+        const adresse =
+            document
+                .getElementById("adresseEntreprise")
+                .value
+                .trim();
+
+
+        const codePostal =
+            document
+                .getElementById("codePostal")
+                .value
+                .trim();
+
+
+        const ville =
+            document
+                .getElementById("ville")
+                .value
+                .trim();
+
+
+        const telephone =
+            document
+                .getElementById("telephoneEntreprise")
+                .value
+                .trim();
+
+
+        const email =
+            document
+                .getElementById("emailEntreprise")
+                .value
+                .trim();
+
+
+        const siret =
+            document
+                .getElementById("siret")
+                .value
+                .trim();
+
+
+        const tva =
+            document
+                .getElementById("tva")
+                .value
+                .trim();
+
+
+        const tauxTVA =
+            Number(
+                document
+                    .getElementById("tauxTVA")
+                    .value
+            );
+
+
+        const site =
+            document
+                .getElementById("site")
+                .value
+                .trim();
+
+
+        /*
+         * Vérification des champs obligatoires
+         */
+
+        if (
+            nom === "" ||
+            adresse === "" ||
+            codePostal === "" ||
+            ville === "" ||
+            telephone === "" ||
+            email === "" ||
+            siret === ""
+        ) {
+
+            alert(
+                "Merci de remplir tous les champs obligatoires (*)."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Vérification de la TVA
+         */
+
+        if (
+            !Number.isFinite(tauxTVA) ||
+            tauxTVA < 0 ||
+            tauxTVA > 100
+        ) {
+
+            alert(
+                "Merci d'indiquer un taux de TVA valide entre 0 et 100."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Objet entreprise
+         */
+
+        const nouvellesInformations = {
+
+            nom:
+                nom,
+
+            adresse:
+                adresse,
+
+            codePostal:
+                codePostal,
+
+            ville:
+                ville,
+
+            telephone:
+                telephone,
+
+            email:
+                email,
+
+            siret:
+                siret,
+
+            tva:
+                tva,
+
+            tauxTVA:
+                tauxTVA,
+
+            site:
+                site
+
+        };
+
+
+        /*
+         * Enregistrement
+         */
+
+        localStorage.setItem(
+            "parametres321Devis",
+            JSON.stringify(
+                nouvellesInformations
+            )
+        );
+
+
+        /*
+         * Confirmation
+         */
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        message.style.display =
+            "block";
+
+
+        setTimeout(
+            function() {
+
+                message.style.display =
+                    "none";
+
+            },
+            3000
+        );
+
+    }
+
+</script>
+
+
+</body>
+
+</html>
