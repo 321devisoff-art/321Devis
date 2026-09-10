@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Précisions sur votre demande — 321Devis</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #eef2f6;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+        .container { max-width: 900px; margin: auto; }
+        .header {
+            background: #111827;
+            color: white;
+            padding: 25px;
+            border-radius: 10px 10px 0 0;
+        }
+        .header h1 { margin: 0 0 8px 0; }
+        .header p { margin: 0; color: #d1d5db; }
+        .contenu {
+            background: white;
+            padding: 35px;
+            border-radius: 0 0 10px 10px;
+        }
+        .numero {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #d1d5db;
+            margin-bottom: 25px;
+        }
+        .numero h2 { margin: 0 0 10px 0; }
+        .question {
+            padding: 20px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            border-radius: 8px;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 20px 0 8px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font: inherit;
+            resize: vertical;
+        }
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 15px;
+            border: none;
+            border-radius: 7px;
+            background: #059669;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .message {
+            padding: 18px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+        .succes {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+        .information {
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+        .erreur {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        @media (max-width: 650px) {
+            body { padding: 10px; }
+            .contenu { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>321Devis</h1>
+        <p>Précisions sur votre demande</p>
+    </div>
+
+    <div class="contenu" id="contenu">
+        <div class="numero">
+            <h2>Une précision est nécessaire</h2>
+            <p>
+                Demande :
+                <strong id="numeroDemande">—</strong>
+            </p>
+        </div>
+
+        <p>
+            L'entreprise a besoin d'une information supplémentaire
+            avant de pouvoir préparer votre devis.
+        </p>
+
+        <div class="question">
+            <strong>Question :</strong>
+            <div id="questionPrecision" style="margin-top:10px;">
+                Chargement…
+            </div>
+        </div>
+
+        <div id="zoneReponse">
+            <label for="reponsePrecision">Votre réponse</label>
+            <textarea
+                id="reponsePrecision"
+                placeholder="Décrivez ici les précisions demandées…"
+            ></textarea>
+
+            <button id="boutonEnvoyer" onclick="envoyerReponse()">
+                Envoyer ma réponse
+            </button>
+        </div>
+
+        <div id="messageFinal" style="display:none;"></div>
+    </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+let publicToken = null;
+let demandeSelectionnee = null;
+
+async function appelerRPC(nomFonction, parametres) {
+    const reponse = await fetch(
+        SUPABASE_URL + "/rest/v1/rpc/" + nomFonction,
+        {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(parametres)
+        }
+    );
+
+    const texte = await reponse.text();
+    let donnees = null;
+
+    if (texte) {
+        try {
+            donnees = JSON.parse(texte);
+        } catch (erreur) {
+            donnees = texte;
+        }
+    }
+
+    if (!reponse.ok) {
+        let message = "Erreur Supabase HTTP " + reponse.status;
+
+        if (donnees && typeof donnees === "object") {
+            if (donnees.message) {
+                message += " : " + donnees.message;
+            } else if (donnees.error) {
+                message += " : " + donnees.error;
+            } else if (donnees.hint) {
+                message += " : " + donnees.hint;
+            }
+        } else if (typeof donnees === "string" && donnees.trim() !== "") {
+            message += " : " + donnees;
+        }
+
+        throw new Error(message);
+    }
+
+    return donnees;
+}
+
+function echapperHTML(texte) {
+    return String(texte || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function recupererPublicToken() {
+    const parametres = new URLSearchParams(window.location.search);
+    const token = String(parametres.get("token") || "").trim();
+
+    const formatUUID =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (token === "" || !formatUUID.test(token)) {
+        throw new Error("Lien de demande invalide ou incomplet.");
+    }
+
+    publicToken = token;
+}
+
+async function chargerDemande() {
+    recupererPublicToken();
+
+    const resultat = await appelerRPC(
+        "lire_precision_demande_public",
+        {
+            p_token: publicToken
+        }
+    );
+
+    if (!resultat || typeof resultat !== "object" || !resultat.numero) {
+        throw new Error(
+            "Supabase n'a pas retourné la demande attendue."
+        );
+    }
+
+    demandeSelectionnee = resultat;
+
+    document.getElementById("numeroDemande").textContent =
+        resultat.numero || "—";
+
+    if (
+        resultat.precision_requise !== true ||
+        !resultat.question_precision
+    ) {
+        document.getElementById("questionPrecision").textContent =
+            "Aucune précision supplémentaire n'est actuellement demandée.";
+
+        document.getElementById("zoneReponse").style.display =
+            "none";
+
+        const messageFinal =
+            document.getElementById("messageFinal");
+
+        messageFinal.style.display = "block";
+        messageFinal.className = "message information";
+        messageFinal.textContent =
+            "Cette demande ne nécessite plus de réponse supplémentaire.";
+
+        return;
+    }
+
+    document.getElementById("questionPrecision").textContent =
+        resultat.question_precision;
+}
+
+async function envoyerReponse() {
+    if (!publicToken || !demandeSelectionnee) {
+        alert("Demande introuvable.");
+        return;
+    }
+
+    const champ =
+        document.getElementById("reponsePrecision");
+
+    const reponseClient =
+        String(champ.value || "").trim();
+
+    if (reponseClient === "") {
+        alert("Merci de saisir votre réponse.");
+        champ.focus();
+        return;
+    }
+
+    const bouton =
+        document.getElementById("boutonEnvoyer");
+
+    bouton.disabled = true;
+    bouton.textContent = "Envoi en cours…";
+
+    try {
+        const resultat = await appelerRPC(
+            "repondre_precision_demande_public",
+            {
+                p_token: publicToken,
+                p_reponse: reponseClient
+            }
+        );
+
+        if (
+            !resultat ||
+            resultat.success !== true
+        ) {
+            throw new Error(
+                "Supabase n'a pas confirmé l'enregistrement de votre réponse."
+            );
+        }
+
+        document.getElementById("zoneReponse").style.display =
+            "none";
+
+        const messageFinal =
+            document.getElementById("messageFinal");
+
+        messageFinal.style.display = "block";
+        messageFinal.className = "message succes";
+        messageFinal.innerHTML =
+            "<strong>Merci, votre réponse a bien été enregistrée.</strong>" +
+            "<p>L'entreprise dispose maintenant des précisions nécessaires pour poursuivre l'étude de votre demande.</p>";
+
+    } catch (erreur) {
+        console.error(erreur);
+
+        bouton.disabled = false;
+        bouton.textContent = "Envoyer ma réponse";
+
+        alert(
+            "Impossible d'enregistrer votre réponse.\\n\\n" +
+            erreur.message
+        );
+    }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+        try {
+            await chargerDemande();
+        } catch (erreur) {
+            console.error(erreur);
+
+            document.body.innerHTML = `
+                <div class="erreur">
+                    <h1>Demande introuvable</h1>
+                    <p>Impossible de charger cette demande.</p>
+                    <p>${echapperHTML(erreur.message)}</p>
+                </div>
+            `;
+        }
+    }
+);
+</script>
+</body>
+</html>
