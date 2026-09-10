@@ -427,38 +427,54 @@
 
     <script>
 
-
         /*
-         * Récupération du catalogue
+         * =====================================================
+         * CONFIGURATION SUPABASE
+         * =====================================================
          */
 
-        let catalogue =
-            JSON.parse(
-                localStorage.getItem(
-                    "catalogue321Devis"
-                )
-            ) || [];
+        const SUPABASE_URL =
+            "https://ywmuiqavjdzuaittqesc.supabase.co";
 
-
-        /*
-         * Récupération des paramètres
-         * de l'entreprise
-         */
-
-        const parametresEntreprise =
-            JSON.parse(
-                localStorage.getItem(
-                    "parametres321Devis"
-                )
-            ) || {};
+        const SUPABASE_KEY =
+            "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
 
 
         /*
-         * Taux de TVA
-         *
-         * Si aucun taux n'est enregistré,
-         * on utilise 20 % par défaut.
+         * =====================================================
+         * DONNÉES
+         * =====================================================
          */
+
+        let catalogue = [];
+
+        let totalHT = 0;
+
+
+        /*
+         * Les paramètres de l'entreprise restent
+         * temporairement dans localStorage.
+         * Ils seront migrés plus tard vers Supabase.
+         */
+
+        let parametresEntreprise = {};
+
+
+        try {
+
+            parametresEntreprise =
+                JSON.parse(
+                    localStorage.getItem(
+                        "parametres321Devis"
+                    )
+                ) || {};
+
+        } catch (erreur) {
+
+            parametresEntreprise = {};
+
+        }
+
 
         const tauxTVA =
             Number.isFinite(
@@ -472,26 +488,151 @@
                 : 20;
 
 
-        let totalHT = 0;
-
-
-        /*
-         * Mise à jour du libellé TVA
-         */
-
         document.getElementById(
             "libelleTVA"
         ).textContent =
             "TVA (" +
-            tauxTVA.toFixed(2).replace(".00", "") +
+            tauxTVA
+                .toFixed(2)
+                .replace(".00", "") +
             " %) :";
 
 
         /*
-         * Chargement du catalogue
+         * =====================================================
+         * APPEL SUPABASE
+         * =====================================================
          */
 
-        function chargerCatalogue() {
+        async function appelerSupabase(
+            endpoint,
+            options = {}
+        ) {
+
+            const reponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/" +
+                    endpoint,
+                    {
+                        method:
+                            options.method ||
+                            "GET",
+
+                        headers: {
+
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json",
+
+                            ...(options.headers || {})
+
+                        },
+
+                        body:
+                            options.body
+
+                    }
+                );
+
+
+            const texte =
+                await reponse.text();
+
+
+            let donnees =
+                null;
+
+
+            if (texte) {
+
+                try {
+
+                    donnees =
+                        JSON.parse(
+                            texte
+                        );
+
+                } catch (erreur) {
+
+                    donnees =
+                        texte;
+
+                }
+
+            }
+
+
+            if (!reponse.ok) {
+
+                console.error(
+                    "Erreur Supabase :",
+                    reponse.status,
+                    donnees
+                );
+
+
+                let message =
+                    "Erreur Supabase HTTP " +
+                    reponse.status;
+
+
+                if (
+                    donnees &&
+                    typeof donnees === "object"
+                ) {
+
+                    if (donnees.message) {
+
+                        message +=
+                            " : " +
+                            donnees.message;
+
+                    }
+
+                    else if (donnees.error) {
+
+                        message +=
+                            " : " +
+                            donnees.error;
+
+                    }
+
+                    else if (donnees.hint) {
+
+                        message +=
+                            " : " +
+                            donnees.hint;
+
+                    }
+
+                }
+
+
+                throw new Error(
+                    message
+                );
+
+            }
+
+
+            return donnees;
+
+        }
+
+
+        /*
+         * =====================================================
+         * CATALOGUE SUPABASE
+         * =====================================================
+         */
+
+        async function chargerCatalogue() {
 
             const select =
                 document.getElementById(
@@ -499,53 +640,121 @@
                 );
 
 
-            select.innerHTML =
-                `
+            select.innerHTML = `
                 <option value="">
-                    -- Choisir une prestation --
+                    Chargement du catalogue…
                 </option>
+            `;
+
+
+            select.disabled =
+                true;
+
+
+            try {
+
+                const donnees =
+                    await appelerSupabase(
+                        "catalogue?select=id,nom,prix_unitaire_ht,unite,actif&actif=eq.true&order=created_at.asc"
+                    );
+
+
+                catalogue =
+                    Array.isArray(donnees)
+                        ? donnees
+                        : [];
+
+
+                select.innerHTML = `
+                    <option value="">
+                        -- Choisir une prestation --
+                    </option>
                 `;
 
 
-            catalogue.forEach(
-                function(prestation, index) {
+                catalogue.forEach(
+                    function(prestation, index) {
 
-                    const option =
-                        document.createElement(
-                            "option"
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            index;
+
+
+                        option.textContent =
+                            (prestation.nom || "Prestation") +
+                            " — " +
+                            Number(
+                                prestation.prix_unitaire_ht || 0
+                            ).toFixed(2) +
+                            " € HT / " +
+                            (prestation.unite || "");
+
+
+                        select.appendChild(
+                            option
                         );
 
-
-                    option.value =
-                        index;
-
-
-                    option.textContent =
-                        prestation.designation +
-                        " — " +
-                        Number(
-                            prestation.prix
-                        ).toFixed(2) +
-                        " € HT / " +
-                        prestation.unite;
+                    }
+                );
 
 
-                    select.appendChild(
-                        option
+                select.disabled =
+                    false;
+
+
+                if (
+                    catalogue.length === 0
+                ) {
+
+                    alert(
+                        "Le catalogue Supabase est vide. Ajoute d'abord une prestation dans la page Catalogue."
                     );
 
                 }
-            );
+
+
+            } catch (erreur) {
+
+                console.error(
+                    "Impossible de charger le catalogue :",
+                    erreur
+                );
+
+
+                select.innerHTML = `
+                    <option value="">
+                        Catalogue indisponible
+                    </option>
+                `;
+
+
+                alert(
+                    "Impossible de charger le catalogue depuis Supabase.
+
+" +
+                    erreur.message
+                );
+
+            }
 
         }
 
 
         /*
-         * Choix d'une prestation
+         * =====================================================
+         * CHOIX D'UNE PRESTATION
+         * =====================================================
          */
 
         document
-            .getElementById("prestation")
+            .getElementById(
+                "prestation"
+            )
             .addEventListener(
                 "change",
                 function() {
@@ -566,16 +775,29 @@
                             0;
 
                         return;
+
                     }
 
 
                     const prestation =
-                        catalogue[index];
+                        catalogue[
+                            Number(index)
+                        ];
+
+
+                    if (!prestation) {
+
+                        champPrix.value =
+                            0;
+
+                        return;
+
+                    }
 
 
                     champPrix.value =
                         Number(
-                            prestation.prix
+                            prestation.prix_unitaire_ht || 0
                         ).toFixed(2);
 
                 }
@@ -583,7 +805,9 @@
 
 
         /*
-         * Ajouter une ligne
+         * =====================================================
+         * AJOUTER UNE LIGNE
+         * =====================================================
          */
 
         function ajouterLigne() {
@@ -613,11 +837,14 @@
                 );
 
                 return;
+
             }
 
 
             if (
-                !Number.isFinite(quantite) ||
+                !Number.isFinite(
+                    quantite
+                ) ||
                 quantite <= 0
             ) {
 
@@ -626,21 +853,52 @@
                 );
 
                 return;
+
             }
 
 
             const prestation =
-                catalogue[index];
+                catalogue[
+                    Number(index)
+                ];
+
+
+            if (!prestation) {
+
+                alert(
+                    "Prestation introuvable dans le catalogue Supabase."
+                );
+
+                return;
+
+            }
 
 
             const prix =
                 Number(
-                    prestation.prix
+                    prestation.prix_unitaire_ht
                 );
 
 
+            if (
+                !Number.isFinite(
+                    prix
+                ) ||
+                prix < 0
+            ) {
+
+                alert(
+                    "Le prix de cette prestation est invalide."
+                );
+
+                return;
+
+            }
+
+
             const totalLigne =
-                quantite * prix;
+                quantite *
+                prix;
 
 
             const ligne =
@@ -649,10 +907,32 @@
                 );
 
 
+            /*
+             * Ces données permettent d'enregistrer
+             * proprement la ligne dans Supabase sans
+             * devoir relire les valeurs affichées.
+             */
+
+            ligne.dataset.description =
+                prestation.nom || "Prestation";
+
+            ligne.dataset.quantite =
+                String(quantite);
+
+            ligne.dataset.prixUnitaireHt =
+                String(prix);
+
+            ligne.dataset.totalHt =
+                String(totalLigne);
+
+
             ligne.innerHTML = `
 
                 <td>
-                    ${prestation.designation}
+                    ${echapperHTML(
+                        prestation.nom ||
+                        "Prestation"
+                    )}
                 </td>
 
                 <td>
@@ -700,10 +980,6 @@
             calculerTotaux();
 
 
-            /*
-             * Réinitialisation
-             */
-
             select.value =
                 "";
 
@@ -723,7 +999,9 @@
 
 
         /*
-         * Suppression d'une ligne
+         * =====================================================
+         * SUPPRIMER UNE LIGNE
+         * =====================================================
          */
 
         function supprimerLigne(
@@ -738,13 +1016,8 @@
 
 
             totalHT -=
-                montant;
+                Number(montant);
 
-
-            /*
-             * Évite les petites erreurs
-             * de calcul flottant.
-             */
 
             if (
                 Math.abs(totalHT) <
@@ -763,7 +1036,9 @@
 
 
         /*
-         * Calcul HT / TVA / TTC
+         * =====================================================
+         * CALCUL HT / TVA / TTC
+         * =====================================================
          */
 
         function calculerTotaux() {
@@ -800,10 +1075,101 @@
 
 
         /*
-         * Création du devis
+         * =====================================================
+         * GÉNÉRER UN NUMÉRO DE DEVIS
+         * =====================================================
          */
 
-        function creerDevis() {
+        async function genererNumeroDevis() {
+
+            const annee =
+                new Date().getFullYear();
+
+
+            const donnees =
+                await appelerSupabase(
+                    "devis?select=numero&numero=like." +
+                    encodeURIComponent(
+                        "DEV-" +
+                        annee +
+                        "-%"
+                    )
+                );
+
+
+            let plusGrandNumero =
+                0;
+
+
+            if (
+                Array.isArray(
+                    donnees
+                )
+            ) {
+
+                donnees.forEach(
+                    function(devisItem) {
+
+                        const numero =
+                            String(
+                                devisItem.numero ||
+                                ""
+                            );
+
+
+                        const morceaux =
+                            numero.split("-");
+
+
+                        const valeur =
+                            Number(
+                                morceaux[
+                                    morceaux.length - 1
+                                ]
+                            );
+
+
+                        if (
+                            Number.isInteger(
+                                valeur
+                            ) &&
+                            valeur >
+                                plusGrandNumero
+                        ) {
+
+                            plusGrandNumero =
+                                valeur;
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            return (
+                "DEV-" +
+                annee +
+                "-" +
+                String(
+                    plusGrandNumero + 1
+                ).padStart(
+                    4,
+                    "0"
+                )
+            );
+
+        }
+
+
+        /*
+         * =====================================================
+         * CRÉATION DU DEVIS
+         * =====================================================
+         */
+
+        async function creerDevis() {
 
             const nomClient =
                 document
@@ -814,31 +1180,30 @@
                     .trim();
 
 
-            if (nomClient === "") {
+            if (
+                nomClient === ""
+            ) {
 
                 alert(
                     "Merci d'indiquer le nom du client."
                 );
 
                 return;
+
             }
 
 
-            if (totalHT <= 0) {
+            if (
+                totalHT <= 0
+            ) {
 
                 alert(
                     "Ajoutez au moins une prestation."
                 );
 
                 return;
+
             }
-
-
-            /*
-             * Récupération des lignes
-             */
-
-            const lignes = [];
 
 
             const lignesHTML =
@@ -847,99 +1212,79 @@
                 );
 
 
+            const lignes =
+                [];
+
+
             lignesHTML.forEach(
                 function(ligne) {
 
-                    const cellules =
-                        ligne.querySelectorAll(
-                            "td"
-                        );
+                    lignes.push({
 
+                        description:
+                            ligne.dataset.description ||
+                            "",
 
-                    if (
-                        cellules.length >= 4
-                    ) {
+                        quantite:
+                            Number(
+                                ligne.dataset.quantite
+                            ),
 
-                        lignes.push({
+                        prixUnitaireHT:
+                            Number(
+                                ligne.dataset.prixUnitaireHt
+                            ),
 
-                            description:
-                                cellules[0]
-                                    .textContent
-                                    .trim(),
+                        totalHT:
+                            Number(
+                                ligne.dataset.totalHt
+                            )
 
-                            quantite:
-                                Number(
-                                    cellules[1]
-                                        .textContent
-                                        .trim()
-                                ),
-
-                            prixUnitaireHT:
-                                parseFloat(
-                                    cellules[2]
-                                        .textContent
-                                        .replace(
-                                            "€",
-                                            ""
-                                        )
-                                        .trim()
-                                ),
-
-                            totalHT:
-                                parseFloat(
-                                    cellules[3]
-                                        .textContent
-                                        .replace(
-                                            "€",
-                                            ""
-                                        )
-                                        .trim()
-                                )
-
-                        });
-
-                    }
+                    });
 
                 }
             );
 
 
-            /*
-             * Génération du numéro
-             */
+            if (
+                lignes.length === 0
+            ) {
 
-            let compteur =
-                Number(
-                    localStorage.getItem(
-                        "compteurDevis321Devis"
-                    )
-                ) || 0;
-
-
-            compteur++;
-
-
-            localStorage.setItem(
-                "compteurDevis321Devis",
-                compteur
-            );
-
-
-            const numeroDevis =
-                "DEV-" +
-                new Date().getFullYear() +
-                "-" +
-                String(
-                    compteur
-                ).padStart(
-                    4,
-                    "0"
+                alert(
+                    "Ajoutez au moins une prestation."
                 );
 
+                return;
 
-            /*
-             * Calcul final avec le taux configuré
-             */
+            }
+
+
+            const telephone =
+                document
+                    .getElementById(
+                        "telephone"
+                    )
+                    .value
+                    .trim();
+
+
+            const email =
+                document
+                    .getElementById(
+                        "email"
+                    )
+                    .value
+                    .trim();
+
+
+            const adresse =
+                document
+                    .getElementById(
+                        "adresse"
+                    )
+                    .value
+                    .trim();
+
 
             const montantTVA =
                 totalHT *
@@ -952,146 +1297,418 @@
                 montantTVA;
 
 
-            /*
-             * Création du devis
-             */
+            const boutonCreer =
+                document.querySelector(
+                    'button[onclick="creerDevis()"]'
+                );
 
-            const nouveauDevis = {
 
-                numero:
-                    numeroDevis,
+            if (boutonCreer) {
 
-                date:
-                    new Date().toISOString(),
+                boutonCreer.disabled =
+                    true;
 
-                client: {
+                boutonCreer.textContent =
+                    "Création en cours…";
 
-                    nom:
-                        nomClient,
+            }
 
-                    telephone:
-                        document
-                            .getElementById(
-                                "telephone"
+
+            try {
+
+                /*
+                 * 1. Créer le client dans Supabase
+                 */
+
+                const resultatClient =
+                    await appelerSupabase(
+                        "clients",
+                        {
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Prefer":
+                                    "return=representation"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    {
+                                        nom:
+                                            nomClient,
+
+                                        telephone:
+                                            telephone ||
+                                            null,
+
+                                        email:
+                                            email ||
+                                            null,
+
+                                        adresse:
+                                            adresse ||
+                                            null
+                                    }
+                                )
+
+                        }
+                    );
+
+
+                if (
+                    !Array.isArray(
+                        resultatClient
+                    ) ||
+                    !resultatClient[0] ||
+                    !resultatClient[0].id
+                ) {
+
+                    throw new Error(
+                        "Supabase n'a pas retourné l'identifiant du client."
+                    );
+
+                }
+
+
+                const clientSupabase =
+                    resultatClient[0];
+
+
+                /*
+                 * 2. Générer le numéro à partir
+                 *    des devis déjà présents dans Supabase
+                 */
+
+                const numeroDevis =
+                    await genererNumeroDevis();
+
+
+                /*
+                 * 3. Créer le devis
+                 *
+                 * Un devis manuel n'est lié à aucune
+                 * demande client : demande_id = null.
+                 */
+
+                const resultatDevis =
+                    await appelerSupabase(
+                        "devis",
+                        {
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Prefer":
+                                    "return=representation"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    {
+                                        numero:
+                                            numeroDevis,
+
+                                        client_id:
+                                            clientSupabase.id,
+
+                                        demande_id:
+                                            null,
+
+                                        statut:
+                                            "Brouillon - validation requise",
+
+                                        total_ht:
+                                            totalHT,
+
+                                        taux_tva:
+                                            tauxTVA,
+
+                                        total_ttc:
+                                            montantTTC,
+
+                                        date_validation:
+                                            null,
+
+                                        date_envoi:
+                                            null,
+
+                                        date_acceptation:
+                                            null,
+
+                                        date_refus:
+                                            null
+                                    }
+                                )
+
+                        }
+                    );
+
+
+                if (
+                    !Array.isArray(
+                        resultatDevis
+                    ) ||
+                    !resultatDevis[0] ||
+                    !resultatDevis[0].id
+                ) {
+
+                    throw new Error(
+                        "Supabase n'a pas retourné l'identifiant du devis."
+                    );
+
+                }
+
+
+                const devisSupabase =
+                    resultatDevis[0];
+
+
+                /*
+                 * 4. Créer les lignes du devis
+                 */
+
+                const lignesSupabase =
+                    lignes.map(
+                        function(ligne) {
+
+                            return {
+
+                                devis_id:
+                                    devisSupabase.id,
+
+                                description:
+                                    ligne.description,
+
+                                quantite:
+                                    ligne.quantite,
+
+                                prix_unitaire_ht:
+                                    ligne.prixUnitaireHT,
+
+                                total_ht:
+                                    ligne.totalHT
+
+                            };
+
+                        }
+                    );
+
+
+                await appelerSupabase(
+                    "lignes_devis",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Prefer":
+                                "return=representation"
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                lignesSupabase
                             )
-                            .value
-                            .trim(),
 
-                    email:
-                        document
-                            .getElementById(
-                                "email"
+                    }
+                );
+
+
+                /*
+                 * 5. Copie locale TEMPORAIRE
+                 *
+                 * validation-devis.html, historique.html
+                 * et voir-devis.html utilisent encore
+                 * localStorage. Cette copie disparaîtra
+                 * quand ces pages seront migrées.
+                 */
+
+                let devisLocaux =
+                    [];
+
+
+                try {
+
+                    devisLocaux =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "devis321Devis"
                             )
-                            .value
-                            .trim(),
+                        ) || [];
 
-                    adresse:
-                        document
-                            .getElementById(
-                                "adresse"
-                            )
-                            .value
-                            .trim()
+                } catch (erreur) {
 
-                },
+                    devisLocaux =
+                        [];
+
+                }
 
 
-                lignes:
-                    lignes,
+                devisLocaux.push(
+                    {
+                        idSupabase:
+                            devisSupabase.id,
+
+                        numero:
+                            numeroDevis,
+
+                        date:
+                            devisSupabase.created_at ||
+                            new Date().toISOString(),
+
+                        statut:
+                            "Brouillon - validation requise",
+
+                        client: {
+
+                            nom:
+                                nomClient,
+
+                            telephone:
+                                telephone,
+
+                            email:
+                                email,
+
+                            adresse:
+                                adresse
+
+                        },
+
+                        lignes:
+                            lignes,
+
+                        totalHT:
+                            totalHT,
+
+                        tauxTVA:
+                            tauxTVA,
+
+                        tva:
+                            montantTVA,
+
+                        totalTTC:
+                            montantTTC
+                    }
+                );
 
 
-                totalHT:
-                    totalHT,
-
-
-                tauxTVA:
-                    tauxTVA,
-
-
-                tva:
-                    montantTVA,
-
-
-                totalTTC:
-                    montantTTC
-
-            };
-
-
-            /*
-             * Récupération des devis
-             */
-
-            const devisExistants =
-                JSON.parse(
-                    localStorage.getItem(
-                        "devis321Devis"
+                localStorage.setItem(
+                    "devis321Devis",
+                    JSON.stringify(
+                        devisLocaux
                     )
-                ) || [];
+                );
 
 
-            /*
-             * Ajout du devis
-             */
+                alert(
+                    "Devis créé avec succès dans Supabase !
 
-            devisExistants.push(
-                nouveauDevis
-            );
-
-
-            /*
-             * Sauvegarde
-             */
-
-            localStorage.setItem(
-                "devis321Devis",
-                JSON.stringify(
-                    devisExistants
-                )
-            );
-
-
-            /*
-             * Confirmation
-             */
-
-            alert(
-                "Devis créé avec succès !\n\n" +
-                "Numéro : " +
-                numeroDevis +
-                "\n" +
-                "Client : " +
-                nomClient +
-                "\n" +
-                "TVA : " +
-                tauxTVA +
-                " %\n" +
-                "Total TTC : " +
-                montantTTC.toFixed(2) +
-                " €"
-            );
+" +
+                    "Numéro : " +
+                    numeroDevis +
+                    "
+" +
+                    "Client : " +
+                    nomClient +
+                    "
+" +
+                    "TVA : " +
+                    tauxTVA +
+                    " %
+" +
+                    "Total TTC : " +
+                    montantTTC.toFixed(2) +
+                    " €"
+                );
 
 
-            /*
-             * Retour au tableau de bord
-             */
+                window.location.href =
+                    "validation-devis.html";
 
-            window.location.href =
-                "index.html";
+
+            } catch (erreur) {
+
+                console.error(
+                    "Erreur création devis :",
+                    erreur
+                );
+
+
+                alert(
+                    "Le devis n'a pas pu être créé.
+
+" +
+                    erreur.message
+                );
+
+
+                if (boutonCreer) {
+
+                    boutonCreer.disabled =
+                        false;
+
+                    boutonCreer.textContent =
+                        "Créer le devis";
+
+                }
+
+            }
 
         }
 
 
         /*
-         * Chargement initial
+         * =====================================================
+         * SÉCURITÉ HTML
+         * =====================================================
          */
 
-        chargerCatalogue();
+        function echapperHTML(
+            valeur
+        ) {
+
+            return String(
+                valeur ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
 
 
         /*
-         * Calcul initial
+         * =====================================================
+         * INITIALISATION
+         * =====================================================
          */
+
+        chargerCatalogue();
 
         calculerTotaux();
 
