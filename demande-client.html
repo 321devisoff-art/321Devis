@@ -171,6 +171,32 @@
             font-size: 14px;
         }
 
+
+        .diagnostic {
+            margin-bottom: 25px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            color: #374151;
+        }
+
+
+        .diagnostic.succes {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+
+
+        .diagnostic.erreur {
+            display: block;
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
     </style>
 
 </head>
@@ -181,8 +207,6 @@
 
 <div class="container">
 
-
-    <!-- EN-TÊTE -->
 
     <div class="header">
 
@@ -198,6 +222,16 @@
 
 
     <div class="bloc">
+
+
+        <!-- DIAGNOSTIC -->
+
+        <div
+            id="diagnostic"
+            class="diagnostic"
+        >
+            Connexion à 321Devis en cours…
+        </div>
 
 
         <!-- INTRODUCTION -->
@@ -347,9 +381,7 @@
             id="boutonEnvoi"
             onclick="envoyerDemande()"
         >
-
             Envoyer ma demande
-
         </button>
 
 
@@ -428,7 +460,90 @@
 
     /*
      * =====================================================
-     * REQUÊTE SUPABASE
+     * ÉLÉMENTS
+     * =====================================================
+     */
+
+    const diagnosticElement =
+        document.getElementById(
+            "diagnostic"
+        );
+
+
+    const boutonEnvoi =
+        document.getElementById(
+            "boutonEnvoi"
+        );
+
+
+    const chargement =
+        document.getElementById(
+            "chargement"
+        );
+
+
+    const confirmation =
+        document.getElementById(
+            "confirmation"
+        );
+
+
+    const erreurElement =
+        document.getElementById(
+            "erreur"
+        );
+
+
+    /*
+     * =====================================================
+     * DIAGNOSTIC
+     * =====================================================
+     */
+
+    function afficherDiagnostic(
+        message,
+        succes
+    ) {
+
+        diagnosticElement.textContent =
+            message;
+
+
+        diagnosticElement.className =
+            "diagnostic";
+
+
+        if (succes) {
+
+            diagnosticElement.classList.add(
+                "succes"
+            );
+
+        }
+
+    }
+
+
+    function afficherErreur(
+        message
+    ) {
+
+        erreurElement.innerHTML =
+            "<strong>Erreur :</strong><br><br>" +
+            echapperHTML(
+                message
+            );
+
+
+        erreurElement.style.display =
+            "block";
+
+    }
+
+
+    /*
+     * =====================================================
+     * APPEL SUPABASE
      * =====================================================
      */
 
@@ -443,32 +558,44 @@
             table;
 
 
+        const optionsFetch = {
+
+            method:
+                options.method ||
+                "GET",
+
+            headers: {
+
+                "apikey":
+                    SUPABASE_KEY,
+
+                "Content-Type":
+                    "application/json",
+
+                "Accept":
+                    "application/json",
+
+                ...(options.headers || {})
+
+            }
+
+        };
+
+
+        if (
+            options.body !== undefined
+        ) {
+
+            optionsFetch.body =
+                options.body;
+
+        }
+
+
         const reponse =
             await fetch(
                 url,
-                {
-                    ...options,
-
-                    headers: {
-
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            "Bearer " +
-                            SUPABASE_KEY,
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Prefer":
-                            "return=representation",
-
-                        ...(options.headers || {})
-
-                    }
-
-                }
+                optionsFetch
             );
 
 
@@ -480,17 +607,21 @@
             null;
 
 
-        try {
+        if (texte) {
 
-            donnees =
-                texte
-                    ? JSON.parse(texte)
-                    : null;
+            try {
 
-        } catch (erreur) {
+                donnees =
+                    JSON.parse(
+                        texte
+                    );
 
-            donnees =
-                texte;
+            } catch (erreur) {
+
+                donnees =
+                    texte;
+
+            }
 
         }
 
@@ -498,16 +629,68 @@
         if (!reponse.ok) {
 
             console.error(
-                "Erreur Supabase :",
+                "Supabase HTTP",
+                reponse.status,
                 donnees
             );
 
 
+            let message =
+                "Erreur Supabase HTTP " +
+                reponse.status;
+
+
+            if (
+                donnees &&
+                typeof donnees === "object"
+            ) {
+
+                if (
+                    donnees.message
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.message;
+
+                }
+
+                else if (
+                    donnees.error
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.error;
+
+                }
+
+                else if (
+                    donnees.hint
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.hint;
+
+                }
+
+            }
+
+            else if (
+                typeof donnees === "string" &&
+                donnees.trim() !== ""
+            ) {
+
+                message +=
+                    " : " +
+                    donnees;
+
+            }
+
+
             throw new Error(
-                obtenirMessageErreurSupabase(
-                    donnees,
-                    reponse.status
-                )
+                message
             );
 
         }
@@ -520,62 +703,50 @@
 
     /*
      * =====================================================
-     * MESSAGE D'ERREUR SUPABASE
+     * TEST DE CONNEXION AU CHARGEMENT
      * =====================================================
      */
 
-    function obtenirMessageErreurSupabase(
-        erreur,
-        statutHTTP
-    ) {
+    async function testerConnexionSupabase() {
 
-        if (
-            erreur &&
-            erreur.message
-        ) {
+        try {
 
-            return erreur.message;
+            await appelerSupabase(
+                "clients?select=id&limit=1",
+                {
+                    method: "GET"
+                }
+            );
+
+
+            afficherDiagnostic(
+                "Connexion Supabase opérationnelle.",
+                true
+            );
+
+
+        } catch (erreur) {
+
+            console.error(
+                "Test Supabase échoué :",
+                erreur
+            );
+
+
+            afficherDiagnostic(
+                "La connexion Supabase n'a pas pu être vérifiée. Utilise le formulaire pour obtenir le détail.",
+                false
+            );
 
         }
-
-
-        if (
-            erreur &&
-            erreur.error_description
-        ) {
-
-            return erreur.error_description;
-
-        }
-
-
-        if (
-            erreur &&
-            erreur.hint
-        ) {
-
-            return erreur.hint;
-
-        }
-
-
-        return (
-            "Erreur Supabase (HTTP " +
-            statutHTTP +
-            ")."
-        );
 
     }
 
 
     /*
      * =====================================================
-     * GÉNÉRATION NUMÉRO DEMANDE
+     * GÉNÉRATION DU NUMÉRO
      * =====================================================
-     *
-     * Pour le prototype, on conserve le compteur local.
-     * Nous remplacerons plus tard cela par une génération
-     * serveur afin d'éviter tout risque de doublon.
      */
 
     function genererNumeroDemande() {
@@ -614,11 +785,11 @@
 
     /*
      * =====================================================
-     * ENREGISTRER LE CLIENT
+     * CRÉER LE CLIENT
      * =====================================================
      */
 
-    async function enregistrerClient(
+    async function creerClient(
         nom,
         telephone,
         email,
@@ -629,7 +800,15 @@
             await appelerSupabase(
                 "clients",
                 {
-                    method: "POST",
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Prefer":
+                            "return=representation"
+
+                    },
 
                     body:
                         JSON.stringify(
@@ -653,13 +832,15 @@
 
 
         if (
-            !Array.isArray(resultat) ||
+            !Array.isArray(
+                resultat
+            ) ||
             !resultat[0] ||
             !resultat[0].id
         ) {
 
             throw new Error(
-                "Le client n'a pas pu être enregistré."
+                "Supabase n'a pas retourné l'identifiant du client."
             );
 
         }
@@ -672,26 +853,18 @@
 
     /*
      * =====================================================
-     * ENREGISTRER LA DEMANDE
+     * CRÉER LA DEMANDE
      * =====================================================
      */
 
-    async function enregistrerDemande(
-        numeroDemande,
+    async function creerDemande(
+        numero,
         clientId,
         typeTravaux,
         description,
         adresse,
         quantite
     ) {
-
-        /*
-         * Notre table actuelle ne possède pas encore
-         * de colonne "type_travaux" ni "quantite".
-         *
-         * Nous conservons donc ces informations dans
-         * le champ description pour ne rien perdre.
-         */
 
         const descriptionComplete =
             "Type de travaux : " +
@@ -708,13 +881,21 @@
             await appelerSupabase(
                 "demandes",
                 {
-                    method: "POST",
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Prefer":
+                            "return=representation"
+
+                    },
 
                     body:
                         JSON.stringify(
                             {
                                 numero:
-                                    numeroDemande,
+                                    numero,
 
                                 client_id:
                                     clientId,
@@ -740,12 +921,14 @@
 
 
         if (
-            !Array.isArray(resultat) ||
+            !Array.isArray(
+                resultat
+            ) ||
             !resultat[0]
         ) {
 
             throw new Error(
-                "La demande n'a pas pu être enregistrée."
+                "Supabase n'a pas retourné la demande créée."
             );
 
         }
@@ -760,14 +943,10 @@
      * =====================================================
      * COPIE LOCALE TEMPORAIRE
      * =====================================================
-     *
-     * On conserve une copie locale pendant la transition.
-     * Elle sera supprimée lorsque toutes les pages utiliseront
-     * Supabase.
      */
 
     function sauvegarderCopieLocale(
-        numeroDemande,
+        numero,
         nom,
         telephone,
         email,
@@ -780,7 +959,7 @@
         const nouvelleDemande = {
 
             numero:
-                numeroDemande,
+                numero,
 
             date:
                 new Date().toISOString(),
@@ -816,13 +995,13 @@
         };
 
 
-        let demandesExistantes =
+        let demandes =
             [];
 
 
         try {
 
-            demandesExistantes =
+            demandes =
                 JSON.parse(
                     localStorage.getItem(
                         "demandes321Devis"
@@ -831,13 +1010,13 @@
 
         } catch (erreur) {
 
-            demandesExistantes =
+            demandes =
                 [];
 
         }
 
 
-        demandesExistantes.push(
+        demandes.push(
             nouvelleDemande
         );
 
@@ -845,7 +1024,7 @@
         localStorage.setItem(
             "demandes321Devis",
             JSON.stringify(
-                demandesExistantes
+                demandes
             )
         );
 
@@ -854,38 +1033,14 @@
 
     /*
      * =====================================================
-     * ENVOI DE LA DEMANDE
+     * ENVOYER LA DEMANDE
      * =====================================================
      */
 
     async function envoyerDemande() {
 
-        const bouton =
-            document.getElementById(
-                "boutonEnvoi"
-            );
-
-
-        const chargement =
-            document.getElementById(
-                "chargement"
-            );
-
-
-        const confirmation =
-            document.getElementById(
-                "confirmation"
-            );
-
-
-        const erreurElement =
-            document.getElementById(
-                "erreur"
-            );
-
-
         /*
-         * Masquer les anciens messages
+         * Réinitialisation
          */
 
         erreurElement.style.display =
@@ -897,7 +1052,7 @@
 
 
         /*
-         * Récupération des champs
+         * Récupération
          */
 
         const nom =
@@ -953,7 +1108,9 @@
          * Vérifications
          */
 
-        if (nom === "") {
+        if (
+            nom === ""
+        ) {
 
             alert(
                 "Merci d'indiquer votre nom."
@@ -964,7 +1121,9 @@
         }
 
 
-        if (telephone === "") {
+        if (
+            telephone === ""
+        ) {
 
             alert(
                 "Merci d'indiquer votre téléphone."
@@ -975,7 +1134,9 @@
         }
 
 
-        if (adresse === "") {
+        if (
+            adresse === ""
+        ) {
 
             alert(
                 "Merci d'indiquer l'adresse des travaux."
@@ -986,7 +1147,9 @@
         }
 
 
-        if (typeTravaux === "") {
+        if (
+            typeTravaux === ""
+        ) {
 
             alert(
                 "Merci de sélectionner le type de travaux."
@@ -997,7 +1160,9 @@
         }
 
 
-        if (description === "") {
+        if (
+            description === ""
+        ) {
 
             alert(
                 "Merci de décrire votre problème."
@@ -1025,22 +1190,22 @@
 
 
         /*
-         * Numéro de demande
+         * Numéro
          */
 
-        const numeroDemande =
+        const numero =
             genererNumeroDemande();
 
 
         /*
-         * Mise en mode chargement
+         * Chargement
          */
 
-        bouton.disabled =
+        boutonEnvoi.disabled =
             true;
 
 
-        bouton.textContent =
+        boutonEnvoi.textContent =
             "Enregistrement…";
 
 
@@ -1048,15 +1213,20 @@
             "block";
 
 
+        afficherDiagnostic(
+            "Connexion à Supabase et enregistrement…",
+            false
+        );
+
+
         try {
 
-
             /*
-             * 1. Création du client
+             * 1. Client
              */
 
             const client =
-                await enregistrerClient(
+                await creerClient(
                     nom,
                     telephone,
                     email,
@@ -1065,11 +1235,11 @@
 
 
             /*
-             * 2. Création de la demande
+             * 2. Demande
              */
 
-            await enregistrerDemande(
-                numeroDemande,
+            await creerDemande(
+                numero,
                 client.id,
                 typeTravaux,
                 description,
@@ -1083,7 +1253,7 @@
              */
 
             sauvegarderCopieLocale(
-                numeroDemande,
+                numero,
                 nom,
                 telephone,
                 email,
@@ -1095,13 +1265,13 @@
 
 
             /*
-             * 4. Confirmation
+             * 4. Succès
              */
 
             document.getElementById(
                 "numeroDemande"
             ).textContent =
-                numeroDemande;
+                numero;
 
 
             confirmation.style.display =
@@ -1112,15 +1282,20 @@
                 "none";
 
 
-            bouton.textContent =
+            boutonEnvoi.textContent =
                 "Demande envoyée";
+
+
+            afficherDiagnostic(
+                "Demande enregistrée avec succès dans Supabase.",
+                true
+            );
 
 
         } catch (erreur) {
 
-
             console.error(
-                "Erreur lors de l'envoi :",
+                "ERREUR 321DEVIS :",
                 erreur
             );
 
@@ -1129,26 +1304,24 @@
                 "none";
 
 
-            erreurElement.innerHTML =
-                "<strong>La demande n'a pas pu être envoyée.</strong><br><br>" +
-                echapperHTML(
-                    erreur.message
-                ) +
-                "<br><br>" +
-                "Vérifie la connexion à Supabase et les règles RLS.";
+            afficherErreur(
+                erreur.message ||
+                "Erreur inconnue."
+            );
 
 
-            erreurElement.style.display =
-                "block";
-
-
-            bouton.disabled =
+            boutonEnvoi.disabled =
                 false;
 
 
-            bouton.textContent =
+            boutonEnvoi.textContent =
                 "Réessayer";
 
+
+            afficherDiagnostic(
+                "La connexion ou l'enregistrement Supabase a échoué.",
+                false
+            );
 
         }
 
@@ -1157,7 +1330,7 @@
 
     /*
      * =====================================================
-     * SÉCURITÉ AFFICHAGE
+     * SÉCURITÉ HTML
      * =====================================================
      */
 
@@ -1190,6 +1363,15 @@
             );
 
     }
+
+
+    /*
+     * =====================================================
+     * INITIALISATION
+     * =====================================================
+     */
+
+    testerConnexionSupabase();
 
 </script>
 
