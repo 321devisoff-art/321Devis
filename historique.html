@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Historique — 321Devis</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .navigation {
+            margin-bottom: 30px;
+        }
+
+        .navigation a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .compte {
+            margin: 10px 0 20px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .bloc {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .filtres {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .filtres button {
+            background: #6b7280;
+        }
+
+        .filtres button.actif {
+            background: #2563eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #eef2f7;
+        }
+
+        .vide {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            margin: 3px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-validation {
+            background: #7c3aed;
+        }
+
+        .btn-envoyer {
+            background: #0891b2 !important;
+            color: white !important;
+        }
+
+        .btn-client {
+            background: #0f766e !important;
+            color: white !important;
+        }
+
+        .btn-accepter {
+            background: #059669;
+        }
+
+        .btn-refuser {
+            background: #dc2626;
+        }
+
+        .btn-supprimer {
+            background: #9f1239;
+        }
+
+        .btn-voir {
+            background: #2563eb;
+        }
+
+        .actions {
+            min-width: 300px;
+        }
+
+        .statut {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .statut-brouillon {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .statut-valide {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .statut-envoye {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .statut-accepte {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .statut-refuse {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .statut-autre {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .resume {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .resume-item {
+            padding: 15px;
+            border-radius: 8px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+
+        .resume-label {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .resume-valeur {
+            margin-top: 6px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .information-envoi {
+            margin-top: 15px;
+            padding: 12px 15px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            color: #1e3a8a;
+            font-size: 14px;
+        }
+
+        .devis-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .devis-actions a,
+        .devis-actions button {
+            display: inline-block;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 0;
+        }
+
+        .devis-actions a {
+            background: #111827;
+            color: #ffffff;
+        }
+
+        .devis-actions button.btn-supprimer {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .devis-actions button.btn-supprimer:hover {
+            background: #fecaca;
+        }
+
+        @media (max-width: 900px) {
+
+            .resume {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                margin: 10px auto;
+                padding: 10px;
+            }
+
+            .resume {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        321Devis
+    </h1>
+
+    <p>
+        1, 2, 3… votre devis est prêt.
+    </p>
+
+    <div
+        class="compte"
+        id="compteUtilisateur"
+    >
+        Vérification de la connexion…
+    </div>
+
+    <!-- NAVIGATION -->
+
+    <div class="navigation">
+
+        <a href="index.html">
+            ← Tableau de bord
+        </a>
+
+        <a href="nouveau-devis.html">
+            + Nouveau devis
+        </a>
+
+        <a href="demandes.html">
+            Demandes clients
+        </a>
+
+        <a href="validation-devis.html">
+            Validation
+        </a>
+
+        <a href="catalogue.html">
+            Catalogue
+        </a>
+
+        <a href="parametres.html">
+            Paramètres
+        </a>
+
+    </div>
+
+    <!-- HISTORIQUE -->
+
+    <div class="bloc">
+
+        <h2>
+            Historique des devis
+        </h2>
+
+        <div class="information-envoi">
+
+            Le bouton
+            <strong>« Envoyer au client »</strong>
+            prépare automatiquement un e-mail contenant le lien sécurisé vers le devis client.
+
+        </div>
+
+        <!-- RESUME -->
+
+        <div class="resume">
+
+            <div class="resume-item">
+
+                <div class="resume-label">
+                    Total
+                </div>
+
+                <div
+                    class="resume-valeur"
+                    id="resumeTotal"
+                >
+                    0
+                </div>
+
+            </div>
+
+            <div class="resume-item">
+
+                <div class="resume-label">
+                    Brouillons
+                </div>
+
+                <div
+                    class="resume-valeur"
+                    id="resumeBrouillons"
+                >
+                    0
+                </div>
+
+            </div>
+
+            <div class="resume-item">
+
+                <div class="resume-label">
+                    Validés
+                </div>
+
+                <div
+                    class="resume-valeur"
+                    id="resumeValides"
+                >
+                    0
+                </div>
+
+            </div>
+
+            <div class="resume-item">
+
+                <div class="resume-label">
+                    Envoyés
+                </div>
+
+                <div
+                    class="resume-valeur"
+                    id="resumeEnvoyes"
+                >
+                    0
+                </div>
+
+            </div>
+
+            <div class="resume-item">
+
+                <div class="resume-label">
+                    Acceptés
+                </div>
+
+                <div
+                    class="resume-valeur"
+                    id="resumeAcceptes"
+                >
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FILTRES -->
+
+        <div class="filtres">
+
+            <button
+                id="filtreTous"
+                onclick="filtrerDevis('Tous')"
+                class="actif"
+            >
+                Tous
+            </button>
+
+            <button
+                id="filtreBrouillon"
+                onclick="filtrerDevis('Brouillon')"
+            >
+                Brouillons
+            </button>
+
+            <button
+                id="filtreValide"
+                onclick="filtrerDevis('Validé')"
+            >
+                Validés
+            </button>
+
+            <button
+                id="filtreEnvoye"
+                onclick="filtrerDevis('Envoyé')"
+            >
+                Envoyés
+            </button>
+
+            <button
+                id="filtreAccepte"
+                onclick="filtrerDevis('Accepté')"
+            >
+                Acceptés
+            </button>
+
+            <button
+                id="filtreRefuse"
+                onclick="filtrerDevis('Refusé')"
+            >
+                Refusés
+            </button>
+
+        </div>
+
+        <!-- TABLEAU -->
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Numéro
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Client
+                    </th>
+
+                    <th>
+                        Statut
+                    </th>
+
+                    <th>
+                        Total TTC
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="listeDevis"></tbody>
+
+        </table>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+
+        const SUPABASE_URL =
+            "https://ywmuiqavjdzuaittqesc.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+        const clientSupabase =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+        let utilisateurId = null;
+        let accessToken = null;
+
+        let devis = [];
+        let clients = [];
+        let filtreActuel = "Tous";
+
+        async function verifierUtilisateur() {
+
+            const {
+                data,
+                error
+            } = await clientSupabase.auth.getSession();
+
+            if (error) {
+                throw error;
+            }
+
+            if (
+                !data ||
+                !data.session ||
+                !data.session.user
+            ) {
+
+                window.location.href =
+                    "connexion.html";
+
+                return false;
+            }
+
+            utilisateurId =
+                data.session.user.id;
+
+            accessToken =
+                data.session.access_token;
+
+            document.getElementById(
+                "compteUtilisateur"
+            ).textContent =
+                "Connecté : " +
+                (
+                    data.session.user.email ||
+                    "Compte utilisateur"
+                );
+
+            return true;
+        }
+
+        async function appelerSupabase(
+            endpoint,
+            options = {}
+        ) {
+
+            if (!accessToken) {
+
+                const connecte =
+                    await verifierUtilisateur();
+
+                if (!connecte) {
+
+                    throw new Error(
+                        "Vous devez être connecté."
+                    );
+                }
+            }
+
+            const reponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/" +
+                    endpoint,
+                    {
+                        method:
+                            options.method ||
+                            "GET",
+
+                        headers: {
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                accessToken,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json",
+
+                            ...(options.headers || {})
+                        },
+
+                        body:
+                            options.body
+                    }
+                );
+
+            const texte =
+                await reponse.text();
+
+            let donnees =
+                null;
+
+            if (texte) {
+
+                try {
+
+                    donnees =
+                        JSON.parse(
+                            texte
+                        );
+
+                } catch (erreur) {
+
+                    donnees =
+                        texte;
+                }
+            }
+
+            if (!reponse.ok) {
+
+                let message =
+                    "Erreur Supabase HTTP " +
+                    reponse.status;
+
+                if (
+                    donnees &&
+                    typeof donnees === "object" &&
+                    donnees.message
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.message;
+                }
+
+                throw new Error(
+                    message
+                );
+            }
+
+            return donnees;
+        }
+
+        function echapperHTML(v) {
+
+            return String(v ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function echapperAttributJS(v) {
+
+            return String(v ?? "")
+                .replace(/\\/g, "\\\\")
+                .replace(/'/g, "\\'");
+        }
+
+        function formaterDate(v) {
+
+            if (!v) {
+                return "—";
+            }
+
+            const d =
+                new Date(v);
+
+            return Number.isNaN(
+                d.getTime()
+            )
+                ? "—"
+                : d.toLocaleDateString(
+                    "fr-FR"
+                );
+        }
+
+        function formaterMontant(v) {
+
+            const n =
+                Number(v);
+
+            if (
+                !Number.isFinite(n)
+            ) {
+                return "—";
+            }
+
+            return n.toLocaleString(
+                "fr-FR",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            ) + " €";
+        }
+
+        function clientPour(id) {
+
+            return clients.find(
+                c => c.id === id
+            ) || null;
+        }
+
+        function construireLienClient(publicToken) {
+
+            if (!publicToken) {
+                return "";
+            }
+
+            return new URL(
+                "client-devis.html?token=" +
+                encodeURIComponent(publicToken),
+                window.location.href
+            ).href;
+        }
+
+        function normaliserFiltre(filtre) {
+
+            const correspondances = {
+                "Brouillon":
+                    "Brouillon - validation requise",
+                "Brouillons":
+                    "Brouillon - validation requise",
+                "Validé":
+                    "Validé",
+                "Validés":
+                    "Validé",
+                "Envoyé":
+                    "Envoyé",
+                "Envoyés":
+                    "Envoyé",
+                "Accepté":
+                    "Accepté",
+                "Acceptés":
+                    "Accepté",
+                "Refusé":
+                    "Refusé",
+                "Refusés":
+                    "Refusé"
+            };
+
+            return correspondances[filtre] ||
+                filtre;
+        }
+
+        function filtrerDevis(filtre) {
+
+            filtreActuel =
+                filtre ||
+                "Tous";
+
+            document
+                .querySelectorAll(
+                    ".filtres button"
+                )
+                .forEach(
+                    bouton => {
+                        bouton.classList.remove(
+                            "actif"
+                        );
+                    }
+                );
+
+            const ids = {
+                "Tous":
+                    "filtreTous",
+                "Brouillon":
+                    "filtreBrouillon",
+                "Brouillons":
+                    "filtreBrouillon",
+                "Validé":
+                    "filtreValide",
+                "Validés":
+                    "filtreValide",
+                "Envoyé":
+                    "filtreEnvoye",
+                "Envoyés":
+                    "filtreEnvoye",
+                "Accepté":
+                    "filtreAccepte",
+                "Acceptés":
+                    "filtreAccepte",
+                "Refusé":
+                    "filtreRefuse",
+                "Refusés":
+                    "filtreRefuse"
+            };
+
+            const bouton =
+                document.getElementById(
+                    ids[filtreActuel] ||
+                    "filtreTous"
+                );
+
+            if (bouton) {
+                bouton.classList.add(
+                    "actif"
+                );
+            }
+
+            afficherDevis();
+        }
+
+        function afficherResume() {
+
+            document.getElementById(
+                "resumeTotal"
+            ).textContent =
+                devis.length;
+
+            document.getElementById(
+                "resumeBrouillons"
+            ).textContent =
+                devis.filter(
+                    d =>
+                        d.statut ===
+                        "Brouillon - validation requise"
+                ).length;
+
+            document.getElementById(
+                "resumeValides"
+            ).textContent =
+                devis.filter(
+                    d =>
+                        d.statut ===
+                        "Validé"
+                ).length;
+
+            document.getElementById(
+                "resumeEnvoyes"
+            ).textContent =
+                devis.filter(
+                    d =>
+                        d.statut ===
+                        "Envoyé"
+                ).length;
+
+            document.getElementById(
+                "resumeAcceptes"
+            ).textContent =
+                devis.filter(
+                    d =>
+                        d.statut ===
+                        "Accepté"
+                ).length;
+        }
+
+        function classeStatut(statut) {
+
+            if (
+                statut ===
+                "Brouillon - validation requise"
+            ) {
+                return "statut statut-brouillon";
+            }
+
+            if (
+                statut ===
+                "Validé"
+            ) {
+                return "statut statut-valide";
+            }
+
+            if (
+                statut ===
+                "Envoyé"
+            ) {
+                return "statut statut-envoye";
+            }
+
+            if (
+                statut ===
+                "Accepté"
+            ) {
+                return "statut statut-accepte";
+            }
+
+            if (
+                statut ===
+                "Refusé"
+            ) {
+                return "statut statut-refuse";
+            }
+
+            return "statut statut-autre";
+        }
+
+        function afficherDevis() {
+
+            const zone =
+                document.getElementById(
+                    "listeDevis"
+                );
+
+            zone.innerHTML =
+                "";
+
+            const statutRecherche =
+                normaliserFiltre(
+                    filtreActuel
+                );
+
+            const liste =
+                filtreActuel === "Tous"
+                    ? devis
+                    : devis.filter(
+                        d =>
+                            d.statut ===
+                            statutRecherche
+                    );
+
+            if (
+                liste.length === 0
+            ) {
+
+                zone.innerHTML = `
+                    <tr>
+                        <td
+                            colspan="6"
+                            class="vide"
+                        >
+                            Aucun devis dans cette catégorie.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            liste.forEach(
+                d => {
+
+                    const client =
+                        clientPour(
+                            d.client_id
+                        );
+
+                    const ligne =
+                        document.createElement(
+                            "tr"
+                        );
+
+                    const peutEnvoyer =
+                        d.statut === "Validé" ||
+                        d.statut === "Envoyé";
+
+                    const boutonEnvoi =
+                        peutEnvoyer
+                            ? `
+                                <button
+                                    type="button"
+                                    class="btn-envoyer"
+                                    onclick="envoyerAuClient(
+                                        '${echapperAttributJS(d.id)}'
+                                    )"
+                                >
+                                    ${d.statut === "Envoyé"
+                                        ? "Renvoyer au client"
+                                        : "Envoyer au client"}
+                                </button>
+                            `
+                            : "";
+
+                    const boutonLienClient =
+                        d.public_token
+                            ? `
+                                <a
+                                    class="btn-client"
+                                    href="${echapperHTML(
+                                        construireLienClient(
+                                            d.public_token
+                                        )
+                                    )}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Voir côté client
+                                </a>
+                            `
+                            : "";
+
+                    ligne.innerHTML = `
+                        <td>
+                            ${echapperHTML(
+                                d.numero ||
+                                "—"
+                            )}
+                        </td>
+
+                        <td>
+                            ${echapperHTML(
+                                formaterDate(
+                                    d.created_at
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${echapperHTML(
+                                client &&
+                                client.nom
+                                    ? client.nom
+                                    : "Client non renseigné"
+                            )}
+                        </td>
+
+                        <td>
+                            <span
+                                class="${classeStatut(
+                                    d.statut
+                                )}"
+                            >
+                                ${echapperHTML(
+                                    d.statut ||
+                                    "—"
+                                )}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${echapperHTML(
+                                formaterMontant(
+                                    d.total_ttc
+                                )
+                            )}
+                        </td>
+
+                        <td class="actions">
+
+                            <div class="devis-actions">
+
+                                <a
+                                    href="voir-devis.html?numero=${encodeURIComponent(
+                                        d.numero ||
+                                        ""
+                                    )}"
+                                >
+                                    Voir le devis
+                                </a>
+
+                                ${boutonEnvoi}
+
+                                ${boutonLienClient}
+
+                                <button
+                                    type="button"
+                                    class="btn-supprimer"
+                                    onclick="supprimerDevis(
+                                        '${echapperAttributJS(
+                                            d.id
+                                        )}',
+                                        '${echapperAttributJS(
+                                            d.numero ||
+                                            ""
+                                        )}'
+                                    )"
+                                >
+                                    Supprimer
+                                </button>
+
+                            </div>
+
+                        </td>
+                    `;
+
+                    zone.appendChild(
+                        ligne
+                    );
+                }
+            );
+        }
+
+        async function envoyerAuClient(
+            devisId
+        ) {
+
+            const devisSelectionne =
+                devis.find(
+                    item =>
+                        item.id === devisId
+                );
+
+            if (!devisSelectionne) {
+
+                alert(
+                    "Impossible d'identifier le devis."
+                );
+
+                return;
+            }
+
+            if (!devisSelectionne.public_token) {
+
+                alert(
+                    "Ce devis ne possède pas de lien public sécurisé."
+                );
+
+                return;
+            }
+
+            if (
+                devisSelectionne.statut !== "Validé" &&
+                devisSelectionne.statut !== "Envoyé"
+            ) {
+
+                alert(
+                    "Seul un devis validé ou déjà envoyé peut être envoyé au client."
+                );
+
+                return;
+            }
+
+            const client =
+                clientPour(
+                    devisSelectionne.client_id
+                );
+
+            const lienClient =
+                construireLienClient(
+                    devisSelectionne.public_token
+                );
+
+            if (!lienClient) {
+
+                alert(
+                    "Impossible de construire le lien client."
+                );
+
+                return;
+            }
+
+            try {
+
+                if (
+                    devisSelectionne.statut ===
+                    "Validé"
+                ) {
+
+                    const maintenant =
+                        new Date().toISOString();
+
+                    await appelerSupabase(
+                        "devis?id=eq." +
+                        encodeURIComponent(
+                            devisSelectionne.id
+                        ) +
+                        "&user_id=eq." +
+                        encodeURIComponent(
+                            utilisateurId
+                        ),
+                        {
+                            method:
+                                "PATCH",
+
+                            headers: {
+                                "Prefer":
+                                    "return=minimal"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    statut:
+                                        "Envoyé",
+                                    date_envoi:
+                                        maintenant
+                                })
+                        }
+                    );
+
+                    devisSelectionne.statut =
+                        "Envoyé";
+
+                    devisSelectionne.date_envoi =
+                        maintenant;
+
+                    afficherResume();
+                    afficherDevis();
+                }
+
+                const destinataire =
+                    client &&
+                    client.email
+                        ? client.email
+                        : "";
+
+                const sujet =
+                    "Votre devis " +
+                    (
+                        devisSelectionne.numero ||
+                        "321Devis"
+                    );
+
+                const corps =
+                    "Bonjour" +
+                    (
+                        client &&
+                        client.nom
+                            ? " " + client.nom
+                            : ""
+                    ) +
+                    ",\n\n" +
+                    "Votre devis est disponible à l'adresse suivante :\n" +
+                    lienClient +
+                    "\n\n" +
+                    "Vous pourrez le consulter puis l'accepter ou le refuser directement depuis cette page.\n\n" +
+                    "Cordialement";
+
+                const mailto =
+                    "mailto:" +
+                    encodeURIComponent(
+                        destinataire
+                    ) +
+                    "?subject=" +
+                    encodeURIComponent(
+                        sujet
+                    ) +
+                    "&body=" +
+                    encodeURIComponent(
+                        corps
+                    );
+
+                window.location.href =
+                    mailto;
+
+            } catch (erreur) {
+
+                console.error(
+                    erreur
+                );
+
+                alert(
+                    "Impossible de préparer l'envoi du devis.\n\n" +
+                    erreur.message
+                );
+            }
+        }
+
+        async function supprimerDevis(
+            devisId,
+            numeroDevis
+        ) {
+
+            if (!devisId) {
+
+                alert(
+                    "Impossible d'identifier le devis à supprimer."
+                );
+
+                return;
+            }
+
+            const confirmation =
+                confirm(
+                    "Supprimer définitivement le devis " +
+                    (numeroDevis || "") +
+                    " ?\n\nCette action supprimera aussi ses lignes de devis."
+                );
+
+            if (!confirmation) {
+                return;
+            }
+
+            try {
+
+                await appelerSupabase(
+                    "lignes_devis?devis_id=eq." +
+                    encodeURIComponent(
+                        devisId
+                    ) +
+                    "&user_id=eq." +
+                    encodeURIComponent(
+                        utilisateurId
+                    ),
+                    {
+                        method:
+                            "DELETE",
+
+                        headers: {
+                            "Prefer":
+                                "return=minimal"
+                        }
+                    }
+                );
+
+                await appelerSupabase(
+                    "devis?id=eq." +
+                    encodeURIComponent(
+                        devisId
+                    ) +
+                    "&user_id=eq." +
+                    encodeURIComponent(
+                        utilisateurId
+                    ),
+                    {
+                        method:
+                            "DELETE",
+
+                        headers: {
+                            "Prefer":
+                                "return=minimal"
+                        }
+                    }
+                );
+
+                devis =
+                    devis.filter(
+                        item =>
+                            item.id !==
+                            devisId
+                    );
+
+                afficherResume();
+                afficherDevis();
+
+                alert(
+                    "Le devis " +
+                    (numeroDevis || "") +
+                    " a été supprimé."
+                );
+
+            } catch (erreur) {
+
+                console.error(
+                    erreur
+                );
+
+                alert(
+                    "Impossible de supprimer le devis.\n\n" +
+                    erreur.message
+                );
+            }
+        }
+
+        async function chargerHistorique() {
+
+            const resultats =
+                await Promise.all([
+                    appelerSupabase(
+                        "devis?select=*&user_id=eq." +
+                        encodeURIComponent(
+                            utilisateurId
+                        ) +
+                        "&order=created_at.desc"
+                    ),
+                    appelerSupabase(
+                        "clients?select=id,nom,email,telephone,adresse&user_id=eq." +
+                        encodeURIComponent(
+                            utilisateurId
+                        )
+                    )
+                ]);
+
+            devis =
+                Array.isArray(
+                    resultats[0]
+                )
+                    ? resultats[0]
+                    : [];
+
+            clients =
+                Array.isArray(
+                    resultats[1]
+                )
+                    ? resultats[1]
+                    : [];
+
+            afficherResume();
+            afficherDevis();
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async () => {
+
+                try {
+
+                    const connecte =
+                        await verifierUtilisateur();
+
+                    if (!connecte) {
+                        return;
+                    }
+
+                    await chargerHistorique();
+
+                } catch (erreur) {
+
+                    console.error(
+                        erreur
+                    );
+
+                    document.getElementById(
+                        "listeDevis"
+                    ).innerHTML = `
+                        <tr>
+                            <td
+                                colspan="6"
+                                class="vide"
+                            >
+                                Impossible de charger les devis depuis Supabase.
+                            </td>
+                        </tr>
+                    `;
+
+                    alert(
+                        "Impossible de charger l'historique.\n\n" +
+                        erreur.message
+                    );
+                }
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
