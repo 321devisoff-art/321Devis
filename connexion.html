@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion — 321Devis</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#111827;display:flex;align-items:center;justify-content:center;padding:24px}.carte{width:100%;max-width:440px;background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:32px;box-shadow:0 14px 40px rgba(0,0,0,.08)}.logo{text-align:center;margin-bottom:28px}.logo h1{margin:0;font-size:30px}.logo p{margin:8px 0 0;color:#6b7280}.champ{margin-bottom:18px}label{display:block;margin-bottom:7px;font-weight:700}input{width:100%;padding:13px 14px;border:1px solid #d1d5db;border-radius:10px;font-size:16px;outline:none}input:focus{border-color:#111827}button{width:100%;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:700;cursor:pointer}.bouton-principal{background:#111827;color:#fff}.bouton-secondaire{margin-top:10px;background:#eef2f7;color:#111827}button:disabled{opacity:.6;cursor:wait}.message{display:none;margin-top:18px;padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.45}.message.succes{display:block;background:#dcfce7;color:#166534;border:1px solid #bbf7d0}.message.erreur{display:block;background:#fee2e2;color:#991b1b;border:1px solid #fecaca}.note{margin-top:20px;text-align:center;color:#6b7280;font-size:13px;line-height:1.45}
+</style>
+</head>
+<body>
+<main class="carte">
+<div class="logo"><h1>321Devis</h1><p>1, 2, 3… votre devis est prêt.</p></div>
+<form id="formConnexion">
+<div class="champ"><label for="email">Adresse e-mail</label><input id="email" type="email" autocomplete="email" required></div>
+<div class="champ"><label for="motDePasse">Mot de passe</label><input id="motDePasse" type="password" autocomplete="current-password" minlength="6" required></div>
+<button id="boutonConnexion" class="bouton-principal" type="submit">Se connecter</button>
+<button id="boutonInscription" class="bouton-secondaire" type="button">Créer mon compte</button>
+<div id="message" class="message"></div>
+</form>
+<div class="note">Prototype 321Devis — authentification Supabase</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY="sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+const clientSupabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const formulaire=document.getElementById("formConnexion");
+const email=document.getElementById("email");
+const motDePasse=document.getElementById("motDePasse");
+const boutonConnexion=document.getElementById("boutonConnexion");
+const boutonInscription=document.getElementById("boutonInscription");
+const message=document.getElementById("message");
+
+function afficherMessage(texte,type){
+  message.textContent=texte;
+  message.className="message "+type;
+}
+function bloquerBoutons(etat){
+  boutonConnexion.disabled=etat;
+  boutonInscription.disabled=etat;
+}
+
+async function verifierSession(){
+  const {data,error}=await clientSupabase.auth.getSession();
+  if(error){console.error(error);return;}
+  if(data&&data.session){window.location.href="index.html";}
+}
+
+formulaire.addEventListener("submit",async function(event){
+  event.preventDefault();
+  bloquerBoutons(true);
+  afficherMessage("Connexion en cours…","succes");
+  const {data,error}=await clientSupabase.auth.signInWithPassword({
+    email:email.value.trim(),
+    password:motDePasse.value
+  });
+  bloquerBoutons(false);
+  if(error){afficherMessage(error.message,"erreur");return;}
+  if(data&&data.session){window.location.href="index.html";return;}
+  afficherMessage("Connexion impossible.","erreur");
+});
+
+boutonInscription.addEventListener("click",async function(){
+  const adresse=email.value.trim();
+  const mot=motDePasse.value;
+  if(!adresse||!mot){
+    afficherMessage("Renseigne ton e-mail et ton mot de passe avant de créer le compte.","erreur");
+    return;
+  }
+  bloquerBoutons(true);
+  const {data,error}=await clientSupabase.auth.signUp({
+    email:adresse,
+    password:mot
+  });
+  bloquerBoutons(false);
+  if(error){afficherMessage(error.message,"erreur");return;}
+  if(data&&data.session){window.location.href="index.html";return;}
+  afficherMessage("Compte créé. Vérifie ton e-mail si Supabase demande une confirmation.","succes");
+});
+
+verifierSession();
+</script>
+</body>
+</html>
