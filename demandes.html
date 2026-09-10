@@ -1,0 +1,3167 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Demandes clients — 321Devis</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f4f6;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+
+        .header h1 {
+            margin: 0 0 8px 0;
+        }
+
+
+        .header p {
+            margin: 0;
+            color: #d1d5db;
+        }
+
+
+        .navigation {
+            margin-bottom: 25px;
+        }
+
+
+        .navigation a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+
+        .bloc {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+
+        .demande {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+
+        .demande h3 {
+            margin-top: 0;
+        }
+
+
+        .infos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+
+        .info {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+
+
+        .description {
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin: 15px 0;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+
+        .statut {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+
+        .statut-traitee {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+
+        .statut-terminee {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            margin-right: 8px;
+            margin-top: 8px;
+        }
+
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+
+        .btn-ouvrir {
+            background: #2563eb;
+        }
+
+
+        .btn-supprimer {
+            background: #dc2626;
+        }
+
+
+        .btn-devis {
+            background: #059669;
+        }
+
+
+        .btn-voir {
+            background: #7c3aed;
+        }
+
+
+        .btn-traiter {
+            background: #6b7280;
+        }
+
+
+        .vide {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+
+        .formulaire {
+            display: none;
+        }
+
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 6px;
+        }
+
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+
+        .actions-formulaire {
+            margin-top: 20px;
+        }
+
+
+        .alerte {
+            padding: 15px;
+            margin: 20px 0;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 6px;
+            color: #9a3412;
+        }
+
+
+        .succes {
+            padding: 15px;
+            margin: 20px 0;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 6px;
+            color: #065f46;
+        }
+
+
+        .erreur {
+            padding: 15px;
+            margin: 20px 0;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            color: #991b1b;
+            display: none;
+            line-height: 1.5;
+        }
+
+
+        .chargement {
+            padding: 15px;
+            margin: 20px 0;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            color: #1e40af;
+        }
+
+
+        .diagnostic {
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #374151;
+        }
+
+
+        .diagnostic.succes {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+
+
+        @media (max-width: 750px) {
+
+            .infos {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- EN-TÊTE -->
+
+    <div class="header">
+
+        <h1>
+            321Devis
+        </h1>
+
+        <p>
+            Demandes clients
+        </p>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+
+    <div class="navigation">
+
+        <a href="index.html">
+            ← Tableau de bord
+        </a>
+
+        <a href="demande-client.html">
+            Nouvelle demande
+        </a>
+
+        <a href="validation-devis.html">
+            Validation
+        </a>
+
+        <a href="historique.html">
+            Historique
+        </a>
+
+    </div>
+
+
+    <!-- CONTENU -->
+
+    <div class="bloc">
+
+
+        <div
+            id="diagnostic"
+            class="diagnostic"
+        >
+            Chargement des demandes depuis Supabase…
+        </div>
+
+
+        <h2>
+            Demandes reçues
+        </h2>
+
+
+        <div
+            id="chargement"
+            class="chargement"
+        >
+            Chargement…
+        </div>
+
+
+        <div
+            id="erreur"
+            class="erreur"
+        >
+        </div>
+
+
+        <div id="listeDemandes"></div>
+
+    </div>
+
+
+    <!-- DETAIL DE LA DEMANDE -->
+
+    <div
+        class="bloc formulaire"
+        id="formulaire"
+    >
+
+        <h2>
+            Traiter la demande
+        </h2>
+
+
+        <p>
+            Numéro de demande :
+            <strong id="numeroDemande"></strong>
+        </p>
+
+
+        <p>
+            Statut :
+            <span
+                class="statut"
+                id="statutDemande"
+            ></span>
+        </p>
+
+
+        <!-- MESSAGE SI DEVIS EXISTANT -->
+
+        <div
+            class="alerte"
+            id="dejaConvertie"
+            style="display:none;"
+        >
+
+            Cette demande a déjà été convertie en devis.
+
+            <br><br>
+
+            Numéro du devis :
+            <strong id="numeroDevisExistant"></strong>
+
+        </div>
+
+
+        <!-- CLIENT -->
+
+        <h3>
+            Client
+        </h3>
+
+
+        <label for="nomClient">
+            Nom
+        </label>
+
+        <input
+            type="text"
+            id="nomClient"
+        >
+
+
+        <label for="telephoneClient">
+            Téléphone
+        </label>
+
+        <input
+            type="text"
+            id="telephoneClient"
+        >
+
+
+        <label for="emailClient">
+            E-mail
+        </label>
+
+        <input
+            type="email"
+            id="emailClient"
+        >
+
+
+        <label for="adresseClient">
+            Adresse
+        </label>
+
+        <input
+            type="text"
+            id="adresseClient"
+        >
+
+
+        <!-- DEMANDE -->
+
+        <h3>
+            Demande
+        </h3>
+
+
+        <label for="typeTravaux">
+            Type de travaux
+        </label>
+
+        <input
+            type="text"
+            id="typeTravaux"
+            readonly
+        >
+
+
+        <label for="descriptionDemande">
+            Description
+        </label>
+
+        <textarea
+            id="descriptionDemande"
+        ></textarea>
+
+
+        <label for="quantiteDemande">
+            Quantité estimée
+        </label>
+
+        <input
+            type="number"
+            id="quantiteDemande"
+            min="1"
+            step="1"
+        >
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions-formulaire">
+
+
+            <button
+                id="boutonPreparer"
+                class="btn-devis"
+                onclick="preparerDevis()"
+            >
+                Préparer le devis
+            </button>
+
+
+            <button
+                id="boutonVoirDevis"
+                class="btn-voir"
+                onclick="ouvrirDevisExistant()"
+                style="display:none;"
+            >
+                Voir le devis existant
+            </button>
+
+
+            <button
+                id="boutonTraitee"
+                class="btn-traiter"
+                onclick="marquerTraitee()"
+            >
+                Marquer comme traitée
+            </button>
+
+
+            <button
+                class="btn-supprimer"
+                onclick="supprimerDemandeActuelle()"
+            >
+                Supprimer
+            </button>
+
+        </div>
+
+
+        <div
+            class="succes"
+            id="message"
+            style="display:none;"
+        >
+            Demande mise à jour.
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    /*
+     * =====================================================
+     * CONFIGURATION SUPABASE
+     * =====================================================
+     */
+
+    const SUPABASE_URL =
+        "https://ywmuiqavjdzuaittqesc.supabase.co";
+
+
+    const SUPABASE_KEY =
+        "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+
+    /*
+     * =====================================================
+     * DONNÉES
+     * =====================================================
+     */
+
+    let demandes = [];
+
+    let clients = [];
+
+    let devis = [];
+
+    let demandeActuelle = null;
+
+
+    /*
+     * =====================================================
+     * ÉLÉMENTS
+     * =====================================================
+     */
+
+    const zoneListe =
+        document.getElementById(
+            "listeDemandes"
+        );
+
+
+    const zoneChargement =
+        document.getElementById(
+            "chargement"
+        );
+
+
+    const zoneErreur =
+        document.getElementById(
+            "erreur"
+        );
+
+
+    const zoneDiagnostic =
+        document.getElementById(
+            "diagnostic"
+        );
+
+
+    /*
+     * =====================================================
+     * APPEL SUPABASE
+     * =====================================================
+     */
+
+    async function appelerSupabase(
+        endpoint,
+        options = {}
+    ) {
+
+        const url =
+            SUPABASE_URL +
+            "/rest/v1/" +
+            endpoint;
+
+
+        const headers = {
+
+            "apikey":
+                SUPABASE_KEY,
+
+            "Content-Type":
+                "application/json",
+
+            "Accept":
+                "application/json",
+
+            ...(options.headers || {})
+
+        };
+
+
+        const reponse =
+            await fetch(
+                url,
+                {
+                    method:
+                        options.method ||
+                        "GET",
+
+                    headers:
+                        headers,
+
+                    body:
+                        options.body
+
+                }
+            );
+
+
+        const texte =
+            await reponse.text();
+
+
+        let donnees =
+            null;
+
+
+        if (texte) {
+
+            try {
+
+                donnees =
+                    JSON.parse(
+                        texte
+                    );
+
+            } catch (erreur) {
+
+                donnees =
+                    texte;
+
+            }
+
+        }
+
+
+        if (!reponse.ok) {
+
+            console.error(
+                "Erreur Supabase",
+                reponse.status,
+                donnees
+            );
+
+
+            let message =
+                "Erreur Supabase HTTP " +
+                reponse.status;
+
+
+            if (
+                donnees &&
+                typeof donnees ===
+                    "object"
+            ) {
+
+                if (
+                    donnees.message
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.message;
+
+                } else if (
+                    donnees.error
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.error;
+
+                } else if (
+                    donnees.hint
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.hint;
+
+                }
+
+            }
+
+
+            throw new Error(
+                message
+            );
+
+        }
+
+
+        return donnees;
+
+    }
+
+
+    /*
+     * =====================================================
+     * CHARGEMENT DES DEVIS LOCAUX
+     * =====================================================
+     */
+
+    function chargerDevisLocaux() {
+
+        try {
+
+            devis =
+                JSON.parse(
+                    localStorage.getItem(
+                        "devis321Devis"
+                    )
+                ) || [];
+
+        } catch (erreur) {
+
+            console.error(
+                "Erreur lecture devis locaux :",
+                erreur
+            );
+
+            devis = [];
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * CHARGEMENT DES CLIENTS SUPABASE
+     * =====================================================
+     */
+
+    async function chargerClientsSupabase() {
+
+        return await appelerSupabase(
+            "clients?select=*"
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * CHARGEMENT DES DEMANDES SUPABASE
+     * =====================================================
+     */
+
+    async function chargerDemandesSupabase() {
+
+        return await appelerSupabase(
+            "demandes?select=*&order=created_at.desc"
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * TRANSFORMATION SUPABASE → FORMAT 321DEVIS
+     * =====================================================
+     */
+
+    function convertirDemandeSupabase(
+        demandeSupabase,
+        client
+    ) {
+
+        const descriptionBrute =
+            demandeSupabase.description ||
+            "";
+
+
+        let typeTravaux =
+            "";
+
+
+        let quantite =
+            1;
+
+
+        let description =
+            descriptionBrute;
+
+
+        /*
+         * Le formulaire actuel enregistre :
+         *
+         * Type de travaux : ...
+         *
+         * Quantité estimée : ...
+         *
+         * Description :
+         *
+         * ...
+         */
+
+        const lignes =
+            descriptionBrute.split(
+                "\n"
+            );
+
+
+        lignes.forEach(
+            function(ligne) {
+
+                const texte =
+                    ligne.trim();
+
+
+                if (
+                    texte.startsWith(
+                        "Type de travaux :"
+                    )
+                ) {
+
+                    typeTravaux =
+                        texte
+                            .replace(
+                                "Type de travaux :",
+                                ""
+                            )
+                            .trim();
+
+                }
+
+
+                if (
+                    texte.startsWith(
+                        "Quantité estimée :"
+                    )
+                ) {
+
+                    const valeur =
+                        Number(
+                            texte
+                                .replace(
+                                    "Quantité estimée:",
+                                    ""
+                                )
+                                .trim()
+                        );
+
+
+                    if (
+                        Number.isFinite(
+                            valeur
+                        ) &&
+                        valeur > 0
+                    ) {
+
+                        quantite =
+                            valeur;
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        const indexDescription =
+            descriptionBrute.indexOf(
+                "Description:"
+            );
+
+
+        if (
+            indexDescription !==
+            -1
+        ) {
+
+            description =
+                descriptionBrute
+                    .slice(
+                        indexDescription +
+                        "Description:".length
+                    )
+                    .trim();
+
+        }
+
+
+        return {
+
+            id:
+                demandeSupabase.id,
+
+            numero:
+                demandeSupabase.numero,
+
+            date:
+                demandeSupabase.created_at,
+
+            statut:
+                demandeSupabase.statut ||
+                "Nouvelle",
+
+            clientId:
+                demandeSupabase.client_id,
+
+            adresse:
+                demandeSupabase.adresse ||
+                (
+                    client &&
+                    client.adresse
+                        ? client.adresse
+                        : ""
+                ),
+
+            urgence:
+                demandeSupabase.urgence ||
+                "",
+
+            client: {
+
+                nom:
+                    client &&
+                    client.nom
+                        ? client.nom
+                        : "",
+
+                telephone:
+                    client &&
+                    client.telephone
+                        ? client.telephone
+                        : "",
+
+                email:
+                    client &&
+                    client.email
+                        ? client.email
+                        : "",
+
+                adresse:
+                    client &&
+                    client.adresse
+                        ? client.adresse
+                        : (
+                            demandeSupabase.adresse ||
+                            ""
+                        )
+
+            },
+
+            typeTravaux:
+                typeTravaux,
+
+            description:
+                description,
+
+            quantite:
+                quantite
+
+        };
+
+    }
+
+
+    /*
+     * =====================================================
+     * CONSTRUCTION DE LA LISTE
+     * =====================================================
+     */
+
+    async function chargerDonnees() {
+
+        zoneErreur.style.display =
+            "none";
+
+
+        zoneChargement.style.display =
+            "block";
+
+
+        try {
+
+            chargerDevisLocaux();
+
+
+            clients =
+                await chargerClientsSupabase();
+
+
+            demandes =
+                await chargerDemandesSupabase();
+
+
+            const clientsParId =
+                {};
+
+
+            if (
+                Array.isArray(
+                    clients
+                )
+            ) {
+
+                clients.forEach(
+                    function(client) {
+
+                        clientsParId[
+                            client.id
+                        ] =
+                            client;
+
+                    }
+                );
+
+            }
+
+
+            demandes =
+                (
+                    Array.isArray(
+                        demandes
+                    )
+                        ? demandes
+                        : []
+                )
+                .map(
+                    function(demande) {
+
+                        return convertirDemandeSupabase(
+                            demande,
+                            clientsParId[
+                                demande.client_id
+                            ] || null
+                        );
+
+                    }
+                );
+
+
+            afficherDemandes();
+
+
+            zoneDiagnostic.textContent =
+                "Connexion Supabase opérationnelle. " +
+                demandes.length +
+                " demande(s) chargée(s).";
+
+
+            zoneDiagnostic.classList.add(
+                "succes"
+            );
+
+
+        } catch (erreur) {
+
+            console.error(
+                "Erreur chargement demandes :",
+                erreur
+            );
+
+
+            zoneErreur.innerHTML =
+                "<strong>Impossible de charger les demandes.</strong><br><br>" +
+                echapperHTML(
+                    erreur.message
+                );
+
+
+            zoneErreur.style.display =
+                "block";
+
+
+            zoneDiagnostic.textContent =
+                "La connexion aux demandes Supabase a échoué.";
+
+
+            /*
+             * Fallback local temporaire
+             */
+
+            chargerDemandesLocales();
+
+
+            afficherDemandes();
+
+        } finally {
+
+            zoneChargement.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * FALLBACK LOCAL
+     * =====================================================
+     */
+
+    function chargerDemandesLocales() {
+
+        try {
+
+            demandes =
+                JSON.parse(
+                    localStorage.getItem(
+                        "demandes321Devis"
+                    )
+                ) || [];
+
+        } catch (erreur) {
+
+            console.error(
+                "Erreur lecture demandes locales :",
+                erreur
+            );
+
+            demandes = [];
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * AFFICHAGE
+     * =====================================================
+     */
+
+    function afficherDemandes() {
+
+        zoneListe.innerHTML =
+            "";
+
+
+        if (
+            !Array.isArray(
+                demandes
+            ) ||
+            demandes.length ===
+                0
+        ) {
+
+            zoneListe.innerHTML = `
+
+                <div class="vide">
+                    Aucune demande client reçue.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        const demandesTriees =
+            [...demandes].sort(
+                function(a, b) {
+
+                    return (
+                        new Date(
+                            b.date
+                        ) -
+                        new Date(
+                            a.date
+                        )
+                    );
+
+                }
+            );
+
+
+        demandesTriees.forEach(
+            function(demande) {
+
+                const carte =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                carte.className =
+                    "demande";
+
+
+                const statut =
+                    demande.statut ||
+                    "Nouvelle";
+
+
+                let classeStatut =
+                    "statut";
+
+
+                if (
+                    statut ===
+                    "Traitée"
+                ) {
+
+                    classeStatut +=
+                        " statut-traitee";
+
+                }
+
+
+                if (
+                    statut ===
+                    "Convertie en devis"
+                ) {
+
+                    classeStatut +=
+                        " statut-terminee";
+
+                }
+
+
+                const bouton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                bouton.className =
+                    "btn-ouvrir";
+
+
+                bouton.textContent =
+                    "Ouvrir";
+
+
+                bouton.onclick =
+                    function() {
+
+                        ouvrirDemande(
+                            demande.numero
+                        );
+
+                    };
+
+
+                carte.innerHTML = `
+
+                    <h3>
+                        Demande
+                        ${echapperHTML(
+                            demande.numero
+                        )}
+                    </h3>
+
+
+                    <span
+                        class="${classeStatut}"
+                    >
+                        ${echapperHTML(
+                            statut
+                        )}
+                    </span>
+
+
+                    <div class="infos">
+
+
+                        <div class="info">
+
+                            <strong>
+                                Client
+                            </strong>
+
+                            <br>
+
+                            ${echapperHTML(
+                                demande.client &&
+                                demande.client.nom
+                                    ? demande.client.nom
+                                    : "—"
+                            )}
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <strong>
+                                Type
+                            </strong>
+
+                            <br>
+
+                            ${echapperHTML(
+                                demande.typeTravaux ||
+                                "—"
+                            )}
+
+                        </div>
+
+
+                        <div class="info">
+
+                            <strong>
+                                Date
+                            </strong>
+
+                            <br>
+
+                            ${formaterDate(
+                                demande.date
+                            )}
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="description">
+
+                        <strong>
+                            Demande :
+                        </strong>
+
+                        <br><br>
+
+                        ${echapperHTML(
+                            demande.description ||
+                            "—"
+                        )}
+
+                    </div>
+
+                `;
+
+
+                carte.appendChild(
+                    bouton
+                );
+
+
+                zoneListe.appendChild(
+                    carte
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * FORMATER DATE
+     * =====================================================
+     */
+
+    function formaterDate(
+        dateISO
+    ) {
+
+        const date =
+            new Date(
+                dateISO
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "Date inconnue";
+
+        }
+
+
+        return date.toLocaleDateString(
+            "fr-FR",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * TROUVER UN DEVIS LOCAL
+     * =====================================================
+     */
+
+    function trouverDevisPourDemande(
+        numeroDemande
+    ) {
+
+        return (
+            devis.find(
+                function(devisItem) {
+
+                    return (
+                        devisItem.demandeOrigine ===
+                        numeroDemande
+                    );
+
+                }
+            ) || null
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * OUVRIR UNE DEMANDE
+     * =====================================================
+     */
+
+    function ouvrirDemande(
+        numero
+    ) {
+
+        const demande =
+            demandes.find(
+                function(element) {
+
+                    return (
+                        element.numero ===
+                        numero
+                    );
+
+                }
+            );
+
+
+        if (!demande) {
+
+            alert(
+                "Demande introuvable."
+            );
+
+            return;
+
+        }
+
+
+        demandeActuelle =
+            demande;
+
+
+        document.getElementById(
+            "formulaire"
+        ).style.display =
+            "block";
+
+
+        document.getElementById(
+            "numeroDemande"
+        ).textContent =
+            demande.numero || "";
+
+
+        document.getElementById(
+            "statutDemande"
+        ).textContent =
+            demande.statut ||
+            "Nouvelle";
+
+
+        document.getElementById(
+            "nomClient"
+        ).value =
+            demande.client &&
+            demande.client.nom
+                ? demande.client.nom
+                : "";
+
+
+        document.getElementById(
+            "telephoneClient"
+        ).value =
+            demande.client &&
+            demande.client.telephone
+                ? demande.client.telephone
+                : "";
+
+
+        document.getElementById(
+            "emailClient"
+        ).value =
+            demande.client &&
+            demande.client.email
+                ? demande.client.email
+                : "";
+
+
+        document.getElementById(
+            "adresseClient"
+        ).value =
+            demande.client &&
+            demande.client.adresse
+                ? demande.client.adresse
+                : (
+                    demande.adresse ||
+                    ""
+                );
+
+
+        document.getElementById(
+            "typeTravaux"
+        ).value =
+            demande.typeTravaux ||
+            "";
+
+
+        document.getElementById(
+            "descriptionDemande"
+        ).value =
+            demande.description ||
+            "";
+
+
+        document.getElementById(
+            "quantiteDemande"
+        ).value =
+            demande.quantite ||
+            1;
+
+
+        mettreAJourEtatActions();
+
+
+        window.scrollTo({
+
+            top:
+                document.getElementById(
+                    "formulaire"
+                ).offsetTop - 20,
+
+            behavior:
+                "smooth"
+
+        });
+
+    }
+
+
+    /*
+     * =====================================================
+     * METTRE À JOUR LES BOUTONS
+     * =====================================================
+     */
+
+    function mettreAJourEtatActions() {
+
+        if (
+            !demandeActuelle
+        ) {
+
+            return;
+
+        }
+
+
+        chargerDevisLocaux();
+
+
+        const devisExistant =
+            trouverDevisPourDemande(
+                demandeActuelle.numero
+            );
+
+
+        const messageDejaConvertie =
+            document.getElementById(
+                "dejaConvertie"
+            );
+
+
+        const numeroDevisExistant =
+            document.getElementById(
+                "numeroDevisExistant"
+            );
+
+
+        const boutonPreparer =
+            document.getElementById(
+                "boutonPreparer"
+            );
+
+
+        const boutonVoirDevis =
+            document.getElementById(
+                "boutonVoirDevis"
+            );
+
+
+        const boutonTraitee =
+            document.getElementById(
+                "boutonTraitee"
+            );
+
+
+        if (devisExistant) {
+
+            demandeActuelle.statut =
+                "Convertie en devis";
+
+
+            demandeActuelle.devisNumero =
+                devisExistant.numero;
+
+
+            messageDejaConvertie.style.display =
+                "block";
+
+
+            numeroDevisExistant.textContent =
+                devisExistant.numero;
+
+
+            boutonPreparer.disabled =
+                true;
+
+
+            boutonVoirDevis.style.display =
+                "inline-block";
+
+
+            boutonTraitee.disabled =
+                true;
+
+
+            document.getElementById(
+                "statutDemande"
+            ).textContent =
+                "Convertie en devis";
+
+
+        } else {
+
+            messageDejaConvertie.style.display =
+                "none";
+
+
+            numeroDevisExistant.textContent =
+                "";
+
+
+            boutonPreparer.disabled =
+                false;
+
+
+            boutonVoirDevis.style.display =
+                "none";
+
+
+            boutonTraitee.disabled =
+                false;
+
+
+            document.getElementById(
+                "statutDemande"
+            ).textContent =
+                demandeActuelle.statut ||
+                "Nouvelle";
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * SAUVEGARDER MODIFICATIONS CLIENT
+     * =====================================================
+     */
+
+    async function sauvegarderDemande() {
+
+        if (
+            !demandeActuelle
+        ) {
+
+            return false;
+
+        }
+
+
+        const nom =
+            document
+                .getElementById(
+                    "nomClient"
+                )
+                .value
+                .trim();
+
+
+        const telephone =
+            document
+                .getElementById(
+                    "telephoneClient"
+                )
+                .value
+                .trim();
+
+
+        const email =
+            document
+                .getElementById(
+                    "emailClient"
+                )
+                .value
+                .trim();
+
+
+        const adresse =
+            document
+                .getElementById(
+                    "adresseClient"
+                )
+                .value
+                .trim();
+
+
+        const description =
+            document
+                .getElementById(
+                    "descriptionDemande"
+                )
+                .value
+                .trim();
+
+
+        const quantite =
+            Number(
+                document
+                    .getElementById(
+                        "quantiteDemande"
+                    )
+                    .value
+            );
+
+
+        if (
+            !Number.isFinite(
+                quantite
+            ) ||
+            quantite <= 0
+        ) {
+
+            alert(
+                "La quantité doit être supérieure à 0."
+            );
+
+            return false;
+
+        }
+
+
+        /*
+         * Mise à jour locale de l'objet
+         */
+
+        demandeActuelle.client =
+            demandeActuelle.client ||
+            {};
+
+
+        demandeActuelle.client.nom =
+            nom;
+
+
+        demandeActuelle.client.telephone =
+            telephone;
+
+
+        demandeActuelle.client.email =
+            email;
+
+
+        demandeActuelle.client.adresse =
+            adresse;
+
+
+        demandeActuelle.adresse =
+            adresse;
+
+
+        demandeActuelle.description =
+            description;
+
+
+        demandeActuelle.quantite =
+            quantite;
+
+
+        /*
+         * Mise à jour du client dans Supabase
+         */
+
+        if (
+            demandeActuelle.clientId
+        ) {
+
+            await appelerSupabase(
+                "clients?id=eq." +
+                encodeURIComponent(
+                    demandeActuelle.clientId
+                ),
+                {
+                    method:
+                        "PATCH",
+
+                    headers: {
+
+                        "Prefer":
+                            "return=minimal"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            {
+                                nom:
+                                    nom,
+
+                                telephone:
+                                    telephone,
+
+                                email:
+                                    email ||
+                                    null,
+
+                                adresse:
+                                    adresse
+                            }
+                        )
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Mise à jour temporaire de la demande
+         *
+         * Attention :
+         * le champ description actuel de Supabase
+         * contient également le type et la quantité.
+         */
+
+        if (
+            demandeActuelle.id
+        ) {
+
+            const typeTravaux =
+                demandeActuelle.typeTravaux ||
+                "";
+
+
+            const descriptionComplete =
+                "Type de travaux : " +
+                typeTravaux +
+                "\n\n" +
+                "Quantité estimée : " +
+                quantite +
+                "\n\n" +
+                "Description :\n" +
+                description;
+
+
+            await appelerSupabase(
+                "demandes?id=eq." +
+                encodeURIComponent(
+                    demandeActuelle.id
+                ),
+                {
+                    method:
+                        "PATCH",
+
+                    headers: {
+
+                        "Prefer":
+                            "return=minimal"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            {
+                                description:
+                                    descriptionComplete,
+
+                                adresse:
+                                    adresse
+                            }
+                        )
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Copie locale temporaire
+         */
+
+        try {
+
+            const demandesLocales =
+                JSON.parse(
+                    localStorage.getItem(
+                        "demandes321Devis"
+                    )
+                ) || [];
+
+
+            const indexLocal =
+                demandesLocales.findIndex(
+                    function(element) {
+
+                        return (
+                            element.numero ===
+                            demandeActuelle.numero
+                        );
+
+                    }
+                );
+
+
+            if (
+                indexLocal !==
+                -1
+            ) {
+
+                demandesLocales[
+                    indexLocal
+                ] =
+                    demandeActuelle;
+
+
+                localStorage.setItem(
+                    "demandes321Devis",
+                    JSON.stringify(
+                        demandesLocales
+                    )
+                );
+
+            }
+
+        } catch (erreur) {
+
+            console.warn(
+                "Copie locale non mise à jour :",
+                erreur
+            );
+
+        }
+
+
+        /*
+         * Mise à jour de notre liste
+         */
+
+        const index =
+            demandes.findIndex(
+                function(element) {
+
+                    return (
+                        element.numero ===
+                        demandeActuelle.numero
+                    );
+
+                }
+            );
+
+
+        if (
+            index !==
+            -1
+        ) {
+
+            demandes[index] =
+                demandeActuelle;
+
+        }
+
+
+        return true;
+
+    }
+
+
+    /*
+     * =====================================================
+     * METTRE À JOUR LE STATUT SUPABASE
+     * =====================================================
+     */
+
+    async function mettreAJourStatutSupabase(
+        id,
+        statut
+    ) {
+
+        if (!id) {
+
+            return;
+
+        }
+
+
+        await appelerSupabase(
+            "demandes?id=eq." +
+            encodeURIComponent(
+                id
+            ),
+            {
+                method:
+                    "PATCH",
+
+                headers: {
+
+                    "Prefer":
+                        "return=minimal"
+
+                },
+
+                body:
+                    JSON.stringify(
+                        {
+                            statut:
+                                statut
+                        }
+                    )
+
+            }
+        );
+
+    }
+
+
+    /*
+     * =====================================================
+     * PREPARER DEVIS
+     * =====================================================
+     */
+
+    async function preparerDevis() {
+
+        if (
+            !demandeActuelle
+        ) {
+
+            alert(
+                "Sélectionne d'abord une demande."
+            );
+
+            return;
+
+        }
+
+
+        chargerDevisLocaux();
+
+
+        const devisExistant =
+            trouverDevisPourDemande(
+                demandeActuelle.numero
+            );
+
+
+        if (
+            devisExistant
+        ) {
+
+            alert(
+                "Cette demande possède déjà le devis " +
+                devisExistant.numero +
+                "."
+            );
+
+
+            ouvrirDevisExistant();
+
+            return;
+
+        }
+
+
+        try {
+
+            /*
+             * Sauvegarder les éventuelles corrections
+             */
+
+            const sauvegardeOK =
+                await sauvegarderDemande();
+
+
+            if (
+                !sauvegardeOK
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Catalogue local temporaire
+             */
+
+            let catalogue =
+                [];
+
+
+            try {
+
+                catalogue =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "catalogue321Devis"
+                        )
+                    ) || [];
+
+            } catch (erreur) {
+
+                catalogue = [];
+
+            }
+
+
+            /*
+             * Type
+             */
+
+            const type =
+                demandeActuelle.typeTravaux;
+
+
+            /*
+             * Quantité
+             */
+
+            const quantite =
+                Number(
+                    demandeActuelle.quantite
+                );
+
+
+            const prestations =
+                [];
+
+
+            /*
+             * Recherche catalogue
+             */
+
+            function chercherCatalogue(
+                texte
+            ) {
+
+                return catalogue.find(
+                    function(item) {
+
+                        const designation =
+                            String(
+                                item.designation ||
+                                item.nom ||
+                                ""
+                            );
+
+
+                        return (
+                            designation
+                                .toLowerCase()
+                                .includes(
+                                    texte.toLowerCase()
+                                )
+                        );
+
+                    }
+                ) || null;
+
+            }
+
+
+            /*
+             * Déplacement
+             */
+
+            const deplacement =
+                chercherCatalogue(
+                    "déplacement"
+                );
+
+
+            if (
+                deplacement
+            ) {
+
+                prestations.push({
+
+                    prestation:
+                        deplacement,
+
+                    quantite:
+                        1
+
+                });
+
+            }
+
+
+            /*
+             * Recherche de fuite
+             */
+
+            if (
+                type ===
+                "Fuite / recherche de fuite"
+            ) {
+
+                const prestation =
+                    chercherCatalogue(
+                        "recherche de fuite"
+                    );
+
+
+                if (
+                    prestation
+                ) {
+
+                    prestations.push({
+
+                        prestation:
+                            prestation,
+
+                        quantite:
+                            quantite
+
+                    });
+
+                }
+
+            }
+
+
+            /*
+             * Siphon
+             */
+
+            if (
+                type ===
+                "Remplacement de siphon"
+            ) {
+
+                const prestation =
+                    chercherCatalogue(
+                        "remplacement siphon"
+                    );
+
+
+                if (
+                    prestation
+                ) {
+
+                    prestations.push({
+
+                        prestation:
+                            prestation,
+
+                        quantite:
+                            quantite
+
+                    });
+
+                }
+
+            }
+
+
+            /*
+             * Canalisation
+             */
+
+            if (
+                type ===
+                "Canalisation bouchée"
+            ) {
+
+                const prestation =
+                    chercherCatalogue(
+                        "débouchage canalisation"
+                    );
+
+
+                if (
+                    prestation
+                ) {
+
+                    prestations.push({
+
+                        prestation:
+                            prestation,
+
+                        quantite:
+                            quantite
+
+                    });
+
+                }
+
+            }
+
+
+            /*
+             * Main-d'œuvre
+             */
+
+            if (
+                type ===
+                "Main-d'œuvre / intervention"
+            ) {
+
+                const prestation =
+                    chercherCatalogue(
+                        "main-d'œuvre"
+                    );
+
+
+                if (
+                    prestation
+                ) {
+
+                    prestations.push({
+
+                        prestation:
+                            prestation,
+
+                        quantite:
+                            quantite
+
+                    });
+
+                }
+
+            }
+
+
+            /*
+             * Aucune prestation
+             */
+
+            if (
+                prestations.length ===
+                0
+            ) {
+
+                alert(
+                    "Aucune prestation correspondante n'a été trouvée dans le catalogue."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Paramètres entreprise
+             */
+
+            let parametres =
+                {};
+
+
+            try {
+
+                parametres =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "parametres321Devis"
+                        )
+                    ) || {};
+
+            } catch (erreur) {
+
+                parametres =
+                    {};
+
+            }
+
+
+            const tauxTVA =
+                Number.isFinite(
+                    Number(
+                        parametres.tauxTVA
+                    )
+                )
+                    ? Number(
+                        parametres.tauxTVA
+                    )
+                    : 20;
+
+
+            /*
+             * Numéro devis
+             */
+
+            let compteur =
+                Number(
+                    localStorage.getItem(
+                        "compteurDevis321Devis"
+                    )
+                ) || 0;
+
+
+            compteur++;
+
+
+            localStorage.setItem(
+                "compteurDevis321Devis",
+                compteur
+            );
+
+
+            const numeroDevis =
+                "DEV-" +
+                new Date().getFullYear() +
+                "-" +
+                String(
+                    compteur
+                ).padStart(
+                    4,
+                    "0"
+                );
+
+
+            /*
+             * Construction lignes
+             */
+
+            const lignes =
+                [];
+
+
+            let totalHT =
+                0;
+
+
+            prestations.forEach(
+                function(element) {
+
+                    const prestation =
+                        element.prestation;
+
+
+                    const qte =
+                        Number(
+                            element.quantite
+                        );
+
+
+                    const prix =
+                        Number(
+                            prestation.prix ??
+                            prestation.prix_unitaire_ht ??
+                            0
+                        );
+
+
+                    const designation =
+                        prestation.designation ||
+                        prestation.nom ||
+                        "Prestation";
+
+
+                    const totalLigne =
+                        prix *
+                        qte;
+
+
+                    totalHT +=
+                        totalLigne;
+
+
+                    lignes.push({
+
+                        description:
+                            designation,
+
+                        quantite:
+                            qte,
+
+                        prixUnitaireHT:
+                            prix,
+
+                        totalHT:
+                            totalLigne
+
+                    });
+
+                }
+            );
+
+
+            const tva =
+                totalHT *
+                tauxTVA /
+                100;
+
+
+            const totalTTC =
+                totalHT +
+                tva;
+
+
+            /*
+             * Création devis local
+             */
+
+            const nouveauDevis = {
+
+                numero:
+                    numeroDevis,
+
+                date:
+                    new Date().toISOString(),
+
+                statut:
+                    "Brouillon - validation requise",
+
+                origine:
+                    "Demande client",
+
+                demandeOrigine:
+                    demandeActuelle.numero,
+
+                client: {
+
+                    nom:
+                        demandeActuelle.client &&
+                        demandeActuelle.client.nom
+                            ? demandeActuelle.client.nom
+                            : "",
+
+                    telephone:
+                        demandeActuelle.client &&
+                        demandeActuelle.client.telephone
+                            ? demandeActuelle.client.telephone
+                            : "",
+
+                    email:
+                        demandeActuelle.client &&
+                        demandeActuelle.client.email
+                            ? demandeActuelle.client.email
+                            : "",
+
+                    adresse:
+                        demandeActuelle.client &&
+                        demandeActuelle.client.adresse
+                            ? demandeActuelle.client.adresse
+                            : ""
+
+                },
+
+                demandeClient: {
+
+                    typeTravaux:
+                        demandeActuelle.typeTravaux,
+
+                    description:
+                        demandeActuelle.description
+
+                },
+
+                lignes:
+                    lignes,
+
+                totalHT:
+                    totalHT,
+
+                tauxTVA:
+                    tauxTVA,
+
+                tva:
+                    tva,
+
+                totalTTC:
+                    totalTTC
+
+            };
+
+
+            devis.push(
+                nouveauDevis
+            );
+
+
+            localStorage.setItem(
+                "devis321Devis",
+                JSON.stringify(
+                    devis
+                )
+            );
+
+
+            /*
+             * Statut demande
+             */
+
+            demandeActuelle.statut =
+                "Convertie en devis";
+
+
+            demandeActuelle.devisNumero =
+                numeroDevis;
+
+
+            const indexDemande =
+                demandes.findIndex(
+                    function(element) {
+
+                        return (
+                            element.numero ===
+                            demandeActuelle.numero
+                        );
+
+                    }
+                );
+
+
+            if (
+                indexDemande !==
+                -1
+            ) {
+
+                demandes[
+                    indexDemande
+                ] =
+                    demandeActuelle;
+
+            }
+
+
+            /*
+             * Mise à jour Supabase
+             */
+
+            await mettreAJourStatutSupabase(
+                demandeActuelle.id,
+                "Convertie en devis"
+            );
+
+
+            afficherDemandes();
+
+
+            document.getElementById(
+                "statutDemande"
+            ).textContent =
+                "Convertie en devis";
+
+
+            mettreAJourEtatActions();
+
+
+            alert(
+                "Brouillon de devis préparé avec succès !\n\n" +
+                "Numéro : " +
+                numeroDevis
+            );
+
+
+            /*
+             * Validation
+             */
+
+            window.location.href =
+                "validation-devis.html";
+
+
+        } catch (erreur) {
+
+            console.error(
+                "Erreur préparation devis :",
+                erreur
+            );
+
+
+            alert(
+                "Le devis n'a pas pu être préparé.\n\n" +
+                erreur.message
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * OUVRIR DEVIS EXISTANT
+     * =====================================================
+     */
+
+    function ouvrirDevisExistant() {
+
+        if (
+            !demandeActuelle
+        ) {
+
+            alert(
+                "Aucune demande sélectionnée."
+            );
+
+            return;
+
+        }
+
+
+        chargerDevisLocaux();
+
+
+        const devisExistant =
+            trouverDevisPourDemande(
+                demandeActuelle.numero
+            );
+
+
+        if (
+            !devisExistant
+        ) {
+
+            alert(
+                "Aucun devis trouvé pour cette demande."
+            );
+
+            return;
+
+        }
+
+
+        window.location.href =
+            "voir-devis.html?numero=" +
+            encodeURIComponent(
+                devisExistant.numero
+            );
+
+    }
+
+
+    /*
+     * =====================================================
+     * MARQUER TRAITÉE
+     * =====================================================
+     */
+
+    async function marquerTraitee() {
+
+        if (
+            !demandeActuelle
+        ) {
+
+            alert(
+                "Sélectionne d'abord une demande."
+            );
+
+            return;
+
+        }
+
+
+        chargerDevisLocaux();
+
+
+        const devisExistant =
+            trouverDevisPourDemande(
+                demandeActuelle.numero
+            );
+
+
+        if (
+            devisExistant
+        ) {
+
+            alert(
+                "Cette demande est déjà liée au devis " +
+                devisExistant.numero +
+                "."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const sauvegardeOK =
+                await sauvegarderDemande();
+
+
+            if (
+                !sauvegardeOK
+            ) {
+
+                return;
+
+            }
+
+
+            demandeActuelle.statut =
+                "Traitée";
+
+
+            await mettreAJourStatutSupabase(
+                demandeActuelle.id,
+                "Traitée"
+            );
+
+
+            const index =
+                demandes.findIndex(
+                    function(element) {
+
+                        return (
+                            element.numero ===
+                            demandeActuelle.numero
+                        );
+
+                    }
+                );
+
+
+            if (
+                index !==
+                -1
+            ) {
+
+                demandes[
+                    index
+                ] =
+                    demandeActuelle;
+
+            }
+
+
+            document.getElementById(
+                "statutDemande"
+            ).textContent =
+                "Traitée";
+
+
+            document.getElementById(
+                "message"
+            ).style.display =
+                "block";
+
+
+            afficherDemandes();
+
+
+        } catch (erreur) {
+
+            alert(
+                "Impossible de marquer la demande comme traitée.\n\n" +
+                erreur.message
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * SUPPRIMER DEMANDE
+     * =====================================================
+     */
+
+    async function supprimerDemandeActuelle() {
+
+        if (
+            !demandeActuelle
+        ) {
+
+            alert(
+                "Sélectionne d'abord une demande."
+            );
+
+            return;
+
+        }
+
+
+        chargerDevisLocaux();
+
+
+        const devisExistant =
+            trouverDevisPourDemande(
+                demandeActuelle.numero
+            );
+
+
+        if (
+            devisExistant
+        ) {
+
+            alert(
+                "Cette demande est liée au devis " +
+                devisExistant.numero +
+                ". Elle ne peut pas être supprimée ici."
+            );
+
+            return;
+
+        }
+
+
+        const confirmation =
+            confirm(
+                "Supprimer définitivement cette demande ?"
+            );
+
+
+        if (
+            !confirmation
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            /*
+             * Suppression Supabase
+             */
+
+            if (
+                demandeActuelle.id
+            ) {
+
+                await appelerSupabase(
+                    "demandes?id=eq." +
+                    encodeURIComponent(
+                        demandeActuelle.id
+                    ),
+                    {
+                        method:
+                            "DELETE"
+                    }
+                );
+
+            }
+
+
+            /*
+             * Suppression locale temporaire
+             */
+
+            try {
+
+                const demandesLocales =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "demandes321Devis"
+                        )
+                    ) || [];
+
+
+                const nouvellesDemandesLocales =
+                    demandesLocales.filter(
+                        function(element) {
+
+                            return (
+                                element.numero !==
+                                demandeActuelle.numero
+                            );
+
+                        }
+                    );
+
+
+                localStorage.setItem(
+                    "demandes321Devis",
+                    JSON.stringify(
+                        nouvellesDemandesLocales
+                    )
+                );
+
+            } catch (erreur) {
+
+                console.warn(
+                    "Copie locale non supprimée :",
+                    erreur
+                );
+
+            }
+
+
+            demandes =
+                demandes.filter(
+                    function(element) {
+
+                        return (
+                            element.numero !==
+                            demandeActuelle.numero
+                        );
+
+                    }
+                );
+
+
+            demandeActuelle =
+                null;
+
+
+            document.getElementById(
+                "formulaire"
+            ).style.display =
+                "none";
+
+
+            afficherDemandes();
+
+
+        } catch (erreur) {
+
+            alert(
+                "La demande n'a pas pu être supprimée.\n\n" +
+                erreur.message
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * SÉCURITÉ HTML
+     * =====================================================
+     */
+
+    function echapperHTML(
+        valeur
+    ) {
+
+        return String(
+            valeur ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /*
+     * =====================================================
+     * INITIALISATION
+     * =====================================================
+     */
+
+    chargerDonnees();
+
+</script>
+
+
+</body>
+
+</html>
