@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Paramètres — 321Devis</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f4f6;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+
+        .header h1 {
+            margin: 0 0 8px 0;
+        }
+
+
+        .header p {
+            margin: 0;
+            color: #d1d5db;
+        }
+
+
+        .navigation {
+            margin-bottom: 25px;
+        }
+
+
+        .navigation a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+
+        .bloc {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+
+        .bloc h2 {
+            margin-top: 0;
+        }
+
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+
+        .aide {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+
+        .avertissement {
+            margin-top: 10px;
+            padding: 12px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 6px;
+            color: #9a3412;
+            font-size: 13px;
+        }
+
+
+        button {
+            margin-top: 25px;
+            padding: 13px 18px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        .message {
+            display: none;
+            margin-top: 20px;
+            padding: 14px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 6px;
+            color: #065f46;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="header">
+
+        <h1>
+            321Devis
+        </h1>
+
+        <p>
+            Paramètres de votre entreprise
+        </p>
+
+    </div>
+
+
+    <div class="navigation">
+
+        <a href="index.html">
+            ← Tableau de bord
+        </a>
+
+        <a href="catalogue.html">
+            Catalogue
+        </a>
+
+    </div>
+
+
+    <div class="bloc">
+
+        <h2>
+            Informations de l'entreprise
+        </h2>
+
+        <p>
+            Ces informations seront utilisées
+            automatiquement sur vos devis.
+        </p>
+
+
+        <label for="nomEntreprise">
+            Nom de l'entreprise *
+        </label>
+
+        <input
+            type="text"
+            id="nomEntreprise"
+            placeholder="Ex : Plomberie Dupont"
+        >
+
+
+        <label for="adresseEntreprise">
+            Adresse *
+        </label>
+
+        <input
+            type="text"
+            id="adresseEntreprise"
+            placeholder="Ex : 10 rue de Paris"
+        >
+
+
+        <label for="codePostal">
+            Code postal *
+        </label>
+
+        <input
+            type="text"
+            id="codePostal"
+            placeholder="Ex : 59000"
+        >
+
+
+        <label for="ville">
+            Ville *
+        </label>
+
+        <input
+            type="text"
+            id="ville"
+            placeholder="Ex : Lille"
+        >
+
+
+        <label for="telephoneEntreprise">
+            Téléphone *
+        </label>
+
+        <input
+            type="text"
+            id="telephoneEntreprise"
+            placeholder="Ex : 06 00 00 00 00"
+        >
+
+
+        <label for="emailEntreprise">
+            E-mail *
+        </label>
+
+        <input
+            type="email"
+            id="emailEntreprise"
+            placeholder="contact@entreprise.fr"
+        >
+
+
+        <label for="siret">
+            SIRET *
+        </label>
+
+        <input
+            type="text"
+            id="siret"
+            placeholder="Ex : 123 456 789 00012"
+        >
+
+
+        <p class="aide">
+            Le SIRET doit être celui de l'entreprise.
+        </p>
+
+
+        <label for="tva">
+            Numéro de TVA intracommunautaire
+        </label>
+
+        <input
+            type="text"
+            id="tva"
+            placeholder="Ex : FR12345678901"
+        >
+
+
+        <p class="aide">
+            Facultatif pour le moment.
+        </p>
+
+
+        <label for="tauxTVA">
+            Taux de TVA appliqué (%) *
+        </label>
+
+        <input
+            type="number"
+            id="tauxTVA"
+            min="0"
+            max="100"
+            step="0.01"
+            placeholder="Ex : 20"
+        >
+
+
+        <p class="aide">
+            Ce taux sera utilisé pour calculer la TVA
+            sur les nouveaux devis.
+        </p>
+
+
+        <div class="avertissement">
+
+            Vérifie que le taux renseigné correspond bien
+            à la situation fiscale de l'entreprise et aux
+            prestations concernées.
+
+        </div>
+
+
+        <label for="site">
+            Site internet
+        </label>
+
+        <input
+            type="text"
+            id="site"
+            placeholder="Ex : www.monentreprise.fr"
+        >
+
+
+        <button onclick="sauvegarderParametres()">
+            Enregistrer les informations
+        </button>
+
+
+        <div
+            class="message"
+            id="message"
+        >
+            Informations enregistrées avec succès.
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+let parametresId = null;
+
+async function appelerSupabase(endpoint, options = {}) {
+    const reponse = await fetch(
+        SUPABASE_URL + "/rest/v1/" + endpoint,
+        {
+            method: options.method || "GET",
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                ...(options.headers || {})
+            },
+            body: options.body
+        }
+    );
+
+    const texte = await reponse.text();
+    let donnees = null;
+
+    if (texte) {
+        try {
+            donnees = JSON.parse(texte);
+        } catch (erreur) {
+            donnees = texte;
+        }
+    }
+
+    if (!reponse.ok) {
+        let message =
+            "Erreur Supabase HTTP " +
+            reponse.status;
+
+        if (
+            donnees &&
+            typeof donnees === "object" &&
+            donnees.message
+        ) {
+            message += " : " + donnees.message;
+        }
+
+        throw new Error(message);
+    }
+
+    return donnees;
+}
+
+function valeur(id) {
+    const element = document.getElementById(id);
+    return element ? element.value.trim() : "";
+}
+
+function nombreOuZero(id) {
+    const nombre = Number(
+        document.getElementById(id)?.value
+    );
+
+    return Number.isFinite(nombre)
+        ? nombre
+        : 0;
+}
+
+function remplir(id, valeur) {
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+        element.value =
+            valeur ?? "";
+    }
+}
+
+function afficherMessage(texte, type = "succes") {
+    const zone =
+        document.getElementById("message");
+
+    if (!zone) {
+        return;
+    }
+
+    zone.textContent = texte;
+    zone.style.display = "block";
+
+    if (type === "erreur") {
+        zone.style.background = "#fee2e2";
+        zone.style.color = "#991b1b";
+        zone.style.borderColor = "#fecaca";
+    } else {
+        zone.style.background = "#dcfce7";
+        zone.style.color = "#166534";
+        zone.style.borderColor = "#bbf7d0";
+    }
+}
+
+async function chargerParametres() {
+    const resultats =
+        await appelerSupabase(
+            "parametres?select=*&order=created_at.asc&limit=1"
+        );
+
+    if (
+        !Array.isArray(resultats) ||
+        !resultats[0]
+    ) {
+        parametresId = null;
+        return;
+    }
+
+    const parametres =
+        resultats[0];
+
+    parametresId =
+        parametres.id;
+
+    remplir(
+        "nomEntreprise",
+        parametres.nom_entreprise
+    );
+
+    remplir(
+        "adresseEntreprise",
+        parametres.adresse
+    );
+
+    remplir(
+        "codePostal",
+        parametres.code_postal
+    );
+
+    remplir(
+        "ville",
+        parametres.ville
+    );
+
+    remplir(
+        "telephoneEntreprise",
+        parametres.telephone
+    );
+
+    remplir(
+        "emailEntreprise",
+        parametres.email
+    );
+
+    remplir(
+        "siret",
+        parametres.siret
+    );
+
+    remplir(
+        "tva",
+        parametres.numero_tva
+    );
+
+    remplir(
+        "tauxTVA",
+        parametres.taux_tva ?? 20
+    );
+
+    remplir(
+        "site",
+        parametres.site
+    );
+}
+
+async function enregistrerParametres(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    const donnees = {
+        nom_entreprise:
+            valeur("nomEntreprise"),
+
+        adresse:
+            valeur("adresseEntreprise"),
+
+        code_postal:
+            valeur("codePostal"),
+
+        ville:
+            valeur("ville"),
+
+        telephone:
+            valeur("telephoneEntreprise"),
+
+        email:
+            valeur("emailEntreprise"),
+
+        siret:
+            valeur("siret"),
+
+        numero_tva:
+            valeur("tva"),
+
+        taux_tva:
+            nombreOuZero("tauxTVA"),
+
+        site:
+            valeur("site"),
+
+        updated_at:
+            new Date().toISOString()
+    };
+
+    try {
+        if (parametresId) {
+            await appelerSupabase(
+                "parametres?id=eq." +
+                encodeURIComponent(
+                    parametresId
+                ),
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Prefer":
+                            "return=minimal"
+                    },
+                    body:
+                        JSON.stringify(
+                            donnees
+                        )
+                }
+            );
+        } else {
+            const insertion =
+                await appelerSupabase(
+                    "parametres",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Prefer":
+                                "return=representation"
+                        },
+                        body:
+                            JSON.stringify(
+                                donnees
+                            )
+                    }
+                );
+
+            if (
+                Array.isArray(insertion) &&
+                insertion[0]
+            ) {
+                parametresId =
+                    insertion[0].id;
+            }
+        }
+
+        afficherMessage(
+            "Paramètres enregistrés dans Supabase."
+        );
+
+    } catch (erreur) {
+        console.error(erreur);
+
+        afficherMessage(
+            "Impossible d'enregistrer les paramètres : " +
+            erreur.message,
+            "erreur"
+        );
+    }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+        try {
+            await chargerParametres();
+        } catch (erreur) {
+            console.error(erreur);
+
+            afficherMessage(
+                "Impossible de charger les paramètres : " +
+                erreur.message,
+                "erreur"
+            );
+        }
+
+        const formulaire =
+            document.querySelector("form");
+
+        if (formulaire) {
+            formulaire.addEventListener(
+                "submit",
+                enregistrerParametres
+            );
+        }
+
+        const boutons =
+            Array.from(
+                document.querySelectorAll(
+                    "button"
+                )
+            );
+
+        const boutonEnregistrer =
+            boutons.find(
+                bouton =>
+                    /enregistrer|sauvegarder/i.test(
+                        bouton.textContent || ""
+                    )
+            );
+
+        if (
+            boutonEnregistrer &&
+            !formulaire
+        ) {
+            boutonEnregistrer.addEventListener(
+                "click",
+                enregistrerParametres
+            );
+        }
+    }
+);
+</script>
+
+
+</body>
+
+</html>
