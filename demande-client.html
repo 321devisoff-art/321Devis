@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Demande de devis — 321Devis</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f4f6;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+        }
+
+
+        .header h1 {
+            margin: 0 0 8px 0;
+        }
+
+
+        .header p {
+            margin: 0;
+            color: #d1d5db;
+        }
+
+
+        .bloc {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+        }
+
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+
+        .section h2 {
+            margin-bottom: 18px;
+        }
+
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+
+        button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+
+        .confirmation {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+        }
+
+
+        .confirmation h3 {
+            margin-top: 0;
+            color: #065f46;
+        }
+
+
+        .numero {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+
+        .information {
+            margin-top: 15px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+
+        .erreur {
+            display: none;
+            margin-top: 25px;
+            padding: 15px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            color: #991b1b;
+            line-height: 1.5;
+        }
+
+
+        .chargement {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            color: #4b5563;
+            font-size: 14px;
+        }
+
+
+        .diagnostic {
+            margin-bottom: 25px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            color: #374151;
+        }
+
+
+        .diagnostic.succes {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+
+
+        .diagnostic.erreur {
+            display: block;
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="header">
+
+        <h1>
+            321Devis
+        </h1>
+
+        <p>
+            1, 2, 3… votre demande est envoyée.
+        </p>
+
+    </div>
+
+
+    <div class="bloc">
+
+
+        <!-- DIAGNOSTIC -->
+
+        <div
+            id="diagnostic"
+            class="diagnostic"
+        >
+            Connexion à 321Devis en cours…
+        </div>
+
+
+        <!-- INTRODUCTION -->
+
+        <div class="section">
+
+            <h2>
+                Demande de devis
+            </h2>
+
+            <p>
+                Décrivez votre besoin. L'entreprise recevra
+                votre demande et pourra préparer un devis.
+            </p>
+
+        </div>
+
+
+        <!-- INFORMATIONS CLIENT -->
+
+        <div class="section">
+
+            <h2>
+                Vos informations
+            </h2>
+
+
+            <label for="nom">
+                Nom *
+            </label>
+
+            <input
+                type="text"
+                id="nom"
+                placeholder="Jean Dupont"
+            >
+
+
+            <label for="telephone">
+                Téléphone *
+            </label>
+
+            <input
+                type="text"
+                id="telephone"
+                placeholder="06 00 00 00 00"
+            >
+
+
+            <label for="email">
+                E-mail
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="jean@email.fr"
+            >
+
+
+            <label for="adresse">
+                Adresse des travaux *
+            </label>
+
+            <input
+                type="text"
+                id="adresse"
+                placeholder="10 rue de Paris, 59000 Lille"
+            >
+
+        </div>
+
+
+        <!-- DEMANDE -->
+
+        <div class="section">
+
+            <h2>
+                Votre besoin
+            </h2>
+
+
+            <label for="typeTravaux">
+                Type de travaux *
+            </label>
+
+
+            <select id="typeTravaux">
+
+                <option value="">
+                    -- Sélectionnez --
+                </option>
+
+                <option value="Fuite / recherche de fuite">
+                    Fuite / recherche de fuite
+                </option>
+
+                <option value="Remplacement de siphon">
+                    Remplacement de siphon
+                </option>
+
+                <option value="Canalisation bouchée">
+                    Canalisation bouchée
+                </option>
+
+                <option value="Main-d'œuvre / intervention">
+                    Main-d'œuvre / intervention
+                </option>
+
+                <option value="Autre demande">
+                    Autre demande
+                </option>
+
+            </select>
+
+
+            <label for="description">
+                Décrivez votre problème *
+            </label>
+
+
+            <textarea
+                id="description"
+                placeholder="Exemple : J'ai une fuite sous l'évier de ma cuisine..."
+            ></textarea>
+
+
+            <label for="quantite">
+                Quantité estimée
+            </label>
+
+
+            <input
+                type="number"
+                id="quantite"
+                value="1"
+                min="1"
+                step="1"
+            >
+
+        </div>
+
+
+        <!-- ENVOI -->
+
+        <button
+            id="boutonEnvoi"
+            onclick="envoyerDemande()"
+        >
+            Envoyer ma demande
+        </button>
+
+
+        <div
+            class="chargement"
+            id="chargement"
+        >
+            Enregistrement de votre demande…
+        </div>
+
+
+        <!-- ERREUR -->
+
+        <div
+            class="erreur"
+            id="erreur"
+        >
+        </div>
+
+
+        <!-- CONFIRMATION -->
+
+        <div
+            class="confirmation"
+            id="confirmation"
+        >
+
+            <h3>
+                Demande envoyée avec succès
+            </h3>
+
+
+            <p>
+                Votre numéro de demande :
+            </p>
+
+
+            <div
+                class="numero"
+                id="numeroDemande"
+            >
+            </div>
+
+
+            <p class="information">
+
+                Votre demande est maintenant enregistrée.
+                L'entreprise pourra la consulter et préparer votre devis.
+
+            </p>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+    /*
+     * =====================================================
+     * CONFIGURATION SUPABASE
+     * =====================================================
+     */
+
+    const SUPABASE_URL =
+        "https://ywmuiqavjdzuaittqesc.supabase.co";
+
+
+    const SUPABASE_KEY =
+        "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+
+    /*
+     * =====================================================
+     * ÉLÉMENTS
+     * =====================================================
+     */
+
+    const diagnosticElement =
+        document.getElementById(
+            "diagnostic"
+        );
+
+
+    const boutonEnvoi =
+        document.getElementById(
+            "boutonEnvoi"
+        );
+
+
+    const chargement =
+        document.getElementById(
+            "chargement"
+        );
+
+
+    const confirmation =
+        document.getElementById(
+            "confirmation"
+        );
+
+
+    const erreurElement =
+        document.getElementById(
+            "erreur"
+        );
+
+
+    /*
+     * =====================================================
+     * DIAGNOSTIC
+     * =====================================================
+     */
+
+    function afficherDiagnostic(
+        message,
+        succes
+    ) {
+
+        diagnosticElement.textContent =
+            message;
+
+
+        diagnosticElement.className =
+            "diagnostic";
+
+
+        if (succes) {
+
+            diagnosticElement.classList.add(
+                "succes"
+            );
+
+        }
+
+    }
+
+
+    function afficherErreur(
+        message
+    ) {
+
+        erreurElement.innerHTML =
+            "<strong>Erreur :</strong><br><br>" +
+            echapperHTML(
+                message
+            );
+
+
+        erreurElement.style.display =
+            "block";
+
+    }
+
+
+    /*
+     * =====================================================
+     * APPEL SUPABASE
+     * =====================================================
+     */
+
+    async function appelerSupabase(
+        table,
+        options
+    ) {
+
+        const url =
+            SUPABASE_URL +
+            "/rest/v1/" +
+            table;
+
+
+        const optionsFetch = {
+
+            method:
+                options.method ||
+                "GET",
+
+            headers: {
+
+                "apikey":
+                    SUPABASE_KEY,
+
+                "Content-Type":
+                    "application/json",
+
+                "Accept":
+                    "application/json",
+
+                ...(options.headers || {})
+
+            }
+
+        };
+
+
+        if (
+            options.body !== undefined
+        ) {
+
+            optionsFetch.body =
+                options.body;
+
+        }
+
+
+        const reponse =
+            await fetch(
+                url,
+                optionsFetch
+            );
+
+
+        const texte =
+            await reponse.text();
+
+
+        let donnees =
+            null;
+
+
+        if (texte) {
+
+            try {
+
+                donnees =
+                    JSON.parse(
+                        texte
+                    );
+
+            } catch (erreur) {
+
+                donnees =
+                    texte;
+
+            }
+
+        }
+
+
+        if (!reponse.ok) {
+
+            console.error(
+                "Supabase HTTP",
+                reponse.status,
+                donnees
+            );
+
+
+            let message =
+                "Erreur Supabase HTTP " +
+                reponse.status;
+
+
+            if (
+                donnees &&
+                typeof donnees === "object"
+            ) {
+
+                if (
+                    donnees.message
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.message;
+
+                }
+
+                else if (
+                    donnees.error
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.error;
+
+                }
+
+                else if (
+                    donnees.hint
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.hint;
+
+                }
+
+            }
+
+            else if (
+                typeof donnees === "string" &&
+                donnees.trim() !== ""
+            ) {
+
+                message +=
+                    " : " +
+                    donnees;
+
+            }
+
+
+            throw new Error(
+                message
+            );
+
+        }
+
+
+        return donnees;
+
+    }
+
+
+    /*
+     * =====================================================
+     * TEST DE CONNEXION AU CHARGEMENT
+     * =====================================================
+     */
+
+    async function testerConnexionSupabase() {
+
+        try {
+
+            await appelerSupabase(
+                "clients?select=id&limit=1",
+                {
+                    method: "GET"
+                }
+            );
+
+
+            afficherDiagnostic(
+                "Connexion Supabase opérationnelle.",
+                true
+            );
+
+
+        } catch (erreur) {
+
+            console.error(
+                "Test Supabase échoué :",
+                erreur
+            );
+
+
+            afficherDiagnostic(
+                "La connexion Supabase n'a pas pu être vérifiée. Utilise le formulaire pour obtenir le détail.",
+                false
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * GÉNÉRATION DU NUMÉRO
+     * =====================================================
+     */
+
+    async function genererNumeroDemande() {
+
+        const annee =
+            new Date().getFullYear();
+
+        const donnees =
+            await appelerSupabase(
+                "demandes?select=numero"
+            );
+
+        let plusGrandNumero = 0;
+
+        if (Array.isArray(donnees)) {
+
+            donnees.forEach(
+                function(demande) {
+
+                    const numero =
+                        String(
+                            demande.numero || ""
+                        );
+
+                    const prefixe =
+                        "DEM-" +
+                        annee +
+                        "-";
+
+                    if (
+                        numero.startsWith(
+                            prefixe
+                        )
+                    ) {
+
+                        const suffixe =
+                            Number(
+                                numero.slice(
+                                    prefixe.length
+                                )
+                            );
+
+                        if (
+                            Number.isFinite(
+                                suffixe
+                            ) &&
+                            suffixe >
+                            plusGrandNumero
+                        ) {
+                            plusGrandNumero =
+                                suffixe;
+                        }
+                    }
+                }
+            );
+        }
+
+        return (
+            "DEM-" +
+            annee +
+            "-" +
+            String(
+                plusGrandNumero + 1
+            ).padStart(
+                4,
+                "0"
+            )
+        );
+    }
+
+
+    /*
+     * =====================================================
+     * CRÉER LE CLIENT
+     * =====================================================
+     */
+
+    async function creerClient(
+        nom,
+        telephone,
+        email,
+        adresse
+    ) {
+
+        const resultat =
+            await appelerSupabase(
+                "clients",
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Prefer":
+                            "return=representation"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            {
+                                nom:
+                                    nom,
+
+                                email:
+                                    email ||
+                                    null,
+
+                                telephone:
+                                    telephone,
+
+                                adresse:
+                                    adresse
+                            }
+                        )
+                }
+            );
+
+
+        if (
+            !Array.isArray(
+                resultat
+            ) ||
+            !resultat[0] ||
+            !resultat[0].id
+        ) {
+
+            throw new Error(
+                "Supabase n'a pas retourné l'identifiant du client."
+            );
+
+        }
+
+
+        return resultat[0];
+
+    }
+
+
+    /*
+     * =====================================================
+     * CRÉER LA DEMANDE
+     * =====================================================
+     */
+
+    async function creerDemande(
+        numero,
+        clientId,
+        typeTravaux,
+        description,
+        adresse,
+        quantite
+    ) {
+
+        const descriptionComplete =
+            "Type de travaux : " +
+            typeTravaux +
+            "\n\n" +
+            "Quantité estimée : " +
+            quantite +
+            "\n\n" +
+            "Description :\n" +
+            description;
+
+
+        const resultat =
+            await appelerSupabase(
+                "demandes",
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Prefer":
+                            "return=representation"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            {
+                                numero:
+                                    numero,
+
+                                client_id:
+                                    clientId,
+
+                                description:
+                                    descriptionComplete,
+
+                                adresse:
+                                    adresse,
+
+                                urgence:
+                                    null,
+
+                                statut:
+                                    "Nouvelle",
+
+                                created_at:
+                                    new Date().toISOString()
+                            }
+                        )
+                }
+            );
+
+
+        if (
+            !Array.isArray(
+                resultat
+            ) ||
+            !resultat[0]
+        ) {
+
+            throw new Error(
+                "Supabase n'a pas retourné la demande créée."
+            );
+
+        }
+
+
+        return resultat[0];
+
+    }
+
+
+    /*
+     * =====================================================
+     * ENVOYER LA DEMANDE
+     * =====================================================
+     */
+
+    async function envoyerDemande() {
+
+        /*
+         * Réinitialisation
+         */
+
+        erreurElement.style.display =
+            "none";
+
+
+        confirmation.style.display =
+            "none";
+
+
+        /*
+         * Récupération
+         */
+
+        const nom =
+            document
+                .getElementById("nom")
+                .value
+                .trim();
+
+
+        const telephone =
+            document
+                .getElementById("telephone")
+                .value
+                .trim();
+
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+
+        const adresse =
+            document
+                .getElementById("adresse")
+                .value
+                .trim();
+
+
+        const typeTravaux =
+            document
+                .getElementById("typeTravaux")
+                .value;
+
+
+        const description =
+            document
+                .getElementById("description")
+                .value
+                .trim();
+
+
+        const quantite =
+            Number(
+                document
+                    .getElementById("quantite")
+                    .value
+            );
+
+
+        /*
+         * Vérifications
+         */
+
+        if (
+            nom === ""
+        ) {
+
+            alert(
+                "Merci d'indiquer votre nom."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            telephone === ""
+        ) {
+
+            alert(
+                "Merci d'indiquer votre téléphone."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            adresse === ""
+        ) {
+
+            alert(
+                "Merci d'indiquer l'adresse des travaux."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            typeTravaux === ""
+        ) {
+
+            alert(
+                "Merci de sélectionner le type de travaux."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            description === ""
+        ) {
+
+            alert(
+                "Merci de décrire votre problème."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !Number.isFinite(
+                quantite
+            ) ||
+            quantite <= 0
+        ) {
+
+            alert(
+                "La quantité doit être supérieure à 0."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Numéro
+         */
+
+        const numero =
+            await genererNumeroDemande();
+
+
+        /*
+         * Chargement
+         */
+
+        boutonEnvoi.disabled =
+            true;
+
+
+        boutonEnvoi.textContent =
+            "Enregistrement…";
+
+
+        chargement.style.display =
+            "block";
+
+
+        afficherDiagnostic(
+            "Connexion à Supabase et enregistrement…",
+            false
+        );
+
+
+        try {
+
+            /*
+             * 1. Client
+             */
+
+            const client =
+                await creerClient(
+                    nom,
+                    telephone,
+                    email,
+                    adresse
+                );
+
+
+            /*
+             * 2. Demande
+             */
+
+            await creerDemande(
+                numero,
+                client.id,
+                typeTravaux,
+                description,
+                adresse,
+                quantite
+            );
+
+
+            /*
+             * 3. Succès
+             */
+
+            document.getElementById(
+                "numeroDemande"
+            ).textContent =
+                numero;
+
+
+            confirmation.style.display =
+                "block";
+
+
+            chargement.style.display =
+                "none";
+
+
+            boutonEnvoi.textContent =
+                "Demande envoyée";
+
+
+            afficherDiagnostic(
+                "Demande enregistrée avec succès dans Supabase.",
+                true
+            );
+
+
+        } catch (erreur) {
+
+            console.error(
+                "ERREUR 321DEVIS :",
+                erreur
+            );
+
+
+            chargement.style.display =
+                "none";
+
+
+            afficherErreur(
+                erreur.message ||
+                "Erreur inconnue."
+            );
+
+
+            boutonEnvoi.disabled =
+                false;
+
+
+            boutonEnvoi.textContent =
+                "Réessayer";
+
+
+            afficherDiagnostic(
+                "La connexion ou l'enregistrement Supabase a échoué.",
+                false
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =====================================================
+     * SÉCURITÉ HTML
+     * =====================================================
+     */
+
+    function echapperHTML(
+        valeur
+    ) {
+
+        return String(
+            valeur ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /*
+     * =====================================================
+     * INITIALISATION
+     * =====================================================
+     */
+
+    testerConnexionSupabase();
+
+</script>
+
+
+</body>
+
+</html>
