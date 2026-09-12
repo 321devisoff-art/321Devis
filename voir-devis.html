@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Devis — 321Devis</title>
+
+    <style>
+*{box-sizing:border-box}
+:root{--blue:#2864e8;--ink:#101828;--muted:#667085;--line:#e4e7ec;--bg:#f5f7fb;--white:#fff}
+body{margin:0;padding:30px 18px 55px;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.actions{max-width:900px;margin:0 auto 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}.actions a,.actions button{display:inline-block;padding:10px 13px;border:1px solid var(--line);border-radius:9px;text-decoration:none;cursor:pointer;font-size:12px;font-weight:750}.btn-retour{background:#fff;color:#344054}.btn-imprimer{background:var(--blue);border-color:var(--blue)!important;color:#fff}.compte{margin-left:auto;color:var(--muted);font-size:11px}
+.devis{width:100%;max-width:900px;margin:0 auto;background:#fff;padding:48px 52px;box-shadow:0 12px 35px rgba(16,24,40,.07);border:1px solid #eaecf0;border-radius:4px}
+.entete{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;padding-bottom:24px;border-bottom:2px solid var(--ink)}.entreprise{flex:1}.logo{width:58px;height:58px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--blue);color:#fff;font-size:19px;font-weight:850;margin-bottom:15px}.entreprise h1{margin:0 0 7px;font-size:25px;letter-spacing:-.6px}.entreprise .slogan{margin:0 0 15px;color:var(--muted);font-size:12px}.entreprise p{margin:4px 0;color:#475467;font-size:12px}.bloc-numero{min-width:220px;text-align:right}.type-document{display:inline-block;padding:6px 12px;background:#eef4ff;color:#175cd3;border-radius:7px;font-size:11px;font-weight:850;letter-spacing:1.2px;margin-bottom:12px}.bloc-numero p{margin:6px 0;font-size:12px}
+.titre-document{margin:28px 0 24px}.titre-document h2{margin:0 0 6px;font-size:24px;letter-spacing:-.5px}.titre-document p{margin:0;color:var(--muted);font-size:12px}
+.blocs-informations{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}.carte-information{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff}.carte-information h3{margin:0 0 11px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}.carte-information p{margin:5px 0;line-height:1.4;font-size:12px}
+.tableau-devis{width:100%;border-collapse:collapse;margin-top:14px}.tableau-devis th{padding:11px 10px;background:#f8fafc;color:#475467;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:10px;text-transform:uppercase;letter-spacing:.35px;text-align:left}.tableau-devis td{padding:12px 10px;border-bottom:1px solid var(--line);font-size:12px}.tableau-devis tbody tr:nth-child(even){background:#fcfcfd}.col-quantite,.col-prix,.col-total{text-align:right!important;white-space:nowrap}
+.zone-totaux{display:flex;justify-content:flex-end;margin-top:22px}.totaux{width:300px}.ligne-total{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}.ligne-total span:first-child{color:#475467}.ligne-total strong{color:var(--ink)}.ligne-total-final{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:13px 14px;background:var(--ink);color:#fff;border-radius:8px;font-size:16px}.ligne-total-final strong{color:#fff}
+.section{margin-top:34px}.section h3{margin:0 0 10px;font-size:14px}.conditions{border:1px solid var(--line);border-radius:9px;padding:15px;background:#f8fafc;color:#475467;line-height:1.5;font-size:11px}.conditions p{margin:6px 0}.acceptation{margin-top:25px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.zone-signature{min-height:125px;border:1px solid var(--line);border-radius:9px;padding:15px}.zone-signature h3{margin-top:0;font-size:12px}.zone-signature p{font-size:11px}.ligne-signature{margin-top:60px;border-top:1px solid #98a2b3;padding-top:7px;color:var(--muted);font-size:10px}.footer{margin-top:34px;padding-top:15px;border-top:1px solid var(--line);color:var(--muted);font-size:10px;line-height:1.45}.footer p{margin:4px 0}
+.erreur{max-width:700px;margin:100px auto;background:#fff;padding:40px;text-align:center;border-radius:10px}.erreur a{color:var(--blue)}
+@media(max-width:700px){body{padding:12px}.devis{padding:25px 18px}.entete{flex-direction:column;gap:20px}.bloc-numero{text-align:left}.blocs-informations,.acceptation{grid-template-columns:1fr}.zone-totaux{justify-content:stretch}.totaux{width:100%}.compte{width:100%;margin-left:0}.tableau-devis{display:block;overflow-x:auto;white-space:nowrap}}
+@media print{@page{size:A4;margin:12mm}body{background:#fff;padding:0}.actions{display:none!important}.devis{max-width:none;width:100%;margin:0;padding:8mm;box-shadow:none;border:0}.tableau-devis tr,.section,.acceptation,.footer{page-break-inside:avoid}}
+</style>
+
+</head>
+
+<body>
+
+    <div class="actions">
+
+        <a
+            href="historique.html"
+            class="btn-retour"
+        >
+            ← Retour
+        </a>
+
+        <button
+            class="btn-imprimer"
+            onclick="window.print()"
+        >
+            Imprimer / PDF
+        </button>
+
+        <span
+            class="compte"
+            id="compteUtilisateur"
+        >
+            Vérification de la connexion…
+        </span>
+
+    </div>
+
+    <div class="devis">
+
+        <!-- EN-TÊTE ENTREPRISE -->
+
+        <div class="entete">
+
+            <div class="entreprise">
+
+                <div class="logo">
+                    321
+                </div>
+
+                <h1 id="nomEntreprise">
+                    Votre entreprise
+                </h1>
+
+                <p class="slogan">
+                    1, 2, 3… votre devis est prêt.
+                </p>
+
+                <p id="adresseEntreprise"></p>
+                <p id="villeEntreprise"></p>
+                <p id="telephoneEntreprise"></p>
+                <p id="emailEntreprise"></p>
+                <p id="siteEntreprise"></p>
+
+            </div>
+
+            <div class="bloc-numero">
+
+                <div class="type-document">
+                    DEVIS
+                </div>
+
+                <p>
+                    <strong>N° :</strong>
+                    <span id="numeroDevis"></span>
+                </p>
+
+                <p>
+                    <strong>Date :</strong>
+                    <span id="dateDevis"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="titre-document">
+
+            <h2>
+                Votre devis
+            </h2>
+
+            <p>
+                Détail des prestations proposées.
+            </p>
+
+        </div>
+
+        <!-- INFORMATIONS -->
+
+        <div class="blocs-informations">
+
+            <div class="carte-information">
+
+                <h3>
+                    Émetteur
+                </h3>
+
+                <p>
+                    <strong id="nomEntrepriseCarte"></strong>
+                </p>
+
+                <p id="adresseEntrepriseCarte"></p>
+                <p id="villeEntrepriseCarte"></p>
+
+                <p>
+                    SIRET :
+                    <span id="siretEntreprise"></span>
+                </p>
+
+                <p>
+                    TVA :
+                    <span id="tvaEntreprise"></span>
+                </p>
+
+            </div>
+
+            <div class="carte-information">
+
+                <h3>
+                    Client
+                </h3>
+
+                <p>
+                    <strong id="nomClient"></strong>
+                </p>
+
+                <p id="adresseClient"></p>
+                <p id="telephoneClient"></p>
+                <p id="emailClient"></p>
+
+            </div>
+
+        </div>
+
+        <!-- TABLEAU -->
+
+        <table class="tableau-devis">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Désignation
+                    </th>
+
+                    <th class="col-quantite">
+                        Qté
+                    </th>
+
+                    <th class="col-prix">
+                        Prix unitaire HT
+                    </th>
+
+                    <th class="col-total">
+                        Total HT
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="lignesDevis"></tbody>
+
+        </table>
+
+        <!-- TOTALS -->
+
+        <div class="zone-totaux">
+
+            <div class="totaux">
+
+                <div class="ligne-total">
+
+                    <span>
+                        Total HT
+                    </span>
+
+                    <strong>
+                        <span id="totalHT"></span>
+                    </strong>
+
+                </div>
+
+                <div class="ligne-total">
+
+                    <span>
+                        TVA (<span id="tauxTVA"></span> %)
+                    </span>
+
+                    <strong>
+                        <span id="tva"></span>
+                    </strong>
+
+                </div>
+
+                <div class="ligne-total-final">
+
+                    <span>
+                        Total TTC
+                    </span>
+
+                    <strong>
+                        <span id="totalTTC"></span>
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CONDITIONS -->
+
+        <div class="section">
+
+            <h3>
+                Conditions
+            </h3>
+
+            <div class="conditions">
+
+                <p>
+                    Validité du devis : à renseigner.
+                </p>
+
+                <p>
+                    Délai d'intervention : à convenir avec le client.
+                </p>
+
+                <p>
+                    Les travaux seront réalisés selon les prestations
+                    détaillées dans le présent devis.
+                </p>
+
+                <p>
+                    Toute prestation supplémentaire fera l'objet
+                    d'une validation préalable.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- SIGNATURE -->
+
+        <div class="section">
+
+            <h3>
+                Acceptation du devis
+            </h3>
+
+            <p>
+                Bon pour accord.
+            </p>
+
+            <div class="acceptation">
+
+                <div class="zone-signature">
+
+                    <h3>
+                        Le client
+                    </h3>
+
+                    <p>
+                        Nom :
+                        <span id="nomSignature"></span>
+                    </p>
+
+                    <div class="ligne-signature">
+                        Signature
+                    </div>
+
+                </div>
+
+                <div class="zone-signature">
+
+                    <h3>
+                        L'entreprise
+                    </h3>
+
+                    <p>
+                        <span id="entrepriseSignature"></span>
+                    </p>
+
+                    <div class="ligne-signature">
+                        Signature et cachet
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            <p>
+                Devis généré avec 321Devis.
+            </p>
+
+            <p>
+                Ce document est basé sur les informations
+                enregistrées dans les paramètres de l'entreprise.
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+
+        const SUPABASE_URL =
+            "https://ywmuiqavjdzuaittqesc.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+        const clientSupabase =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+        let utilisateurId = null;
+        let accessToken = null;
+
+        async function verifierUtilisateur() {
+
+            const { data, error } =
+                await clientSupabase.auth.getSession();
+
+            if (error) {
+                throw error;
+            }
+
+            if (
+                !data ||
+                !data.session ||
+                !data.session.user
+            ) {
+
+                window.location.href =
+                    "connexion.html";
+
+                return false;
+            }
+
+            utilisateurId =
+                data.session.user.id;
+
+            accessToken =
+                data.session.access_token;
+
+            document.getElementById(
+                "compteUtilisateur"
+            ).textContent =
+                "Connecté : " +
+                (
+                    data.session.user.email ||
+                    "Compte utilisateur"
+                );
+
+            return true;
+        }
+
+        async function appelerSupabase(
+            endpoint,
+            options = {}
+        ) {
+
+            if (!accessToken) {
+
+                const connecte =
+                    await verifierUtilisateur();
+
+                if (!connecte) {
+
+                    throw new Error(
+                        "Vous devez être connecté."
+                    );
+                }
+            }
+
+            const reponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/" +
+                    endpoint,
+                    {
+                        method:
+                            options.method ||
+                            "GET",
+
+                        headers: {
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                accessToken,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json",
+
+                            ...(options.headers || {})
+                        },
+
+                        body:
+                            options.body
+                    }
+                );
+
+            const texte =
+                await reponse.text();
+
+            let donnees =
+                null;
+
+            if (texte) {
+
+                try {
+
+                    donnees =
+                        JSON.parse(
+                            texte
+                        );
+
+                } catch (erreur) {
+
+                    donnees =
+                        texte;
+                }
+            }
+
+            if (!reponse.ok) {
+
+                let message =
+                    "Erreur Supabase HTTP " +
+                    reponse.status;
+
+                if (
+                    donnees &&
+                    typeof donnees === "object" &&
+                    donnees.message
+                ) {
+
+                    message +=
+                        " : " +
+                        donnees.message;
+                }
+
+                throw new Error(
+                    message
+                );
+            }
+
+            return donnees;
+        }
+
+        function echapperHTML(valeur) {
+
+            return String(
+                valeur ?? ""
+            )
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formaterDate(dateISO) {
+
+            if (!dateISO) {
+                return "—";
+            }
+
+            const date =
+                new Date(dateISO);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return "—";
+            }
+
+            return date.toLocaleDateString(
+                "fr-FR",
+                {
+                    day:
+                        "2-digit",
+                    month:
+                        "2-digit",
+                    year:
+                        "numeric"
+                }
+            );
+        }
+
+        function formaterMontant(valeur) {
+
+            const montant =
+                Number(valeur);
+
+            if (
+                !Number.isFinite(
+                    montant
+                )
+            ) {
+                return "0,00 €";
+            }
+
+            return montant.toLocaleString(
+                "fr-FR",
+                {
+                    minimumFractionDigits:
+                        2,
+                    maximumFractionDigits:
+                        2
+                }
+            ) + " €";
+        }
+
+        function afficherTexte(
+            id,
+            valeur,
+            secours = "—"
+        ) {
+
+            const element =
+                document.getElementById(
+                    id
+                );
+
+            if (element) {
+
+                element.textContent =
+                    valeur !== null &&
+                    valeur !== undefined &&
+                    String(valeur).trim() !== ""
+                        ? valeur
+                        : secours;
+            }
+        }
+
+        function construireVilleEntreprise(
+            parametres
+        ) {
+
+            const codePostal =
+                String(
+                    parametres.code_postal ||
+                    ""
+                ).trim();
+
+            const ville =
+                String(
+                    parametres.ville ||
+                    ""
+                ).trim();
+
+            return [
+                codePostal,
+                ville
+            ]
+                .filter(Boolean)
+                .join(" ");
+        }
+
+        async function chargerEntrepriseSupabase() {
+
+            const donnees =
+                await appelerSupabase(
+                    "parametres?select=nom_entreprise,adresse,code_postal,ville,telephone,email,siret,numero_tva,taux_tva,site&user_id=eq." +
+                    encodeURIComponent(
+                        utilisateurId
+                    ) +
+                    "&order=created_at.asc&limit=1"
+                );
+
+            const entreprise =
+                Array.isArray(donnees) &&
+                donnees[0]
+                    ? donnees[0]
+                    : null;
+
+            if (!entreprise) {
+                return;
+            }
+
+            const villeComplete =
+                construireVilleEntreprise(
+                    entreprise
+                );
+
+            afficherTexte(
+                "nomEntreprise",
+                entreprise.nom_entreprise
+            );
+
+            afficherTexte(
+                "adresseEntreprise",
+                entreprise.adresse
+            );
+
+            afficherTexte(
+                "villeEntreprise",
+                villeComplete
+            );
+
+            afficherTexte(
+                "telephoneEntreprise",
+                entreprise.telephone
+            );
+
+            afficherTexte(
+                "emailEntreprise",
+                entreprise.email
+            );
+
+            afficherTexte(
+                "siteEntreprise",
+                entreprise.site
+            );
+
+            afficherTexte(
+                "nomEntrepriseCarte",
+                entreprise.nom_entreprise
+            );
+
+            afficherTexte(
+                "adresseEntrepriseCarte",
+                entreprise.adresse
+            );
+
+            afficherTexte(
+                "villeEntrepriseCarte",
+                villeComplete
+            );
+
+            afficherTexte(
+                "siretEntreprise",
+                entreprise.siret
+            );
+
+            afficherTexte(
+                "tvaEntreprise",
+                entreprise.numero_tva
+            );
+
+            afficherTexte(
+                "entrepriseSignature",
+                entreprise.nom_entreprise
+            );
+        }
+
+        async function chargerDevis() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+            const numero =
+                params.get(
+                    "numero"
+                );
+
+            if (!numero) {
+
+                throw new Error(
+                    "Aucun numéro de devis n'a été fourni dans l'URL."
+                );
+            }
+
+            const devisTrouves =
+                await appelerSupabase(
+                    "devis?select=*&numero=eq." +
+                    encodeURIComponent(
+                        numero
+                    ) +
+                    "&user_id=eq." +
+                    encodeURIComponent(
+                        utilisateurId
+                    ) +
+                    "&limit=1"
+                );
+
+            if (
+                !Array.isArray(
+                    devisTrouves
+                ) ||
+                !devisTrouves[0]
+            ) {
+
+                throw new Error(
+                    "Devis introuvable dans Supabase."
+                );
+            }
+
+            const devis =
+                devisTrouves[0];
+
+            const [clients, lignes] =
+                await Promise.all([
+                    devis.client_id
+                        ? appelerSupabase(
+                            "clients?select=*&id=eq." +
+                            encodeURIComponent(
+                                devis.client_id
+                            ) +
+                            "&user_id=eq." +
+                            encodeURIComponent(
+                                utilisateurId
+                            ) +
+                            "&limit=1"
+                        )
+                        : Promise.resolve(
+                            []
+                        ),
+
+                    appelerSupabase(
+                        "lignes_devis?select=*&devis_id=eq." +
+                        encodeURIComponent(
+                            devis.id
+                        ) +
+                        "&user_id=eq." +
+                        encodeURIComponent(
+                            utilisateurId
+                        ) +
+                        "&order=created_at.asc"
+                    )
+                ]);
+
+            const client =
+                Array.isArray(
+                    clients
+                ) &&
+                clients[0]
+                    ? clients[0]
+                    : null;
+
+            const lignesDevis =
+                Array.isArray(
+                    lignes
+                )
+                    ? lignes
+                    : [];
+
+            afficherTexte(
+                "numeroDevis",
+                devis.numero
+            );
+
+            afficherTexte(
+                "dateDevis",
+                formaterDate(
+                    devis.date_validation ||
+                    devis.created_at
+                )
+            );
+
+            afficherTexte(
+                "nomClient",
+                client?.nom
+            );
+
+            afficherTexte(
+                "adresseClient",
+                client?.adresse
+            );
+
+            afficherTexte(
+                "telephoneClient",
+                client?.telephone
+            );
+
+            afficherTexte(
+                "emailClient",
+                client?.email
+            );
+
+            afficherTexte(
+                "nomSignature",
+                client?.nom
+            );
+
+            const tbody =
+                document.getElementById(
+                    "lignesDevis"
+                );
+
+            if (tbody) {
+
+                tbody.innerHTML =
+                    "";
+
+                lignesDevis.forEach(
+                    function(ligne) {
+
+                        const tr =
+                            document.createElement(
+                                "tr"
+                            );
+
+                        tr.innerHTML = `
+                            <td>
+                                ${echapperHTML(
+                                    ligne.description ||
+                                    ""
+                                )}
+                            </td>
+
+                            <td class="col-quantite">
+                                ${echapperHTML(
+                                    Number(
+                                        ligne.quantite ||
+                                        0
+                                    ).toLocaleString(
+                                        "fr-FR"
+                                    )
+                                )}
+                            </td>
+
+                            <td class="col-prix">
+                                ${echapperHTML(
+                                    formaterMontant(
+                                        ligne.prix_unitaire_ht
+                                    )
+                                )}
+                            </td>
+
+                            <td class="col-total">
+                                ${echapperHTML(
+                                    formaterMontant(
+                                        ligne.total_ht
+                                    )
+                                )}
+                            </td>
+                        `;
+
+                        tbody.appendChild(
+                            tr
+                        );
+                    }
+                );
+            }
+
+            const totalHT =
+                Number(
+                    devis.total_ht ||
+                    0
+                );
+
+            const tauxTVA =
+                Number(
+                    devis.taux_tva ||
+                    0
+                );
+
+            const montantTVA =
+                totalHT *
+                tauxTVA /
+                100;
+
+            afficherTexte(
+                "totalHT",
+                formaterMontant(
+                    totalHT
+                )
+            );
+
+            afficherTexte(
+                "tauxTVA",
+                tauxTVA.toLocaleString(
+                    "fr-FR"
+                )
+            );
+
+            afficherTexte(
+                "tva",
+                formaterMontant(
+                    montantTVA
+                )
+            );
+
+            afficherTexte(
+                "totalTTC",
+                formaterMontant(
+                    devis.total_ttc
+                )
+            );
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async function() {
+
+                try {
+
+                    const connecte =
+                        await verifierUtilisateur();
+
+                    if (!connecte) {
+                        return;
+                    }
+
+                    await Promise.all([
+                        chargerEntrepriseSupabase(),
+                        chargerDevis()
+                    ]);
+
+                } catch (erreur) {
+
+                    console.error(
+                        erreur
+                    );
+
+                    alert(
+                        "Impossible de charger le devis.\n\n" +
+                        erreur.message
+                    );
+                }
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
