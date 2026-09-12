@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Votre devis — 321Devis</title>
+
+
+    <style>
+*{box-sizing:border-box}
+:root{--blue:#2864e8;--ink:#101828;--muted:#667085;--line:#e4e7ec;--bg:#f5f7fb;--green:#067647;--red:#b42318}
+body{margin:0;padding:28px 16px 50px;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.container{max-width:820px;margin:auto}.header{background:#fff;padding:18px 24px;border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0}.header h1{margin:0 0 3px;font-size:22px;letter-spacing:-.5px}.header p{margin:0;color:var(--muted);font-size:12px}.devis{background:#fff;padding:30px 32px;border:1px solid var(--line);border-radius:0 0 14px 14px;box-shadow:0 10px 30px rgba(16,24,40,.05)}
+.numero{display:flex;justify-content:space-between;gap:20px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:24px}.numero h2{margin:0;font-size:23px;letter-spacing:-.4px}.numero p{margin:5px 0;color:var(--muted);font-size:12px}.bloc{margin-bottom:25px}.bloc h3{margin:0 0 10px;font-size:14px}.client{padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:9px}.client p{margin:5px 0;font-size:12px}
+table{width:100%;border-collapse:collapse;margin-top:12px}th,td{padding:11px 9px;border-bottom:1px solid var(--line);font-size:12px}th{background:#f8fafc;color:#475467;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.3px;border-top:1px solid var(--line)}.droite{text-align:right}.totaux{width:310px;max-width:100%;margin-left:auto;margin-top:20px}.ligne-total{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}.total-final{margin-top:7px;padding:13px 14px;background:var(--ink);color:#fff;border:0;border-radius:8px;font-size:17px;font-weight:800}
+.message{padding:14px;border-radius:9px;margin-top:16px;font-size:12px}.message-information{background:#eff8ff;border:1px solid #b2ddff;color:#175cd3}.message-succes{background:#ecfdf3;border:1px solid #abefc6;color:var(--green)}.message-refus{background:#fef3f2;border:1px solid #fecdca;color:var(--red)}
+.actions{display:flex;gap:10px;margin-top:17px}.actions button{flex:1;padding:14px;border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:800;cursor:pointer}.btn-accepter{background:var(--green)}.btn-refuser{background:#fff!important;color:var(--red)!important;border:1px solid #fda29b!important}.actions button:disabled{opacity:.5;cursor:not-allowed}
+.signature{margin-top:26px;padding:15px;border:1px solid var(--line);border-radius:9px;background:#f8fafc}.signature h3{margin:0 0 8px;font-size:13px}.signature p{margin:5px 0;color:#475467;font-size:11px}.statut{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#f2f4f7;color:#475467}.statut-envoye{background:#eff8ff;color:#175cd3}.statut-accepte{background:#ecfdf3;color:var(--green)}.statut-refuse{background:#fef3f2;color:var(--red)}.erreur{max-width:650px;margin:80px auto;background:#fff;padding:35px;border:1px solid var(--line);border-radius:12px;text-align:center}.erreur a{color:var(--blue)}
+@media(max-width:650px){body{padding:10px}.header{padding:16px 18px}.devis{padding:22px 17px}.numero{flex-direction:column;gap:8px}.actions{flex-direction:column}.totaux{width:100%}table{display:block;overflow-x:auto;white-space:nowrap}}
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="header">
+
+        <h1>
+            321Devis
+        </h1>
+
+        <p>
+            Votre devis
+        </p>
+
+    </div>
+
+
+    <div
+        class="devis"
+        id="contenuDevis"
+    >
+
+
+        <div class="numero">
+
+            <div>
+
+                <h2>
+                    Votre devis
+                </h2>
+
+                <p>
+                    Vérifiez les prestations et le montant ci-dessous.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p>
+                    <strong>
+                        Numéro :
+                    </strong>
+
+                    <span id="numeroDevis"></span>
+                </p>
+
+
+                <p>
+                    <strong>
+                        Date :
+                    </strong>
+
+                    <span id="dateDevis"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- CLIENT -->
+
+        <div class="bloc">
+
+            <h3>
+                Client
+            </h3>
+
+
+            <div class="client">
+
+                <p>
+                    <strong id="nomClient"></strong>
+                </p>
+
+
+                <p id="adresseClient"></p>
+
+
+                <p id="telephoneClient"></p>
+
+
+                <p id="emailClient"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRESTATIONS -->
+
+        <div class="bloc">
+
+            <h3>
+                Prestations
+            </h3>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Désignation
+                        </th>
+
+                        <th class="droite">
+                            Quantité
+                        </th>
+
+                        <th class="droite">
+                            Prix unitaire HT
+                        </th>
+
+                        <th class="droite">
+                            Total HT
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="lignesDevis"></tbody>
+
+            </table>
+
+
+            <div class="totaux">
+
+
+                <div class="ligne-total">
+
+                    <span>
+                        Total HT
+                    </span>
+
+                    <strong>
+                        <span id="totalHT"></span> €
+                    </strong>
+
+                </div>
+
+
+                <div class="ligne-total">
+
+                    <span id="libelleTVA">
+                        TVA
+                    </span>
+
+                    <strong>
+                        <span id="tva"></span> €
+                    </strong>
+
+                </div>
+
+
+                <div class="ligne-total total-final">
+
+                    <span>
+                        Total TTC
+                    </span>
+
+                    <strong>
+                        <span id="totalTTC"></span> €
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- STATUT -->
+
+        <div class="bloc">
+
+            <h3>
+                Statut
+            </h3>
+
+
+            <span
+                class="statut"
+                id="statutDevis"
+            >
+            </span>
+
+
+            <div
+                class="message message-information"
+                id="messageInformation"
+            >
+                Ce devis est prêt pour votre décision.
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS CLIENT -->
+
+        <div
+            class="bloc"
+            id="zoneActions"
+        >
+
+            <h3>
+                Votre décision
+            </h3>
+
+
+            <p>
+                Choisissez simplement votre réponse.
+            </p>
+
+
+            <div class="actions">
+
+                <button
+                    class="btn-accepter"
+                    id="boutonAccepter"
+                    onclick="accepterDevis()"
+                >
+                    ✓ Accepter le devis
+                </button>
+
+
+                <button
+                    class="btn-refuser"
+                    id="boutonRefuser"
+                    onclick="refuserDevis()"
+                >
+                    Refuser
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- MESSAGE FINAL -->
+
+        <div
+            id="messageFinal"
+            style="display:none;"
+        >
+        </div>
+
+
+        <!-- SIGNATURE -->
+
+        <div class="signature">
+
+            <h3>
+                Accord du client
+            </h3>
+
+
+            <p>
+                En acceptant le devis, vous confirmez
+                votre accord avec les prestations et
+                le montant indiqué.
+            </p>
+
+
+            <p>
+                Client :
+                <strong id="nomSignature"></strong>
+            </p>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+let publicToken = null;
+let devisSelectionne = null;
+let clientSelectionne = null;
+let lignesDevis = [];
+
+async function appelerRPC(nomFonction, parametres) {
+    const reponse = await fetch(
+        SUPABASE_URL + "/rest/v1/rpc/" + nomFonction,
+        {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(parametres)
+        }
+    );
+
+    const texte = await reponse.text();
+    let donnees = null;
+
+    if (texte) {
+        try {
+            donnees = JSON.parse(texte);
+        } catch (erreur) {
+            donnees = texte;
+        }
+    }
+
+    if (!reponse.ok) {
+        let message =
+            "Erreur Supabase HTTP " +
+            reponse.status;
+
+        if (
+            donnees &&
+            typeof donnees === "object"
+        ) {
+            if (donnees.message) {
+                message += " : " + donnees.message;
+            } else if (donnees.error) {
+                message += " : " + donnees.error;
+            } else if (donnees.hint) {
+                message += " : " + donnees.hint;
+            }
+        } else if (
+            typeof donnees === "string" &&
+            donnees.trim() !== ""
+        ) {
+            message += " : " + donnees;
+        }
+
+        throw new Error(message);
+    }
+
+    return donnees;
+}
+
+function echapperHTML(texte) {
+    return String(texte || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+function nombre(valeur) {
+    const resultat = Number(valeur);
+    return Number.isFinite(resultat)
+        ? resultat
+        : 0;
+}
+
+function formaterMontant(valeur) {
+    return nombre(valeur)
+        .toLocaleString(
+            "fr-FR",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+}
+
+function formaterDate(dateISO) {
+    if (!dateISO) {
+        return "—";
+    }
+
+    const date = new Date(dateISO);
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return date.toLocaleDateString("fr-FR");
+}
+
+function recupererPublicToken() {
+    const parametres =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const token =
+        String(
+            parametres.get("token") || ""
+        ).trim();
+
+    const formatUUID =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (
+        token === "" ||
+        !formatUUID.test(token)
+    ) {
+        throw new Error(
+            "Lien de devis invalide ou incomplet."
+        );
+    }
+
+    publicToken = token;
+}
+
+async function chargerDevis() {
+    recupererPublicToken();
+
+    const resultat =
+        await appelerRPC(
+            "lire_devis_public",
+            {
+                p_public_token:
+                    publicToken
+            }
+        );
+
+    if (
+        !resultat ||
+        typeof resultat !== "object" ||
+        !resultat.devis
+    ) {
+        throw new Error(
+            "Supabase n'a pas retourné le devis attendu."
+        );
+    }
+
+    devisSelectionne =
+        resultat.devis;
+
+    clientSelectionne =
+        resultat.client &&
+        typeof resultat.client === "object"
+            ? resultat.client
+            : null;
+
+    lignesDevis =
+        Array.isArray(resultat.lignes)
+            ? resultat.lignes
+            : [];
+
+    afficherDevis();
+}
+
+function afficherDevis() {
+    document.getElementById(
+        "numeroDevis"
+    ).textContent =
+        devisSelectionne.numero || "—";
+
+    document.getElementById(
+        "dateDevis"
+    ).textContent =
+        formaterDate(
+            devisSelectionne.date_envoi ||
+            devisSelectionne.date_validation ||
+            devisSelectionne.created_at
+        );
+
+    document.getElementById(
+        "nomClient"
+    ).textContent =
+        clientSelectionne?.nom || "—";
+
+    document.getElementById(
+        "nomSignature"
+    ).textContent =
+        clientSelectionne?.nom || "—";
+
+    document.getElementById(
+        "adresseClient"
+    ).textContent =
+        clientSelectionne?.adresse || "—";
+
+    document.getElementById(
+        "telephoneClient"
+    ).textContent =
+        clientSelectionne?.telephone
+            ? "Téléphone : " +
+              clientSelectionne.telephone
+            : "Téléphone : —";
+
+    document.getElementById(
+        "emailClient"
+    ).textContent =
+        clientSelectionne?.email || "—";
+
+    const tauxTVA =
+        nombre(
+            devisSelectionne.taux_tva
+        );
+
+    document.getElementById(
+        "libelleTVA"
+    ).textContent =
+        "TVA (" +
+        tauxTVA +
+        " %)";
+
+    const tableau =
+        document.getElementById(
+            "lignesDevis"
+        );
+
+    tableau.innerHTML = "";
+
+    lignesDevis.forEach(
+        function(ligne) {
+            const tr =
+                document.createElement("tr");
+
+            tr.innerHTML = `
+                <td>
+                    ${echapperHTML(
+                        ligne.description
+                    )}
+                </td>
+
+                <td class="droite">
+                    ${nombre(
+                        ligne.quantite
+                    )}
+                </td>
+
+                <td class="droite">
+                    ${formaterMontant(
+                        ligne.prix_unitaire_ht
+                    )} €
+                </td>
+
+                <td class="droite">
+                    ${formaterMontant(
+                        ligne.total_ht
+                    )} €
+                </td>
+            `;
+
+            tableau.appendChild(tr);
+        }
+    );
+
+    const totalHT =
+        nombre(
+            devisSelectionne.total_ht
+        );
+
+    const totalTTC =
+        nombre(
+            devisSelectionne.total_ttc
+        );
+
+    const montantTVA =
+        totalTTC - totalHT;
+
+    document.getElementById(
+        "totalHT"
+    ).textContent =
+        formaterMontant(totalHT);
+
+    document.getElementById(
+        "tva"
+    ).textContent =
+        formaterMontant(montantTVA);
+
+    document.getElementById(
+        "totalTTC"
+    ).textContent =
+        formaterMontant(totalTTC);
+
+    afficherStatut();
+}
+
+function afficherStatut() {
+    if (!devisSelectionne) {
+        return;
+    }
+
+    const statut =
+        devisSelectionne.statut ||
+        "Validé";
+
+    const zone =
+        document.getElementById(
+            "statutDevis"
+        );
+
+    zone.textContent =
+        statut;
+
+    zone.className =
+        "statut";
+
+    if (statut === "Envoyé") {
+        zone.classList.add(
+            "statut-envoye"
+        );
+    }
+
+    if (statut === "Accepté") {
+        zone.classList.add(
+            "statut-accepte"
+        );
+    }
+
+    if (statut === "Refusé") {
+        zone.classList.add(
+            "statut-refuse"
+        );
+    }
+
+    const boutonAccepter =
+        document.getElementById(
+            "boutonAccepter"
+        );
+
+    const boutonRefuser =
+        document.getElementById(
+            "boutonRefuser"
+        );
+
+    boutonAccepter.disabled =
+        statut !== "Envoyé";
+
+    boutonRefuser.disabled =
+        statut !== "Envoyé";
+
+    const messageInformation =
+        document.getElementById(
+            "messageInformation"
+        );
+
+    if (
+        statut === "Accepté" ||
+        statut === "Refusé"
+    ) {
+        messageInformation.textContent =
+            "Une décision a déjà été enregistrée pour ce devis.";
+
+        document.getElementById(
+            "zoneActions"
+        ).style.display =
+            "none";
+    }
+}
+
+function accepterDevis() {
+    enregistrerDecision(
+        "Accepté"
+    );
+}
+
+function refuserDevis() {
+    enregistrerDecision(
+        "Refusé"
+    );
+}
+
+async function enregistrerDecision(
+    nouveauStatut
+) {
+    if (
+        !devisSelectionne ||
+        !publicToken
+    ) {
+        alert(
+            "Devis introuvable."
+        );
+        return;
+    }
+
+    if (
+        devisSelectionne.statut !==
+        "Envoyé"
+    ) {
+        alert(
+            "Ce devis ne peut pas encore recevoir de décision."
+        );
+        return;
+    }
+
+    const texteConfirmation =
+        nouveauStatut ===
+        "Accepté"
+            ? "Confirmer l'acceptation du devis ?"
+            : "Confirmer le refus du devis ?";
+
+    if (
+        !confirm(
+            texteConfirmation
+        )
+    ) {
+        return;
+    }
+
+    const boutonAccepter =
+        document.getElementById(
+            "boutonAccepter"
+        );
+
+    const boutonRefuser =
+        document.getElementById(
+            "boutonRefuser"
+        );
+
+    boutonAccepter.disabled = true;
+    boutonRefuser.disabled = true;
+
+    try {
+        const resultat =
+            await appelerRPC(
+                "repondre_devis_public",
+                {
+                    p_public_token:
+                        publicToken,
+
+                    p_decision:
+                        nouveauStatut === "Accepté"
+                            ? "accepter"
+                            : "refuser"
+                }
+            );
+
+        if (
+            !resultat ||
+            resultat.succes !== true ||
+            !resultat.statut
+        ) {
+            throw new Error(
+                "Supabase n'a pas confirmé la décision."
+            );
+        }
+
+        devisSelectionne.statut =
+            resultat.statut;
+
+        afficherStatut();
+
+        document.getElementById(
+            "zoneActions"
+        ).style.display =
+            "none";
+
+        const messageFinal =
+            document.getElementById(
+                "messageFinal"
+            );
+
+        messageFinal.style.display =
+            "block";
+
+        if (
+            resultat.statut ===
+            "Accepté"
+        ) {
+            messageFinal.className =
+                "message message-succes";
+
+            messageFinal.innerHTML = `
+                <strong>
+                    Merci, votre devis est accepté.
+                </strong>
+
+                <p>
+                    Votre réponse a bien été enregistrée.
+                </p>
+            `;
+        } else {
+            messageFinal.className =
+                "message message-refus";
+
+            messageFinal.innerHTML = `
+                <strong>
+                    Votre refus a bien été enregistré.
+                </strong>
+
+                <p>
+                    L'entreprise pourra prendre connaissance
+                    de votre réponse.
+                </p>
+            `;
+        }
+
+    } catch (erreur) {
+        console.error(erreur);
+
+        boutonAccepter.disabled = false;
+        boutonRefuser.disabled = false;
+
+        alert(
+            "Impossible d'enregistrer votre décision.\\n\\n" +
+            erreur.message
+        );
+    }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+        try {
+            await chargerDevis();
+        } catch (erreur) {
+            console.error(erreur);
+
+            document.body.innerHTML = `
+                <div class="erreur">
+                    <h1>
+                        Devis introuvable
+                    </h1>
+
+                    <p>
+                        Impossible de charger ce devis.
+                    </p>
+
+                    <p>
+                        ${echapperHTML(
+                            erreur.message
+                        )}
+                    </p>
+                </div>
+            `;
+        }
+    }
+);
+</script>
+
+
+</body>
+
+</html>
