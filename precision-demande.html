@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Une petite précision — 321Devis</title>
+    <style>
+*{box-sizing:border-box}
+:root{--blue:#2864e8;--ink:#101828;--muted:#667085;--line:#e4e7ec;--bg:#f5f7fb;--green:#067647;--red:#b42318}
+body{margin:0;padding:28px 16px 50px;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.container{max-width:620px;margin:auto}.header{background:#fff;padding:22px 24px 16px;border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0}.header h1{margin:0 0 4px;font-size:22px;letter-spacing:-.5px}.header p{margin:0;color:var(--muted);font-size:12px}.contenu{background:#fff;padding:26px;border:1px solid var(--line);border-radius:0 0 14px 14px;box-shadow:0 10px 30px rgba(16,24,40,.05)}.numero{padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:20px}.numero h2{margin:0 0 6px;font-size:20px;letter-spacing:-.3px}.numero p{margin:0;color:var(--muted);font-size:11px}.contenu>p{margin:0 0 18px;color:var(--muted);font-size:12px;line-height:1.5}
+.question{padding:17px;background:#eff8ff;border:1px solid #b2ddff;color:#175cd3;border-radius:10px;margin:16px 0 18px;line-height:1.5;font-size:13px}.question strong{font-size:11px;text-transform:uppercase;letter-spacing:.35px}label{display:block;font-weight:750;font-size:12px;margin:0 0 6px;color:#344054}textarea{width:100%;min-height:125px;padding:12px;border:1px solid #d0d5dd;border-radius:9px;font:inherit;font-size:14px;resize:vertical;outline:none}textarea:focus{border-color:#84adff;box-shadow:0 0 0 3px #eff4ff}button{width:100%;margin-top:12px;padding:13px;border:0;border-radius:9px;background:var(--blue);color:#fff;font-size:14px;font-weight:800;cursor:pointer}button:hover{opacity:.94}button:disabled{opacity:.55;cursor:not-allowed}.message{padding:14px;border-radius:9px;margin-top:18px;font-size:12px;line-height:1.5}.succes{background:#ecfdf3;border:1px solid #abefc6;color:var(--green)}.information{background:#f8fafc;border:1px solid var(--line);color:#475467}.erreur{max-width:620px;margin:80px auto;background:#fff;padding:32px;border:1px solid var(--line);border-radius:12px;text-align:center}.erreur h1{font-size:20px}.erreur p{color:var(--muted);font-size:12px;line-height:1.5}
+@media(max-width:650px){body{padding:10px}.header{padding:18px 18px 14px}.contenu{padding:21px 18px}textarea{font-size:16px;min-height:110px}}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>321Devis</h1>
+        <p>Une petite précision</p>
+    </div>
+
+    <div class="contenu" id="contenu">
+        <div class="numero">
+            <h2>Une information nous manque</h2>
+            <p>
+                Demande :
+                <strong id="numeroDemande">—</strong>
+            </p>
+        </div>
+
+        <p>
+            Répondez simplement à la question ci-dessous pour que votre devis puisse continuer.
+        </p>
+
+        <div class="question">
+            <strong>Question :</strong>
+            <div id="questionPrecision" style="margin-top:10px;">
+                Chargement…
+            </div>
+        </div>
+
+        <div id="zoneReponse">
+            <label for="reponsePrecision">Votre réponse</label>
+            <textarea
+                id="reponsePrecision"
+                placeholder="Écrivez votre réponse ici…"
+            ></textarea>
+
+            <button id="boutonEnvoyer" onclick="envoyerReponse()">
+                Envoyer
+            </button>
+        </div>
+
+        <div id="messageFinal" style="display:none;"></div>
+    </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+let publicToken = null;
+let demandeSelectionnee = null;
+
+async function appelerRPC(nomFonction, parametres) {
+    const reponse = await fetch(
+        SUPABASE_URL + "/rest/v1/rpc/" + nomFonction,
+        {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(parametres)
+        }
+    );
+
+    const texte = await reponse.text();
+    let donnees = null;
+
+    if (texte) {
+        try {
+            donnees = JSON.parse(texte);
+        } catch (erreur) {
+            donnees = texte;
+        }
+    }
+
+    if (!reponse.ok) {
+        let message = "Erreur Supabase HTTP " + reponse.status;
+
+        if (donnees && typeof donnees === "object") {
+            if (donnees.message) {
+                message += " : " + donnees.message;
+            } else if (donnees.error) {
+                message += " : " + donnees.error;
+            } else if (donnees.hint) {
+                message += " : " + donnees.hint;
+            }
+        } else if (typeof donnees === "string" && donnees.trim() !== "") {
+            message += " : " + donnees;
+        }
+
+        throw new Error(message);
+    }
+
+    return donnees;
+}
+
+function echapperHTML(texte) {
+    return String(texte || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function recupererPublicToken() {
+    const parametres = new URLSearchParams(window.location.search);
+    const token = String(parametres.get("token") || "").trim();
+
+    const formatUUID =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (token === "" || !formatUUID.test(token)) {
+        throw new Error("Lien de demande invalide ou incomplet.");
+    }
+
+    publicToken = token;
+}
+
+async function chargerDemande() {
+    recupererPublicToken();
+
+    const resultat = await appelerRPC(
+        "lire_precision_demande_public",
+        {
+            p_token: publicToken
+        }
+    );
+
+    if (!resultat || typeof resultat !== "object" || !resultat.numero) {
+        throw new Error(
+            "Supabase n'a pas retourné la demande attendue."
+        );
+    }
+
+    demandeSelectionnee = resultat;
+
+    document.getElementById("numeroDemande").textContent =
+        resultat.numero || "—";
+
+    if (
+        resultat.precision_requise !== true ||
+        !resultat.question_precision
+    ) {
+        document.getElementById("questionPrecision").textContent =
+            "Aucune précision supplémentaire n'est actuellement demandée.";
+
+        document.getElementById("zoneReponse").style.display =
+            "none";
+
+        const messageFinal =
+            document.getElementById("messageFinal");
+
+        messageFinal.style.display = "block";
+        messageFinal.className = "message information";
+        messageFinal.textContent =
+            "Cette demande ne nécessite plus de réponse supplémentaire.";
+
+        return;
+    }
+
+    document.getElementById("questionPrecision").textContent =
+        resultat.question_precision;
+}
+
+async function envoyerReponse() {
+    if (!publicToken || !demandeSelectionnee) {
+        alert("Demande introuvable.");
+        return;
+    }
+
+    const champ =
+        document.getElementById("reponsePrecision");
+
+    const reponseClient =
+        String(champ.value || "").trim();
+
+    if (reponseClient === "") {
+        alert("Merci de saisir votre réponse.");
+        champ.focus();
+        return;
+    }
+
+    const bouton =
+        document.getElementById("boutonEnvoyer");
+
+    bouton.disabled = true;
+    bouton.textContent = "Envoi en cours…";
+
+    try {
+        const resultat = await appelerRPC(
+            "repondre_precision_demande_public",
+            {
+                p_token: publicToken,
+                p_reponse: reponseClient
+            }
+        );
+
+        if (
+            !resultat ||
+            resultat.success !== true
+        ) {
+            throw new Error(
+                "Supabase n'a pas confirmé l'enregistrement de votre réponse."
+            );
+        }
+
+        document.getElementById("zoneReponse").style.display =
+            "none";
+
+        const messageFinal =
+            document.getElementById("messageFinal");
+
+        messageFinal.style.display = "block";
+        messageFinal.className = "message succes";
+        messageFinal.innerHTML =
+            "<strong>Merci, votre réponse a bien été enregistrée.</strong>" +
+            "<p>Votre demande peut maintenant continuer.</p>";
+
+    } catch (erreur) {
+        console.error(erreur);
+
+        bouton.disabled = false;
+        bouton.textContent = "Envoyer";
+
+        alert(
+            "Impossible d'enregistrer votre réponse.\\n\\n" +
+            erreur.message
+        );
+    }
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+        try {
+            await chargerDemande();
+        } catch (erreur) {
+            console.error(erreur);
+
+            document.body.innerHTML = `
+                <div class="erreur">
+                    <h1>Demande introuvable</h1>
+                    <p>Impossible de charger cette demande.</p>
+                    <p>${echapperHTML(erreur.message)}</p>
+                </div>
+            `;
+        }
+    }
+);
+</script>
+</body>
+</html>
