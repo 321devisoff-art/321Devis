@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Devis à valider — 321Devis</title>
+
+
+    <style>
+*{box-sizing:border-box}
+:root{--blue:#2864e8;--blue2:#1748ba;--ink:#101828;--muted:#667085;--line:#e5eaf2;--bg:#f5f7fb;--white:#fff;--green:#067647;--green2:#05603a;--greenbg:#ecfdf3;--red:#b42318;--redbg:#fef3f2;--shadow:0 10px 30px rgba(16,24,40,.055)}
+body{margin:0;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.container{max-width:1100px;margin:auto;padding:34px 22px 55px}
+h1{margin:0 0 5px;font-size:30px;letter-spacing:-1px}h1+p{margin:7px 0 22px;color:var(--muted);font-size:14px}
+.navigation{display:flex;gap:5px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px;margin-bottom:25px;overflow-x:auto}.navigation a{color:#475467;text-decoration:none;margin:0;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;white-space:nowrap}.navigation a:hover{background:#f2f4f7;color:var(--ink)}
+.bloc{background:#fff;padding:23px;border:1px solid var(--line);border-radius:16px;margin-bottom:22px;box-shadow:var(--shadow)}.bloc h2{margin:0 0 18px;font-size:19px;letter-spacing:-.3px}.bloc h3{margin:24px 0 10px;font-size:15px}
+#listeBrouillons{display:flex;flex-wrap:wrap;gap:9px}#listeBrouillons>button{background:#fff;color:var(--ink);border:1px solid var(--line);margin:0}#listeBrouillons>button:hover{border-color:#84adff;background:#f5f8ff}
+.liste-vide,#listeBrouillons>p{width:100%;padding:38px 20px;text-align:center;color:var(--muted);margin:0}.carte-devis{border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:12px}.carte-devis h3{margin-top:0}
+.infos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}.info{background:#f8fafc;padding:11px;border-radius:9px}
+button{padding:11px 15px;border:none;border-radius:9px;cursor:pointer;color:#fff;font-weight:750;margin-right:7px;margin-bottom:8px;font-size:13px}button:disabled{opacity:.5;cursor:not-allowed}.btn-ouvrir{background:var(--blue)}.btn-valider{background:var(--green);font-size:14px;padding:12px 19px}.btn-valider:hover{background:var(--green2)}.btn-supprimer{background:#fff;color:var(--red);border:1px solid #fecdca}.btn-retour{background:#667085}
+.editeur{display:none}.editeur>p{display:inline-block;margin:0 22px 12px 0;color:var(--muted);font-size:13px}.editeur>p strong{color:var(--ink)}
+label{display:block;margin-top:13px;margin-bottom:6px;font-weight:700;font-size:12px;color:#475467}input{width:100%;padding:11px 12px;border:1px solid #d0d5dd;border-radius:9px;font-size:14px}input:focus{outline:none;border-color:#84adff;box-shadow:0 0 0 3px #eef4ff}
+table{width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;border:1px solid var(--line);border-radius:11px;overflow:hidden}th,td{border:0;border-bottom:1px solid var(--line);padding:12px;font-size:13px}tr:last-child td{border-bottom:0}th{background:#f8fafc;color:#475467;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.35px}.droite{text-align:right}.totaux{width:350px;max-width:100%;margin-left:auto;margin-top:20px}.ligne-total{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.total-final{font-size:20px;font-weight:800;border-top:2px solid var(--ink);border-bottom:0;padding-top:12px;margin-top:4px}
+.statut{display:inline-block;padding:5px 9px;border-radius:999px;background:#fffaeb;color:#b54708;font-size:11px;font-weight:800}.statut-valide{background:var(--greenbg);color:var(--green)}.erreur{color:var(--red);font-weight:bold}
+@media(max-width:700px){.container{padding:25px 14px 40px}h1{font-size:27px}.bloc{padding:17px}.infos{grid-template-columns:1fr}.editeur>p{display:block;margin-bottom:8px}table{display:block;overflow-x:auto;white-space:nowrap}.editeur>button{width:100%;margin-right:0}.totaux{width:100%}}
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <h1>
+        321Devis
+    </h1>
+
+
+    <p>
+        Devis à valider
+    </p>
+
+
+    <div class="navigation">
+
+        <a href="index.html">
+            Accueil
+        </a>
+
+        <a href="demandes.html">
+            Demandes
+        </a>
+
+        <a href="historique.html">
+            Historique
+        </a>
+
+    </div>
+
+
+    <!-- LISTE DES BROUILLONS -->
+
+    <div class="bloc">
+
+        <h2>
+            À valider
+        </h2>
+
+
+        <div id="listeBrouillons"></div>
+
+    </div>
+
+
+    <!-- ÉDITEUR -->
+
+    <div
+        class="bloc editeur"
+        id="editeur"
+    >
+
+        <h2>
+            Vérifiez puis validez
+        </h2>
+
+
+        <p>
+            Numéro :
+            <strong id="numeroDevis"></strong>
+        </p>
+
+
+        <p>
+            Client :
+            <strong id="nomClient"></strong>
+        </p>
+
+
+        <p>
+            Statut :
+            <span
+                class="statut"
+                id="statutDevis"
+            ></span>
+        </p>
+
+
+        <h3>
+            Informations client
+        </h3>
+
+
+        <label for="telephone">
+            Téléphone
+        </label>
+
+        <input
+            type="text"
+            id="telephone"
+        >
+
+
+        <label for="email">
+            E-mail
+        </label>
+
+        <input
+            type="email"
+            id="email"
+        >
+
+
+        <label for="adresse">
+            Adresse
+        </label>
+
+        <input
+            type="text"
+            id="adresse"
+        >
+
+
+        <h3>
+            Prestations
+        </h3>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Prestation
+                    </th>
+
+                    <th class="droite">
+                        Quantité
+                    </th>
+
+                    <th class="droite">
+                        Prix unitaire HT
+                    </th>
+
+                    <th class="droite">
+                        Total HT
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="lignesDevis"></tbody>
+
+        </table>
+
+
+        <div class="totaux">
+
+            <div class="ligne-total">
+
+                <span>
+                    Total HT
+                </span>
+
+                <strong>
+                    <span id="totalHT"></span>
+                </strong>
+
+            </div>
+
+
+            <div class="ligne-total">
+
+                <span>
+                    TVA (<span id="tauxTVA"></span> %)
+                </span>
+
+                <strong>
+                    <span id="tva"></span>
+                </strong>
+
+            </div>
+
+
+            <div class="ligne-total total-final">
+
+                <span>
+                    Total TTC
+                </span>
+
+                <strong>
+                    <span id="totalTTC"></span>
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <br>
+
+
+        <button
+            class="btn-valider"
+            onclick="validerDevis()"
+        >
+            ✓ Valider
+        </button>
+
+
+        <button
+            class="btn-ouvrir"
+            onclick="voirDevis()"
+        >
+            Modifier
+        </button>
+
+        <button
+            class="btn-supprimer"
+            onclick="refuserDevis()"
+        >
+            Refuser
+        </button>
+
+
+        <button
+            class="btn-retour"
+            onclick="fermerEditeur()"
+        >
+            Fermer
+        </button>
+
+    </div>
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+const clientSupabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let utilisateurId = null;
+let accessToken = null;
+
+async function verifierUtilisateur() {
+    const { data, error } = await clientSupabase.auth.getSession();
+
+    if (error) {
+        throw error;
+    }
+
+    if (!data || !data.session || !data.session.user) {
+        window.location.href = "connexion.html";
+        return false;
+    }
+
+    utilisateurId = data.session.user.id;
+    accessToken = data.session.access_token;
+
+    return true;
+}
+
+let devis = [];
+let devisActuel = null;
+let clientActuel = null;
+let lignesActuelles = [];
+
+async function appelerSupabase(endpoint, options = {}) {
+    const reponse = await fetch(SUPABASE_URL + "/rest/v1/" + endpoint, {
+        method: options.method || "GET",
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + accessToken,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            ...(options.headers || {})
+        },
+        body: options.body
+    });
+
+    const texte = await reponse.text();
+    let donnees = null;
+
+    if (texte) {
+        try { donnees = JSON.parse(texte); }
+        catch (erreur) { donnees = texte; }
+    }
+
+    if (!reponse.ok) {
+        let message = "Erreur Supabase HTTP " + reponse.status;
+        if (donnees && typeof donnees === "object" && donnees.message) {
+            message += " : " + donnees.message;
+        }
+        throw new Error(message);
+    }
+
+    return donnees;
+}
+
+function nombre(v) {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+}
+
+function montant(v) {
+    return nombre(v).toLocaleString("fr-FR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + " €";
+}
+
+function echapperHTML(v) {
+    return String(v ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+async function chargerBrouillons() {
+    devis = await appelerSupabase(
+        "devis?select=id,numero,client_id,demande_id,statut,total_ht,taux_tva,total_ttc,date_validation,created_at&user_id=eq." + encodeURIComponent(utilisateurId) + "&order=created_at.desc"
+    );
+
+    if (!Array.isArray(devis)) devis = [];
+
+    const liste = document.getElementById("listeBrouillons");
+    liste.innerHTML = "";
+
+    // Statut actuel créé par l'automatisation + compatibilité avec les anciens devis.
+    const brouillons = devis.filter(d =>
+        d.statut === "À valider" ||
+        d.statut === "Brouillon - validation requise"
+    );
+
+    if (brouillons.length === 0) {
+        liste.innerHTML = "<p>Aucun devis en attente de validation.</p>";
+        document.getElementById("editeur").style.display = "none";
+        return;
+    }
+
+    brouillons.forEach(d => {
+        const bouton = document.createElement("button");
+        bouton.type = "button";
+        bouton.textContent = d.numero || "Devis";
+        bouton.onclick = () => ouvrirDevis(d.id);
+        liste.appendChild(bouton);
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const numeroURL = params.get("numero");
+    const cible = numeroURL
+        ? brouillons.find(d => d.numero === numeroURL)
+        : brouillons[0];
+
+    if (cible) await ouvrirDevis(cible.id);
+}
+
+async function ouvrirDevis(id) {
+    devisActuel = devis.find(d => d.id === id) || null;
+    if (!devisActuel) return;
+
+    const [clients, lignes] = await Promise.all([
+        devisActuel.client_id
+            ? appelerSupabase(
+                "clients?select=*&id=eq." +
+                encodeURIComponent(devisActuel.client_id) +
+                "&user_id=eq." +
+                encodeURIComponent(utilisateurId) +
+                "&limit=1"
+              )
+            : Promise.resolve([]),
+        appelerSupabase(
+            "lignes_devis?select=*&devis_id=eq." +
+            encodeURIComponent(devisActuel.id) +
+            "&user_id=eq." +
+            encodeURIComponent(utilisateurId) +
+            "&order=created_at.asc"
+        )
+    ]);
+
+    clientActuel =
+        Array.isArray(clients) && clients[0] ? clients[0] : null;
+
+    lignesActuelles =
+        Array.isArray(lignes) ? lignes : [];
+
+    afficherEditeur();
+}
+
+function afficherEditeur() {
+    document.getElementById("editeur").style.display = "block";
+    document.getElementById("numeroDevis").textContent =
+        devisActuel.numero || "—";
+    document.getElementById("nomClient").textContent =
+        clientActuel?.nom || "—";
+    document.getElementById("statutDevis").textContent =
+        devisActuel.statut || "—";
+    document.getElementById("telephone").value =
+        clientActuel?.telephone || "";
+    document.getElementById("email").value =
+        clientActuel?.email || "";
+    document.getElementById("adresse").value =
+        clientActuel?.adresse || "";
+
+    const tbody = document.getElementById("lignesDevis");
+    tbody.innerHTML = "";
+
+    lignesActuelles.forEach(ligne => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${echapperHTML(ligne.description || "")}</td>
+            <td>${nombre(ligne.quantite)}</td>
+            <td>${montant(ligne.prix_unitaire_ht)}</td>
+            <td>${montant(ligne.total_ht)}</td>
+            <td>—</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    const totalHT = nombre(devisActuel.total_ht);
+    const tauxTVA = nombre(devisActuel.taux_tva);
+    const montantTVA = totalHT * tauxTVA / 100;
+
+    document.getElementById("totalHT").textContent =
+        montant(totalHT);
+    document.getElementById("tauxTVA").textContent =
+        tauxTVA.toLocaleString("fr-FR");
+    document.getElementById("tva").textContent =
+        montant(montantTVA);
+    document.getElementById("totalTTC").textContent =
+        montant(devisActuel.total_ttc);
+}
+
+async function validerDevis() {
+    if (!devisActuel) return;
+
+    try {
+        const dateValidation = new Date().toISOString();
+
+        await appelerSupabase(
+            "devis?id=eq." +
+            encodeURIComponent(devisActuel.id) +
+            "&user_id=eq." +
+            encodeURIComponent(utilisateurId),
+            {
+                method: "PATCH",
+                headers: { "Prefer": "return=minimal" },
+                body: JSON.stringify({
+                    statut: "Validé",
+                    date_validation: dateValidation
+                })
+            }
+        );
+
+        await synchroniserDemandeLiee("Devis validé");
+        alert("Le devis a été validé. Il est maintenant dans l’historique, prêt à être envoyé au client.");
+        await chargerBrouillons();
+
+    } catch (erreur) {
+        console.error(erreur);
+        alert("Impossible de valider le devis.\n\n" + erreur.message);
+    }
+}
+
+async function synchroniserDemandeLiee(statut) {
+    if (!devisActuel?.demande_id) return;
+
+    await appelerSupabase(
+        "demandes?id=eq." +
+        encodeURIComponent(devisActuel.demande_id) +
+        "&user_id=eq." +
+        encodeURIComponent(utilisateurId),
+        {
+            method: "PATCH",
+            headers: { "Prefer": "return=minimal" },
+            body: JSON.stringify({ statut })
+        }
+    );
+}
+
+async function refuserDevis() {
+    if (!devisActuel) return;
+    if (!confirm("Refuser ce devis ?")) return;
+
+    try {
+        await appelerSupabase(
+            "devis?id=eq." + encodeURIComponent(devisActuel.id) +
+            "&user_id=eq." + encodeURIComponent(utilisateurId),
+            {
+                method: "PATCH",
+                headers: { "Prefer": "return=minimal" },
+                body: JSON.stringify({
+                    statut: "Refusé",
+                    date_refus: new Date().toISOString()
+                })
+            }
+        );
+        await synchroniserDemandeLiee("Devis refusé");
+        alert("Le devis a été refusé.");
+        await chargerBrouillons();
+    } catch (erreur) {
+        console.error(erreur);
+        alert("Impossible de refuser le devis.\n\n" + erreur.message);
+    }
+}
+
+function fermerEditeur() {
+    devisActuel = null;
+    clientActuel = null;
+    lignesActuelles = [];
+    document.getElementById("editeur").style.display = "none";
+}
+
+function voirDevis() {
+    if (!devisActuel) return;
+    window.location.href =
+        "voir-devis.html?numero=" +
+        encodeURIComponent(devisActuel.numero || "");
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const connecte = await verifierUtilisateur();
+
+        if (!connecte) {
+            return;
+        }
+
+        await chargerBrouillons();
+    } catch (erreur) {
+        console.error(erreur);
+        alert("Impossible de charger les devis.\n\n" + erreur.message);
+    }
+});
+</script>
+
+
+</body>
+
+</html>
