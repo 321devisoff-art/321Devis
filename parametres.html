@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Paramètres — 321Devis</title>
+
+    <style>
+*{box-sizing:border-box}
+:root{--blue:#2864e8;--blue2:#1748ba;--ink:#101828;--muted:#667085;--line:#e5eaf2;--bg:#f5f7fb;--green:#067647;--amber:#b54708;--shadow:0 10px 30px rgba(16,24,40,.055)}
+body{margin:0;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.container{max-width:850px;margin:auto;padding:34px 22px 55px}
+.header{background:transparent;color:var(--ink);padding:0;margin-bottom:22px}.header h1{margin:0 0 6px;font-size:30px;letter-spacing:-1px}.header p{margin:0;color:var(--muted);font-size:14px}
+.navigation{display:flex;gap:5px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px;margin-bottom:22px;overflow-x:auto}.navigation a{color:#475467;text-decoration:none;margin:0;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;white-space:nowrap}.navigation a:hover{background:#f2f4f7;color:var(--ink)}
+.bloc{background:#fff;padding:25px;border:1px solid var(--line);border-radius:16px;margin-bottom:22px;box-shadow:var(--shadow)}.bloc h2{margin:0 0 7px;font-size:19px;letter-spacing:-.3px}.bloc>p{margin:0 0 18px;color:var(--muted);font-size:13px}
+label{display:block;margin-top:15px;margin-bottom:6px;font-weight:700;font-size:12px;color:#475467}input{width:100%;padding:11px 12px;border:1px solid #d0d5dd;border-radius:9px;font-size:14px;color:var(--ink);background:#fff}input:focus{outline:none;border-color:#84adff;box-shadow:0 0 0 3px #eef4ff}.aide{color:var(--muted);font-size:11px;margin:5px 0 0}.avertissement{margin-top:10px;padding:11px 12px;background:#fffaeb;border:1px solid #fedf89;border-radius:9px;color:var(--amber);font-size:12px;line-height:1.45}
+button{margin-top:22px;padding:12px 17px;border:none;border-radius:9px;background:var(--blue);color:#fff;font-size:13px;font-weight:750;cursor:pointer}button:hover{background:var(--blue2)}button:disabled{opacity:.6;cursor:not-allowed}.message{display:none;margin-top:16px;padding:12px 13px;background:#ecfdf3;border:1px solid #abefc6;border-radius:9px;color:var(--green);font-size:13px}
+@media(max-width:700px){.container{padding:25px 14px 40px}.header h1{font-size:27px}.bloc{padding:18px}button{width:100%}}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>
+            321Devis
+        </h1>
+
+        <p>
+            Paramètres
+        </p>
+
+    </div>
+
+    <div class="navigation">
+
+        <a href="index.html">
+            Accueil
+        </a>
+
+        <a href="demandes.html">Demandes</a>
+        <a href="validation-devis.html">Devis</a>
+        <a href="catalogue.html">Catalogue</a>
+
+    </div>
+
+    <div class="bloc">
+
+        <h2>
+            Votre entreprise
+        </h2>
+
+        <p>
+            Ces informations sont utilisées automatiquement sur vos devis.
+        </p>
+
+        <label for="nomEntreprise">
+            Nom de l'entreprise *
+        </label>
+
+        <input
+            type="text"
+            id="nomEntreprise"
+            placeholder="Ex : Plomberie Dupont"
+        >
+
+        <label for="adresseEntreprise">
+            Adresse *
+        </label>
+
+        <input
+            type="text"
+            id="adresseEntreprise"
+            placeholder="Ex : 10 rue de Paris"
+        >
+
+        <label for="codePostal">
+            Code postal *
+        </label>
+
+        <input
+            type="text"
+            id="codePostal"
+            placeholder="Ex : 59000"
+        >
+
+        <label for="ville">
+            Ville *
+        </label>
+
+        <input
+            type="text"
+            id="ville"
+            placeholder="Ex : Lille"
+        >
+
+        <label for="telephoneEntreprise">
+            Téléphone *
+        </label>
+
+        <input
+            type="text"
+            id="telephoneEntreprise"
+            placeholder="Ex : 06 00 00 00 00"
+        >
+
+        <label for="emailEntreprise">
+            E-mail *
+        </label>
+
+        <input
+            type="email"
+            id="emailEntreprise"
+            placeholder="contact@entreprise.fr"
+        >
+
+        <label for="siret">
+            SIRET *
+        </label>
+
+        <input
+            type="text"
+            id="siret"
+            placeholder="Ex : 123 456 789 00012"
+        >
+
+        <p class="aide">
+            Le SIRET doit être celui de l'entreprise.
+        </p>
+
+        <label for="tva">
+            Numéro de TVA intracommunautaire
+        </label>
+
+        <input
+            type="text"
+            id="tva"
+            placeholder="Ex : FR12345678901"
+        >
+
+        <p class="aide">
+            Facultatif pour le moment.
+        </p>
+
+        <label for="tauxTVA">
+            Taux de TVA appliqué (%) *
+        </label>
+
+        <input
+            type="number"
+            id="tauxTVA"
+            min="0"
+            max="100"
+            step="0.01"
+            placeholder="Ex : 20"
+        >
+
+        <p class="aide">
+            Ce taux sera utilisé pour calculer la TVA
+            sur les nouveaux devis.
+        </p>
+
+        <div class="avertissement">
+
+            Vérifie que le taux renseigné correspond bien
+            à la situation fiscale de l'entreprise et aux
+            prestations concernées.
+
+        </div>
+
+        <label for="site">
+            Site internet
+        </label>
+
+        <input
+            type="text"
+            id="site"
+            placeholder="Ex : www.monentreprise.fr"
+        >
+
+        <button
+            id="boutonEnregistrer"
+            type="button"
+            onclick="sauvegarderParametres()"
+        >
+            Enregistrer
+        </button>
+
+        <div
+            class="message"
+            id="message"
+        >
+            Informations enregistrées avec succès.
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+const clientSupabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let parametresId = null;
+let utilisateurId = null;
+let accessToken = null;
+
+async function verifierUtilisateur() {
+    const {
+        data,
+        error
+    } = await clientSupabase.auth.getSession();
+
+    if (error) {
+        throw error;
+    }
+
+    if (
+        !data ||
+        !data.session ||
+        !data.session.user
+    ) {
+        window.location.href = "connexion.html";
+        return false;
+    }
+
+    utilisateurId = data.session.user.id;
+    accessToken = data.session.access_token;
+
+    return true;
+}
+
+async function appelerSupabase(endpoint, options = {}) {
+    if (!accessToken) {
+        const connecte = await verifierUtilisateur();
+
+        if (!connecte) {
+            throw new Error(
+                "Vous devez être connecté pour accéder à cette page."
+            );
+        }
+    }
+
+    const reponse = await fetch(
+        SUPABASE_URL + "/rest/v1/" + endpoint,
+        {
+            method: options.method || "GET",
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + accessToken,
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                ...(options.headers || {})
+            },
+            body: options.body
+        }
+    );
+
+    const texte = await reponse.text();
+    let donnees = null;
+
+    if (texte) {
+        try {
+            donnees = JSON.parse(texte);
+        } catch (erreur) {
+            donnees = texte;
+        }
+    }
+
+    if (!reponse.ok) {
+        let message =
+            "Erreur Supabase HTTP " +
+            reponse.status;
+
+        if (
+            donnees &&
+            typeof donnees === "object" &&
+            donnees.message
+        ) {
+            message +=
+                " : " +
+                donnees.message;
+        }
+
+        throw new Error(message);
+    }
+
+    return donnees;
+}
+
+function valeur(id) {
+    const element =
+        document.getElementById(id);
+
+    return element
+        ? element.value.trim()
+        : "";
+}
+
+function nombreOuZero(id) {
+    const nombre = Number(
+        document.getElementById(id)?.value
+    );
+
+    return Number.isFinite(nombre)
+        ? nombre
+        : 0;
+}
+
+function remplir(id, valeurChamp) {
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+        element.value =
+            valeurChamp ?? "";
+    }
+}
+
+function afficherMessage(
+    texte,
+    type = "succes"
+) {
+    const zone =
+        document.getElementById("message");
+
+    if (!zone) {
+        return;
+    }
+
+    zone.textContent = texte;
+    zone.style.display = "block";
+
+    if (type === "erreur") {
+        zone.style.background = "#fee2e2";
+        zone.style.color = "#991b1b";
+        zone.style.borderColor = "#fecaca";
+    } else {
+        zone.style.background = "#dcfce7";
+        zone.style.color = "#166534";
+        zone.style.borderColor = "#bbf7d0";
+    }
+}
+
+async function chargerParametres() {
+    const resultats =
+        await appelerSupabase(
+            "parametres?select=*&user_id=eq." +
+            encodeURIComponent(utilisateurId) +
+            "&order=created_at.asc&limit=1"
+        );
+
+    if (
+        !Array.isArray(resultats) ||
+        !resultats[0]
+    ) {
+        parametresId = null;
+        return;
+    }
+
+    const parametres =
+        resultats[0];
+
+    parametresId =
+        parametres.id;
+
+    remplir(
+        "nomEntreprise",
+        parametres.nom_entreprise
+    );
+
+    remplir(
+        "adresseEntreprise",
+        parametres.adresse
+    );
+
+    remplir(
+        "codePostal",
+        parametres.code_postal
+    );
+
+    remplir(
+        "ville",
+        parametres.ville
+    );
+
+    remplir(
+        "telephoneEntreprise",
+        parametres.telephone
+    );
+
+    remplir(
+        "emailEntreprise",
+        parametres.email
+    );
+
+    remplir(
+        "siret",
+        parametres.siret
+    );
+
+    remplir(
+        "tva",
+        parametres.numero_tva
+    );
+
+    remplir(
+        "tauxTVA",
+        parametres.taux_tva ?? 20
+    );
+
+    remplir(
+        "site",
+        parametres.site
+    );
+}
+
+async function enregistrerParametres() {
+    const bouton =
+        document.getElementById(
+            "boutonEnregistrer"
+        );
+
+    bouton.disabled = true;
+    bouton.textContent =
+        "Enregistrement…";
+
+    const donnees = {
+        user_id:
+            utilisateurId,
+
+        nom_entreprise:
+            valeur("nomEntreprise"),
+
+        adresse:
+            valeur("adresseEntreprise"),
+
+        code_postal:
+            valeur("codePostal"),
+
+        ville:
+            valeur("ville"),
+
+        telephone:
+            valeur("telephoneEntreprise"),
+
+        email:
+            valeur("emailEntreprise"),
+
+        siret:
+            valeur("siret"),
+
+        numero_tva:
+            valeur("tva"),
+
+        taux_tva:
+            nombreOuZero("tauxTVA"),
+
+        site:
+            valeur("site"),
+
+        updated_at:
+            new Date().toISOString()
+    };
+
+    try {
+        if (parametresId) {
+            await appelerSupabase(
+                "parametres?id=eq." +
+                encodeURIComponent(parametresId) +
+                "&user_id=eq." +
+                encodeURIComponent(utilisateurId),
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Prefer":
+                            "return=minimal"
+                    },
+                    body:
+                        JSON.stringify(
+                            donnees
+                        )
+                }
+            );
+        } else {
+            const insertion =
+                await appelerSupabase(
+                    "parametres",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Prefer":
+                                "return=representation"
+                        },
+                        body:
+                            JSON.stringify(
+                                donnees
+                            )
+                    }
+                );
+
+            if (
+                Array.isArray(insertion) &&
+                insertion[0]
+            ) {
+                parametresId =
+                    insertion[0].id;
+            }
+        }
+
+        afficherMessage(
+            "Paramètres enregistrés dans Supabase."
+        );
+
+    } catch (erreur) {
+        console.error(erreur);
+
+        afficherMessage(
+            "Impossible d'enregistrer les paramètres : " +
+            erreur.message,
+            "erreur"
+        );
+
+    } finally {
+        bouton.disabled = false;
+        bouton.textContent =
+            "Enregistrer";
+    }
+}
+
+async function sauvegarderParametres() {
+    await enregistrerParametres();
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+        try {
+            const connecte =
+                await verifierUtilisateur();
+
+            if (!connecte) {
+                return;
+            }
+
+            await chargerParametres();
+
+        } catch (erreur) {
+            console.error(erreur);
+
+            afficherMessage(
+                "Impossible de charger les paramètres : " +
+                erreur.message,
+                "erreur"
+            );
+        }
+    }
+);
+</script>
+
+</body>
+
+</html>
