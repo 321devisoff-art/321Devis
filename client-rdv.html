@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choisir mon rendez-vous — 321Devis</title>
+  <style>
+    *{box-sizing:border-box}
+    :root{--blue:#2864e8;--ink:#101828;--muted:#667085;--line:#e5eaf2;--bg:#f5f7fb;--green:#067647;--red:#b42318;--shadow:0 10px 30px rgba(16,24,40,.07)}
+    body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .page{max-width:760px;margin:0 auto;padding:36px 18px 60px}
+    .brand{font-size:26px;font-weight:850;margin-bottom:26px}.brand span{color:var(--blue)}
+    h1{font-size:30px;letter-spacing:-.8px;margin:0 0 8px}
+    .intro{color:var(--muted);margin:0 0 24px;line-height:1.5}
+    .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);margin-bottom:16px}
+    .infos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .info{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:13px}
+    .label{font-size:12px;color:var(--muted);margin-bottom:5px}.value{font-weight:800}
+    .message{margin-top:18px;padding:14px;border-left:4px solid var(--blue);background:#f8fafc;border-radius:8px;line-height:1.5}
+    h2{font-size:19px;margin:0 0 14px}
+    .phone{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}
+    .phone a{background:#111827;color:#fff;text-decoration:none;font-weight:800;padding:10px 14px;border-radius:9px;white-space:nowrap}
+    .slots{display:flex;flex-direction:column;gap:10px}
+    .slot{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px;border:1px solid var(--line);border-radius:12px}
+    .slot-date{font-weight:800}.slot-time{font-size:13px;color:var(--muted);margin-top:4px}
+    button{border:0;border-radius:9px;padding:10px 14px;background:var(--blue);color:#fff;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .success{padding:22px;background:#ecfdf3;border:1px solid #abefc6;border-radius:14px;color:var(--green);font-weight:700;line-height:1.5}
+    .error{padding:22px;background:#fef3f2;border:1px solid #fecdca;border-radius:14px;color:var(--red);line-height:1.5}
+    .loading{text-align:center;padding:45px;color:var(--muted)}
+    @media(max-width:600px){.page{padding:24px 13px 45px}.card{padding:18px}.infos{grid-template-columns:1fr}.slot,.phone{align-items:stretch;flex-direction:column}.slot button,.phone a{text-align:center;width:100%}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="brand"><span>321</span>Devis</div>
+    <div id="app"><div class="loading">Chargement des disponibilités…</div></div>
+  </main>
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+let proposition = null;
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function formatSlot(debut, fin) {
+  const d = new Date(debut);
+  const f = fin ? new Date(fin) : null;
+
+  const date = d.toLocaleDateString("fr-FR", {
+    weekday:"long", day:"numeric", month:"long", year:"numeric"
+  });
+
+  const heureDebut = d.toLocaleTimeString("fr-FR", {
+    hour:"2-digit", minute:"2-digit"
+  });
+
+  const heureFin = f ? f.toLocaleTimeString("fr-FR", {
+    hour:"2-digit", minute:"2-digit"
+  }) : null;
+
+  return {
+    date: date.charAt(0).toUpperCase() + date.slice(1),
+    heure: heureFin ? `${heureDebut} – ${heureFin}` : heureDebut
+  };
+}
+
+async function rpc(name, body) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
+    method:"POST",
+    headers:{
+      apikey:SUPABASE_KEY,
+      Authorization:`Bearer ${SUPABASE_KEY}`,
+      "Content-Type":"application/json",
+      Accept:"application/json"
+    },
+    body:JSON.stringify(body)
+  });
+
+  const text = await response.text();
+  let data = null;
+
+  if (text) {
+    try { data = JSON.parse(text); }
+    catch (_) { data = text; }
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data?.message || data?.error || data?.details ||
+      "Une erreur est survenue."
+    );
+  }
+
+  return data;
+}
+
+function phoneHref(phone) {
+  return "tel:" + String(phone || "").replace(/[^\d+]/g, "");
+}
+
+function afficher(data) {
+  const app = document.getElementById("app");
+  const slots = Array.isArray(data.creneaux) ? data.creneaux : [];
+
+  if (data.statut_proposition === "Confirmé") {
+    app.innerHTML = `
+      <h1>Rendez-vous confirmé</h1>
+      <p class="intro">Votre rendez-vous pour le devis ${escapeHtml(data.numero_devis || "")} a bien été enregistré.</p>
+      <div class="success">
+        Votre artisan a été informé de votre choix.
+      </div>
+      ${data.entreprise_telephone ? `
+        <div class="card" style="margin-top:16px">
+          <div class="phone">
+            <div>
+              <div class="label">Téléphone de l’artisan</div>
+              <div class="value">${escapeHtml(data.entreprise_telephone)}</div>
+            </div>
+            <a href="${escapeHtml(phoneHref(data.entreprise_telephone))}">📞 Appeler l’artisan</a>
+          </div>
+        </div>` : ""}
+    `;
+    return;
+  }
+
+  const disponibles = slots.filter(s => s.disponible !== false);
+
+  app.innerHTML = `
+    <h1>Choisissez votre rendez-vous</h1>
+    <p class="intro">Sélectionnez le créneau qui vous convient pour l’intervention.</p>
+
+    <section class="card">
+      <div class="infos">
+        <div class="info">
+          <div class="label">Artisan</div>
+          <div class="value">${escapeHtml(data.nom_entreprise || "Votre artisan")}</div>
+        </div>
+        <div class="info">
+          <div class="label">Devis</div>
+          <div class="value">${escapeHtml(data.numero_devis || "—")}</div>
+        </div>
+      </div>
+
+      ${data.message_artisan ? `
+        <div class="message">${escapeHtml(data.message_artisan)}</div>
+      ` : ""}
+
+      ${data.entreprise_telephone ? `
+        <div class="phone">
+          <div>
+            <div class="label">Besoin de parler à l’artisan ?</div>
+            <div class="value">${escapeHtml(data.entreprise_telephone)}</div>
+          </div>
+          <a href="${escapeHtml(phoneHref(data.entreprise_telephone))}">📞 Appeler l’artisan</a>
+        </div>
+      ` : ""}
+    </section>
+
+    <section class="card">
+      <h2>Créneaux proposés</h2>
+      <div class="slots">
+        ${disponibles.length ? disponibles.map(slot => {
+          const f = formatSlot(slot.debut, slot.fin);
+          return `
+            <div class="slot">
+              <div>
+                <div class="slot-date">${escapeHtml(f.date)}</div>
+                <div class="slot-time">${escapeHtml(f.heure)}</div>
+              </div>
+              <button type="button" onclick="confirmer('${escapeHtml(slot.id)}', this)">
+                Choisir ce créneau
+              </button>
+            </div>
+          `;
+        }).join("") : `<div class="error">Aucun créneau n’est actuellement disponible.</div>`}
+      </div>
+    </section>
+  `;
+}
+
+async function charger() {
+  const app = document.getElementById("app");
+  const token = new URLSearchParams(location.search).get("token");
+
+  if (!token) {
+    app.innerHTML = `<div class="error">Lien de rendez-vous invalide.</div>`;
+    return;
+  }
+
+  try {
+    const result = await rpc("lire_proposition_rdv_public", {
+      p_token:token
+    });
+
+    const data = Array.isArray(result) ? result[0] : result;
+
+    if (!data) {
+      throw new Error("Cette proposition de rendez-vous est introuvable ou n’est plus disponible.");
+    }
+
+    proposition = data;
+    afficher(data);
+  } catch (error) {
+    console.error(error);
+    app.innerHTML = `<div class="error">${escapeHtml(error.message)}</div>`;
+  }
+}
+
+async function confirmer(creneauId, button) {
+  if (!proposition) return;
+
+  if (!confirm("Confirmer ce créneau pour votre intervention ?")) {
+    return;
+  }
+
+  const buttons = [...document.querySelectorAll("button")];
+  buttons.forEach(b => b.disabled = true);
+  button.textContent = "Confirmation…";
+
+  try {
+    await rpc("confirmer_creneau_rdv_public", {
+      p_token:new URLSearchParams(location.search).get("token"),
+      p_creneau_id:creneauId
+    });
+
+    await charger();
+  } catch (error) {
+    console.error(error);
+    alert(error.message || "Impossible de confirmer ce créneau.");
+    buttons.forEach(b => b.disabled = false);
+    button.textContent = "Choisir ce créneau";
+  }
+}
+
+charger();
+</script>
+</body>
+</html>
