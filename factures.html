@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factures — 321Devis</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#18212f;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#111827;
+      --green:#16a34a;
+      --orange:#ea580c;
+      --blue:#2563eb;
+      --red:#dc2626;
+      --shadow:0 10px 30px rgba(17,24,39,.06);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    a{text-decoration:none;color:inherit}
+
+    .app{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:240px 1fr;
+    }
+
+    .sidebar{
+      background:#fff;
+      border-right:1px solid var(--border);
+      padding:24px 16px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
+
+    .brand{
+      font-size:26px;
+      font-weight:800;
+      margin:4px 12px 28px;
+      letter-spacing:-.6px;
+    }
+
+    .brand span{color:var(--blue)}
+
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .nav a{
+      padding:12px 14px;
+      border-radius:12px;
+      color:#4b5563;
+      font-weight:650;
+    }
+
+    .nav a:hover{background:#f3f4f6;color:#111827}
+    .nav a.active{background:#111827;color:#fff}
+
+    .main{
+      padding:34px;
+      width:100%;
+      max-width:1400px;
+      margin:0 auto;
+    }
+
+    .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:20px;
+      margin-bottom:26px;
+    }
+
+    h1{
+      font-size:30px;
+      line-height:1.1;
+      margin:0 0 8px;
+      letter-spacing:-.7px;
+    }
+
+    .subtitle{color:var(--muted);font-size:15px}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .loading,
+    .empty,
+    .error{
+      padding:48px 24px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .error{color:var(--red)}
+
+    .table-wrap{overflow:auto}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:820px;
+    }
+
+    th,td{
+      padding:16px 18px;
+      text-align:left;
+      border-bottom:1px solid var(--border);
+      vertical-align:middle;
+    }
+
+    th{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      color:var(--muted);
+      background:#fafafa;
+    }
+
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:#fafafa}
+
+    .numero{font-weight:750}
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      min-height:28px;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:750;
+      white-space:nowrap;
+      background:#f3f4f6;
+      color:#374151;
+    }
+
+    .badge-brouillon{background:#fff7ed;color:#c2410c}
+    .badge-validee{background:#eff6ff;color:#1d4ed8}
+    .badge-envoyee{background:#eff6ff;color:#1d4ed8}
+    .badge-payee{background:#ecfdf5;color:#15803d}
+
+    .amount{
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .btn{
+      border:0;
+      border-radius:11px;
+      padding:10px 14px;
+      font:inherit;
+      font-weight:750;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:40px;
+    }
+
+    .btn-primary{
+      background:var(--primary);
+      color:#fff;
+    }
+
+    .btn-primary:hover{opacity:.9}
+
+    .mobile-nav{display:none}
+
+    @media (max-width:900px){
+      .app{display:block}
+      .sidebar{display:none}
+      .main{padding:22px 16px 90px}
+      .mobile-nav{
+        position:fixed;
+        left:10px;
+        right:10px;
+        bottom:10px;
+        z-index:20;
+        display:flex;
+        overflow:auto;
+        gap:6px;
+        padding:8px;
+        background:rgba(255,255,255,.96);
+        border:1px solid var(--border);
+        border-radius:16px;
+        box-shadow:0 10px 35px rgba(0,0,0,.12);
+      }
+      .mobile-nav a{
+        flex:0 0 auto;
+        padding:10px 12px;
+        border-radius:10px;
+        color:#4b5563;
+        font-size:13px;
+        font-weight:700;
+      }
+      .mobile-nav a.active{background:#111827;color:#fff}
+      .top{margin-bottom:18px}
+      h1{font-size:26px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><span>321</span>Devis</div>
+      <nav class="nav">
+        <a href="index.html">Accueil</a>
+        <a href="demandes.html">Demandes</a>
+        <a href="historique.html">Devis</a>
+        <a href="factures.html" class="active">Factures</a>
+        <a href="catalogue.html">Catalogue</a>
+        <a href="parametres.html">Paramètres</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="top">
+        <div>
+          <h1>Factures</h1>
+          <div class="subtitle">Retrouvez les factures créées à partir de vos devis acceptés.</div>
+        </div>
+      </div>
+
+      <section class="card" id="facturesCard">
+        <div class="loading" id="loading">Chargement des factures…</div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-nav">
+    <a href="index.html">Accueil</a>
+    <a href="demandes.html">Demandes</a>
+    <a href="historique.html">Devis</a>
+    <a href="factures.html" class="active">Factures</a>
+    <a href="catalogue.html">Catalogue</a>
+    <a href="parametres.html">Paramètres</a>
+  </nav>
+
+  <script>
+    const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+    let accessToken = null;
+    let currentUser = null;
+
+    function getStoredSession() {
+      const possibleKeys = Object.keys(localStorage).filter(
+        key => key.startsWith("sb-") && key.endsWith("-auth-token")
+      );
+
+      for (const key of possibleKeys) {
+        try {
+          const value = JSON.parse(localStorage.getItem(key));
+          if (value?.access_token) return value;
+          if (value?.currentSession?.access_token) return value.currentSession;
+        } catch (e) {}
+      }
+
+      return null;
+    }
+
+    async function getCurrentUser() {
+      const session = getStoredSession();
+
+      if (!session?.access_token) {
+        window.location.href = "connexion.html";
+        return null;
+      }
+
+      accessToken = session.access_token;
+
+      const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${accessToken}`
+        }
+      });
+
+      if (!response.ok) {
+        window.location.href = "connexion.html";
+        return null;
+      }
+
+      currentUser = await response.json();
+      return currentUser;
+    }
+
+    async function apiGet(path) {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Erreur Supabase");
+      }
+
+      return response.json();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+      return new Intl.DateTimeFormat("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }).format(new Date(value));
+    }
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR"
+      }).format(Number(value || 0));
+    }
+
+    function badgeClass(status) {
+      const s = String(status || "").toLowerCase();
+
+      if (s.includes("pay")) return "badge-payee";
+      if (s.includes("envoy")) return "badge-envoyee";
+      if (s.includes("valid")) return "badge-validee";
+      return "badge-brouillon";
+    }
+
+    async function chargerFactures() {
+      const card = document.getElementById("facturesCard");
+
+      try {
+        await getCurrentUser();
+        if (!currentUser) return;
+
+        const userId = encodeURIComponent(currentUser.id);
+
+        const [factures, clients] = await Promise.all([
+          apiGet(
+            `factures?select=id,numero,client_id,statut,total_ttc,date_creation,date_envoi,date_paiement&user_id=eq.${userId}&order=date_creation.desc`
+          ),
+          apiGet(
+            `clients?select=id,nom&user_id=eq.${userId}`
+          )
+        ]);
+
+        const clientsParId = new Map(
+          clients.map(client => [client.id, client.nom])
+        );
+
+        if (!factures.length) {
+          card.innerHTML = `
+            <div class="empty">
+              <strong>Aucune facture pour le moment.</strong><br><br>
+              Une facture apparaîtra ici lorsqu'elle sera créée depuis un devis accepté.
+            </div>
+          `;
+          return;
+        }
+
+        const rows = factures.map(facture => {
+          const clientNom = clientsParId.get(facture.client_id) || "Client";
+          const numero = facture.numero || "Facture";
+          const statut = facture.statut || "Brouillon";
+
+          return `
+            <tr>
+              <td class="numero">${escapeHtml(numero)}</td>
+              <td>${formatDate(facture.date_creation)}</td>
+              <td>${escapeHtml(clientNom)}</td>
+              <td>
+                <span class="badge ${badgeClass(statut)}">
+                  ${escapeHtml(statut)}
+                </span>
+              </td>
+              <td class="amount">${formatMoney(facture.total_ttc)}</td>
+              <td>
+                <a class="btn btn-primary" href="voir-facture.html?id=${encodeURIComponent(facture.id)}">
+                  Ouvrir
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+        card.innerHTML = `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Facture</th>
+                  <th>Date</th>
+                  <th>Client</th>
+                  <th>Statut</th>
+                  <th>Total TTC</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        `;
+      } catch (error) {
+        console.error(error);
+        card.innerHTML = `
+          <div class="error">
+            Impossible de charger les factures.
+          </div>
+        `;
+      }
+    }
+
+    chargerFactures();
+  </script>
+</body>
+</html>
