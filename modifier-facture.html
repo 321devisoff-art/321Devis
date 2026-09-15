@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifier la facture — 321Devis</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f6f7fb;color:#111827}
+    a{text-decoration:none;color:inherit}
+    .app{min-height:100vh;display:grid;grid-template-columns:220px 1fr}
+    aside{background:#fff;border-right:1px solid #e5e7eb;padding:24px 16px}
+    .brand{font-size:25px;font-weight:850;margin-bottom:30px}.brand span{color:#2563eb}
+    nav{display:flex;flex-direction:column;gap:8px}nav a{padding:12px 14px;border-radius:11px;font-weight:650;color:#374151}
+    nav a.active{background:#111827;color:#fff}
+    main{width:100%;max-width:1050px;margin:0 auto;padding:32px}
+    .back{display:inline-block;margin-bottom:18px;color:#4b5563;font-weight:650}
+    h1{margin:0 0 7px;font-size:30px}.muted{color:#6b7280}
+    .card{margin-top:22px;background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(17,24,39,.06)}
+    .line{display:grid;grid-template-columns:minmax(220px,1fr) 100px 150px 120px 44px;gap:10px;align-items:end;padding:14px 0;border-bottom:1px solid #e5e7eb}
+    label{display:block;margin-bottom:6px;font-size:12px;font-weight:800;color:#6b7280;text-transform:uppercase}
+    input{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:9px;font:inherit}
+    .line-total{padding:11px 0;font-weight:800;text-align:right}
+    .remove{border:0;background:#fee2e2;color:#b91c1c;border-radius:9px;height:42px;cursor:pointer;font-weight:900}
+    .totals{width:330px;margin:24px 0 0 auto}.total-row{display:flex;justify-content:space-between;padding:8px 0}.ttc{font-size:20px;font-weight:850;border-top:2px solid #111827;margin-top:8px;padding-top:14px}
+    .actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:22px}
+    .btn{border:0;border-radius:11px;padding:12px 18px;font:inherit;font-weight:800;cursor:pointer}
+    .btn-primary{background:#111827;color:#fff}.btn-secondary{background:#f3f4f6;color:#111827}.btn-add{background:#eff6ff;color:#1d4ed8}
+    .error,.loading{padding:40px;text-align:center;color:#6b7280}.error{color:#dc2626}
+    @media(max-width:800px){.app{display:block}aside{display:none}main{padding:20px 14px}.line{grid-template-columns:1fr 1fr}.description{grid-column:1/-1}.line-total{text-align:left}.totals{width:100%}.actions{display:block}.btn{width:100%;margin-top:8px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><span>321</span>Devis</div>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="demandes.html">Demandes</a>
+      <a href="historique.html">Devis</a>
+      <a href="planning.html">Planning</a>
+      <a href="factures.html" class="active">Factures</a>
+      <a href="catalogue.html">Catalogue</a>
+      <a href="parametres.html">Paramètres</a>
+    </nav>
+  </aside>
+  <main>
+    <a id="back" class="back" href="factures.html">← Retour à la facture</a>
+    <div id="content"><div class="loading">Chargement…</div></div>
+  </main>
+</div>
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+let accessToken=null,currentUser=null,facture=null,lignes=[];
+
+function sessionLocale(){for(const key of Object.keys(localStorage).filter(k=>k.startsWith("sb-")&&k.endsWith("-auth-token"))){try{const v=JSON.parse(localStorage.getItem(key));if(v?.access_token)return v;if(v?.currentSession?.access_token)return v.currentSession}catch(e){}}return null}
+async function connexion(){const s=sessionLocale();if(!s?.access_token){location.href="connexion.html";return false}accessToken=s.access_token;const r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${accessToken}`}});if(!r.ok){location.href="connexion.html";return false}currentUser=await r.json();return true}
+async function req(path,options={}){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{...options,headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${accessToken}`,"Content-Type":"application/json",Prefer:"return=representation",...(options.headers||{})}});const data=await r.json().catch(()=>null);if(!r.ok)throw new Error(data?.message||data?.details||JSON.stringify(data)||"Erreur Supabase.");return data}
+function e(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function euro(v){return new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"}).format(Number(v||0))}
+function n(v){const x=Number(String(v??"").replace(",", "."));return Number.isFinite(x)?x:0}
+function ligneVide(){return{id:null,description:"",quantite:1,prix_unitaire_ht:0,total_ht:0,nouvelle:true}}
+
+function render(){
+  document.getElementById("back").href=`voir-facture.html?id=${encodeURIComponent(facture.id)}`;
+  document.getElementById("content").innerHTML=`
+    <h1>Modifier ${e(facture.numero||"la facture")}</h1>
+    <div class="muted">Corrigez les prestations avant validation et envoi.</div>
+    <section class="card">
+      <div id="lines">
+        ${lignes.map((l,i)=>lineHtml(l,i)).join("")}
+      </div>
+      <button class="btn btn-add" type="button" onclick="ajouterLigne()">+ Ajouter une ligne</button>
+      <div class="totals">
+        <div class="total-row"><span>Total HT</span><strong id="totalHT">—</strong></div>
+        <div class="total-row"><span>TVA (${e(facture.taux_tva)} %)</span><strong id="tva">—</strong></div>
+        <div class="total-row ttc"><span>Total TTC</span><span id="totalTTC">—</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" type="button" onclick="location.href='voir-facture.html?id=${encodeURIComponent(facture.id)}'">Annuler</button>
+        <button class="btn btn-primary" id="save" type="button" onclick="enregistrer()">Enregistrer les modifications</button>
+      </div>
+    </section>`;
+  recalculer();
+}
+
+function lineHtml(l,i){return `
+  <div class="line" data-index="${i}">
+    <div class="description"><label>Prestation</label><input value="${e(l.description)}" oninput="maj(${i},'description',this.value)"></div>
+    <div><label>Qté</label><input type="number" min="0.01" step="0.01" value="${e(l.quantite)}" oninput="maj(${i},'quantite',this.value)"></div>
+    <div><label>Prix unitaire HT</label><input type="number" min="0" step="0.01" value="${e(l.prix_unitaire_ht)}" oninput="maj(${i},'prix_unitaire_ht',this.value)"></div>
+    <div><label>Total HT</label><div class="line-total" id="lt-${i}">—</div></div>
+    <button class="remove" type="button" title="Supprimer" onclick="supprimerLigne(${i})">×</button>
+  </div>`}
+
+function maj(i,k,v){lignes[i][k]=k==="description"?v:n(v);recalculer()}
+function ajouterLigne(){lignes.push(ligneVide());render()}
+function supprimerLigne(i){if(lignes.length===1){alert("La facture doit contenir au moins une ligne.");return}lignes[i]._supprimee=true;render()}
+function actives(){return lignes.filter(l=>!l._supprimee)}
+function recalculer(){
+  let ht=0;
+  actives().forEach((l,idx)=>{
+    l.total_ht=Math.round(n(l.quantite)*n(l.prix_unitaire_ht)*100)/100;
+    ht+=l.total_ht;
+  });
+  ht=Math.round(ht*100)/100;
+  const tva=Math.round(ht*n(facture.taux_tva)/100*100)/100;
+  const ttc=Math.round((ht+tva)*100)/100;
+  facture.total_ht=ht;facture.total_ttc=ttc;
+  actives().forEach(l=>{
+    const originalIndex=lignes.indexOf(l);
+    const el=document.getElementById(`lt-${originalIndex}`);
+    if(el)el.textContent=euro(l.total_ht);
+  });
+  document.getElementById("totalHT").textContent=euro(ht);
+  document.getElementById("tva").textContent=euro(tva);
+  document.getElementById("totalTTC").textContent=euro(ttc);
+}
+
+async function charger(){
+  try{
+    if(!await connexion())return;
+    const id=new URLSearchParams(location.search).get("id");if(!id)throw new Error("Identifiant de facture manquant.");
+    const uid=encodeURIComponent(currentUser.id),fid=encodeURIComponent(id);
+    const fs=await req(`factures?select=*&id=eq.${fid}&user_id=eq.${uid}&limit=1`);
+    if(!fs.length)throw new Error("Facture introuvable.");
+    facture=fs[0];
+    if(facture.statut!=="Brouillon")throw new Error("Seule une facture en brouillon peut être modifiée.");
+    lignes=await req(`lignes_facture?select=*&facture_id=eq.${fid}&user_id=eq.${uid}&order=created_at.asc`);
+    if(!lignes.length)lignes=[ligneVide()];
+    render();
+  }catch(err){document.getElementById("content").innerHTML=`<div class="error">${e(err.message||"Impossible de charger.")}</div>`}
+}
+
+async function enregistrer(){
+  const btn=document.getElementById("save");
+  try{
+    const restantes=actives();
+    if(!restantes.length)throw new Error("Ajoutez au moins une ligne.");
+    for(const l of restantes){
+      if(!String(l.description||"").trim())throw new Error("Chaque ligne doit avoir une description.");
+      if(n(l.quantite)<=0)throw new Error("La quantité doit être supérieure à 0.");
+      if(n(l.prix_unitaire_ht)<0)throw new Error("Le prix ne peut pas être négatif.");
+    }
+    btn.disabled=true;btn.textContent="Enregistrement…";
+    const uid=encodeURIComponent(currentUser.id),fid=encodeURIComponent(facture.id);
+
+    for(const l of lignes.filter(x=>x._supprimee&&x.id)){
+      await req(`lignes_facture?id=eq.${encodeURIComponent(l.id)}&user_id=eq.${uid}`,{method:"DELETE"});
+    }
+    for(const l of restantes){
+      const body={description:String(l.description).trim(),quantite:n(l.quantite),prix_unitaire_ht:n(l.prix_unitaire_ht),total_ht:l.total_ht};
+      if(l.id){
+        await req(`lignes_facture?id=eq.${encodeURIComponent(l.id)}&user_id=eq.${uid}`,{method:"PATCH",body:JSON.stringify(body)});
+      }else{
+        await req("lignes_facture",{method:"POST",body:JSON.stringify({...body,facture_id:facture.id,user_id:currentUser.id})});
+      }
+    }
+    await req(`factures?id=eq.${fid}&user_id=eq.${uid}`,{method:"PATCH",body:JSON.stringify({total_ht:facture.total_ht,total_ttc:facture.total_ttc})});
+    alert("Facture modifiée. Vérifiez-la puis validez son envoi.");
+    location.href=`voir-facture.html?id=${encodeURIComponent(facture.id)}`;
+  }catch(err){console.error(err);alert(err.message||"Impossible d'enregistrer.");if(btn){btn.disabled=false;btn.textContent="Enregistrer les modifications"}}
+}
+charger();
+</script>
+</body>
+</html>
