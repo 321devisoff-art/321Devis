@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Paramètres — 321Devis</title>
+
+    <style>
+*{box-sizing:border-box}
+:root{--blue:#2864e8;--blue2:#1748ba;--ink:#101828;--muted:#667085;--line:#e5eaf2;--bg:#f5f7fb;--green:#067647;--amber:#b54708;--shadow:0 10px 30px rgba(16,24,40,.055)}
+body{margin:0;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.container{max-width:850px;margin:auto;padding:34px 22px 55px}
+.header{background:transparent;color:var(--ink);padding:0;margin-bottom:22px}.header h1{margin:0 0 6px;font-size:30px;letter-spacing:-1px}.header p{margin:0;color:var(--muted);font-size:14px}
+.navigation{display:flex;gap:5px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px;margin-bottom:22px;overflow-x:auto}.navigation a{color:#475467;text-decoration:none;margin:0;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;white-space:nowrap}.navigation a:hover{background:#f2f4f7;color:var(--ink)}
+.bloc{background:#fff;padding:25px;border:1px solid var(--line);border-radius:16px;margin-bottom:22px;box-shadow:var(--shadow)}.bloc h2{margin:0 0 7px;font-size:19px;letter-spacing:-.3px}.bloc>p{margin:0 0 18px;color:var(--muted);font-size:13px}
+label{display:block;margin-top:15px;margin-bottom:6px;font-weight:700;font-size:12px;color:#475467}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d0d5dd;border-radius:9px;font-size:14px;color:var(--ink);background:#fff;font-family:inherit}textarea{min-height:90px;resize:vertical}input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-shadow:0 0 0 3px #eef4ff}.aide{color:var(--muted);font-size:11px;margin:5px 0 0}.avertissement{margin-top:10px;padding:11px 12px;background:#fffaeb;border:1px solid #fedf89;border-radius:9px;color:var(--amber);font-size:12px;line-height:1.45}
+button{margin-top:22px;padding:12px 17px;border:none;border-radius:9px;background:var(--blue);color:#fff;font-size:13px;font-weight:750;cursor:pointer}button:hover{background:var(--blue2)}button:disabled{opacity:.6;cursor:not-allowed}.message{display:none;margin-top:16px;padding:12px 13px;background:#ecfdf3;border:1px solid #abefc6;border-radius:9px;color:var(--green);font-size:13px}
+.logo-zone{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center;margin:18px 0 6px;padding:18px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}.logo-apercu{width:120px;height:90px;border:1px dashed #b8c1d1;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--muted);font-size:11px;text-align:center;padding:8px}.logo-apercu img{display:none;max-width:100%;max-height:100%;object-fit:contain}.logo-commandes input[type=file]{display:none}.logo-actions{display:flex;gap:9px;flex-wrap:wrap}.logo-actions button{margin-top:10px}.bouton-secondaire{background:#fff;color:#344054;border:1px solid #d0d5dd}.bouton-secondaire:hover{background:#f2f4f7}.bouton-danger{background:#fff;color:#b42318;border:1px solid #fda29b}.bouton-danger:hover{background:#fef3f2}
+.grille-paiement{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.champ-paiement{display:none}.checkline{display:flex;align-items:center;gap:9px;margin-top:16px;font-size:13px;font-weight:700;color:#344054}.checkline input{width:auto;margin:0}.actions-paiement{display:flex;gap:9px;flex-wrap:wrap}.liste-paiements{display:grid;gap:10px;margin-top:20px}.paiement-vide{padding:18px;border:1px dashed #cbd5e1;border-radius:10px;text-align:center;color:var(--muted);font-size:12px}.paiement-item{display:flex;align-items:flex-start;gap:14px;padding:15px;border:1px solid var(--line);border-radius:11px;background:#f8fafc}.paiement-contenu{flex:1;min-width:0}.paiement-titre{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:800}.paiement-details{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.45;overflow-wrap:anywhere}.paiement-badge{padding:4px 7px;border-radius:999px;background:#ecfdf3;color:var(--green);font-size:9px;font-weight:800}.paiement-badge.inactif{background:#f2f4f7;color:#667085}.paiement-actions{display:flex;gap:7px}.paiement-actions button{margin:0;padding:8px 10px;font-size:11px}.message-paiement{display:none;margin-top:14px;padding:11px 12px;border-radius:9px;font-size:12px}
+@media(max-width:700px){.container{padding:25px 14px 40px}.header h1{font-size:27px}.bloc{padding:18px}button{width:100%}}
+@media(max-width:520px){.logo-zone{grid-template-columns:1fr}.logo-apercu{width:100%;height:120px}.logo-actions{display:block}}
+@media(max-width:600px){.grille-paiement{grid-template-columns:1fr}.paiement-item{display:block}.paiement-actions{margin-top:12px}.paiement-actions button{width:auto}.actions-paiement{display:block}}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>
+            321Devis
+        </h1>
+
+        <p>
+            Paramètres
+        </p>
+
+    </div>
+
+    <div class="navigation">
+
+        <a href="index.html">
+            Accueil
+        </a>
+
+        <a href="demandes.html">Demandes</a>
+        <a href="validation-devis.html">Devis</a>
+        <a href="catalogue.html">Catalogue</a>
+
+    </div>
+
+    <div class="bloc">
+
+        <h2>
+            Votre entreprise
+        </h2>
+
+        <p>
+            Ces informations sont utilisées automatiquement sur vos devis et factures.
+        </p>
+
+        <label for="fichierLogo">
+            Logo de l'entreprise
+        </label>
+
+        <div class="logo-zone">
+            <div class="logo-apercu" id="zoneApercuLogo">
+                <img id="apercuLogo" alt="Logo de l'entreprise">
+                <span id="texteApercuLogo">Aucun logo</span>
+            </div>
+
+            <div class="logo-commandes">
+                <input
+                    type="file"
+                    id="fichierLogo"
+                    accept="image/png,image/jpeg,image/webp"
+                    onchange="previsualiserLogo()"
+                >
+
+                <p class="aide">
+                    Facultatif. PNG, JPEG ou WebP, 2 Mo maximum.
+                    Un logo horizontal sur fond transparent est recommandé.
+                </p>
+
+                <div class="logo-actions">
+                    <button
+                        class="bouton-secondaire"
+                        id="boutonChangerLogo"
+                        type="button"
+                        onclick="ouvrirSelectionLogo()"
+                    >
+                        Choisir un logo
+                    </button>
+
+                    <button
+                        class="bouton-danger"
+                        id="boutonSupprimerLogo"
+                        type="button"
+                        onclick="demanderSuppressionLogo()"
+                        style="display:none"
+                    >
+                        Supprimer le logo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <label for="nomEntreprise">
+            Nom de l'entreprise *
+        </label>
+
+        <input
+            type="text"
+            id="nomEntreprise"
+            placeholder="Ex : Plomberie Dupont"
+        >
+
+        <label for="adresseEntreprise">
+            Adresse *
+        </label>
+
+        <input
+            type="text"
+            id="adresseEntreprise"
+            placeholder="Ex : 10 rue de Paris"
+        >
+
+        <label for="codePostal">
+            Code postal *
+        </label>
+
+        <input
+            type="text"
+            id="codePostal"
+            placeholder="Ex : 59000"
+        >
+
+        <label for="ville">
+            Ville *
+        </label>
+
+        <input
+            type="text"
+            id="ville"
+            placeholder="Ex : Lille"
+        >
+
+        <label for="telephoneEntreprise">
+            Téléphone *
+        </label>
+
+        <input
+            type="text"
+            id="telephoneEntreprise"
+            placeholder="Ex : 06 00 00 00 00"
+        >
+
+        <label for="emailEntreprise">
+            E-mail *
+        </label>
+
+        <input
+            type="email"
+            id="emailEntreprise"
+            placeholder="contact@entreprise.fr"
+        >
+
+        <label for="siret">
+            SIRET *
+        </label>
+
+        <input
+            type="text"
+            id="siret"
+            placeholder="Ex : 123 456 789 00012"
+        >
+
+        <p class="aide">
+            Le SIRET doit être celui de l'entreprise.
+        </p>
+
+        <label for="tva">
+            Numéro de TVA intracommunautaire
+        </label>
+
+        <input
+            type="text"
+            id="tva"
+            placeholder="Ex : FR12345678901"
+        >
+
+        <p class="aide">
+            Facultatif pour le moment.
+        </p>
+
+        <label for="tauxTVA">
+            Taux de TVA appliqué (%) *
+        </label>
+
+        <input
+            type="number"
+            id="tauxTVA"
+            min="0"
+            max="100"
+            step="0.01"
+            placeholder="Ex : 20"
+        >
+
+        <p class="aide">
+            Ce taux sera utilisé pour calculer la TVA
+            sur les nouveaux devis.
+        </p>
+
+        <div class="avertissement">
+
+            Vérifie que le taux renseigné correspond bien
+            à la situation fiscale de l'entreprise et aux
+            prestations concernées.
+
+        </div>
+
+        <label for="site">
+            Site internet
+        </label>
+
+        <input
+            type="text"
+            id="site"
+            placeholder="Ex : www.monentreprise.fr"
+        >
+
+        <button
+            id="boutonEnregistrer"
+            type="button"
+            onclick="sauvegarderParametres()"
+        >
+            Enregistrer
+        </button>
+
+        <div
+            class="message"
+            id="message"
+        >
+            Informations enregistrées avec succès.
+        </div>
+
+    </div>
+
+    <div class="bloc">
+
+        <h2>Moyens de paiement</h2>
+
+        <p>
+            Choisissez les moyens proposés au client sur ses factures.
+            N'enregistrez jamais de mot de passe, de clé API ou de numéro de carte bancaire.
+        </p>
+
+        <div class="grille-paiement">
+            <div>
+                <label for="typePaiement">Type de paiement *</label>
+                <select id="typePaiement" onchange="adapterFormulairePaiement()">
+                    <option value="carte">Carte bancaire / lien sécurisé</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="sumup">SumUp</option>
+                    <option value="virement">Virement bancaire</option>
+                    <option value="cheque">Chèque</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="nomPaiement">Nom affiché au client *</label>
+                <input id="nomPaiement" type="text" maxlength="100" placeholder="Ex : Payer par carte bancaire">
+            </div>
+        </div>
+
+        <div class="champ-paiement" id="zoneLienPaiement">
+            <label for="lienPaiement">Lien de paiement HTTPS *</label>
+            <input id="lienPaiement" type="url" maxlength="1000" placeholder="https://...">
+            <p class="aide">Le client sera redirigé vers ce service externe.</p>
+        </div>
+
+        <div class="champ-paiement" id="zoneVirement">
+            <div class="grille-paiement">
+                <div>
+                    <label for="titulaireCompte">Titulaire du compte *</label>
+                    <input id="titulaireCompte" type="text" maxlength="150">
+                </div>
+                <div>
+                    <label for="ibanPaiement">IBAN *</label>
+                    <input id="ibanPaiement" type="text" maxlength="50" autocomplete="off">
+                </div>
+                <div>
+                    <label for="bicPaiement">BIC</label>
+                    <input id="bicPaiement" type="text" maxlength="20" autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <div class="champ-paiement" id="zoneCheque">
+            <div class="grille-paiement">
+                <div>
+                    <label for="ordreCheque">Ordre du chèque *</label>
+                    <input id="ordreCheque" type="text" maxlength="150">
+                </div>
+                <div>
+                    <label for="adresseCheque">Adresse d'envoi</label>
+                    <input id="adresseCheque" type="text" maxlength="300">
+                </div>
+            </div>
+        </div>
+
+        <label for="instructionsPaiement">Instructions complémentaires</label>
+        <textarea id="instructionsPaiement" maxlength="1000" placeholder="Ex : indiquez le numéro de facture dans la référence du paiement."></textarea>
+
+        <label class="checkline" for="paiementActif">
+            <input id="paiementActif" type="checkbox" checked>
+            Proposer ce moyen au client
+        </label>
+
+        <div class="actions-paiement">
+            <button id="boutonEnregistrerPaiement" type="button" onclick="enregistrerMoyenPaiement()">
+                Ajouter ce moyen
+            </button>
+            <button class="bouton-secondaire" id="boutonAnnulerPaiement" type="button" onclick="reinitialiserFormulairePaiement()" style="display:none">
+                Annuler la modification
+            </button>
+        </div>
+
+        <div class="message-paiement" id="messagePaiement"></div>
+        <div class="liste-paiements" id="listePaiements"></div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://ywmuiqavjdzuaittqesc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TiG6CaYzFOPjZ8JJSHRI_w_mZd8Kmpv";
+
+const clientSupabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let parametresId = null;
+let utilisateurId = null;
+let accessToken = null;
+let logoPathActuel = null;
+let logoASupprimer = false;
+let urlApercuLocale = null;
+let moyensPaiement = [];
+let moyenPaiementEnEditionId = null;
+
+const TYPES_LOGO_AUTORISES = [
+    "image/png",
+    "image/jpeg",
+    "image/webp"
+];
+
+const TAILLE_MAX_LOGO = 2 * 1024 * 1024;
+
+const LIBELLES_PAIEMENT = {
+    carte: "Carte bancaire",
+    paypal: "PayPal",
+    sumup: "SumUp",
+    virement: "Virement bancaire",
+    cheque: "Chèque",
+    autre: "Autre"
+};
+
+async function verifierUtilisateur() {
+    const {
+        data,
+        error
+    } = await clientSupabase.auth.getSession();
+
+    if (error) {
+        throw error;
+    }
+
+    if (
+        !data ||
+        !data.session ||
+        !data.session.user
+    ) {
+        window.location.href = "connexion.html";
+        return false;
+    }
+
+    utilisateurId = data.session.user.id;
+    accessToken = data.session.access_token;
+
+    return true;
+}
+
+async function appelerSupabase(endpoint, options = {}) {
+    if (!accessToken) {
+        const connecte = await verifierUtilisateur();
+
+        if (!connecte) {
+            throw new Error(
+                "Vous devez être connecté pour accéder à cette page."
+            );
+        }
+    }
+
+    const reponse = await fetch(
+        SUPABASE_URL + "/rest/v1/" + endpoint,
+        {
+            method: options.method || "GET",
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + accessToken,
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                ...(options.headers || {})
+            },
+            body: options.body
+        }
+    );
+
+    const texte = await reponse.text();
+    let donnees = null;
+
+    if (texte) {
+        try {
+            donnees = JSON.parse(texte);
+        } catch (erreur) {
+            donnees = texte;
+        }
+    }
+
+    if (!reponse.ok) {
+        let message =
+            "Erreur Supabase HTTP " +
+            reponse.status;
+
+        if (
+            donnees &&
+            typeof donnees === "object" &&
+            donnees.message
+        ) {
+            message +=
+                " : " +
+                donnees.message;
+        }
+
+        throw new Error(message);
+    }
+
+    return donnees;
+}
+
+function valeur(id) {
+    const element =
+        document.getElementById(id);
+
+    return element
+        ? element.value.trim()
+        : "";
+}
+
+function nombreOuZero(id) {
+    const nombre = Number(
+        document.getElementById(id)?.value
+    );
+
+    return Number.isFinite(nombre)
+        ? nombre
+        : 0;
+}
+
+function remplir(id, valeurChamp) {
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+        element.value =
+            valeurChamp ?? "";
+    }
+}
+
+function afficherMessage(
+    texte,
+    type = "succes"
+) {
+    const zone =
+        document.getElementById("message");
+
+    if (!zone) {
+        return;
+    }
+
+    zone.textContent = texte;
+    zone.style.display = "block";
+
+    if (type === "erreur") {
+        zone.style.background = "#fee2e2";
+        zone.style.color = "#991b1b";
+        zone.style.borderColor = "#fecaca";
+    } else {
+        zone.style.background = "#dcfce7";
+        zone.style.color = "#166534";
+        zone.style.borderColor = "#bbf7d0";
+    }
+}
+
+function afficherApercuLogo(url) {
+    const image =
+        document.getElementById("apercuLogo");
+
+    const texte =
+        document.getElementById("texteApercuLogo");
+
+    const boutonSupprimer =
+        document.getElementById("boutonSupprimerLogo");
+
+    if (url) {
+        image.src = url;
+        image.style.display = "block";
+        texte.style.display = "none";
+        boutonSupprimer.style.display = "inline-block";
+    } else {
+        image.removeAttribute("src");
+        image.style.display = "none";
+        texte.style.display = "inline";
+        boutonSupprimer.style.display = "none";
+    }
+}
+
+function afficherLogoEnregistre() {
+    if (!logoPathActuel) {
+        afficherApercuLogo(null);
+        return;
+    }
+
+    const { data } =
+        clientSupabase.storage
+            .from("logos-entreprises")
+            .getPublicUrl(logoPathActuel);
+
+    afficherApercuLogo(
+        data?.publicUrl || null
+    );
+}
+
+function ouvrirSelectionLogo() {
+    document.getElementById("fichierLogo").click();
+}
+
+function nettoyerUrlApercuLocale() {
+    if (urlApercuLocale) {
+        URL.revokeObjectURL(urlApercuLocale);
+        urlApercuLocale = null;
+    }
+}
+
+function previsualiserLogo() {
+    const champ =
+        document.getElementById("fichierLogo");
+
+    const fichier = champ.files?.[0];
+
+    if (!fichier) {
+        return;
+    }
+
+    if (!TYPES_LOGO_AUTORISES.includes(fichier.type)) {
+        champ.value = "";
+        afficherMessage(
+            "Format non accepté. Choisissez un fichier PNG, JPEG ou WebP.",
+            "erreur"
+        );
+        return;
+    }
+
+    if (fichier.size > TAILLE_MAX_LOGO) {
+        champ.value = "";
+        afficherMessage(
+            "Le logo dépasse la taille maximale de 2 Mo.",
+            "erreur"
+        );
+        return;
+    }
+
+    nettoyerUrlApercuLocale();
+    urlApercuLocale = URL.createObjectURL(fichier);
+    logoASupprimer = false;
+    afficherApercuLogo(urlApercuLocale);
+}
+
+function demanderSuppressionLogo() {
+    const champ =
+        document.getElementById("fichierLogo");
+
+    champ.value = "";
+    nettoyerUrlApercuLocale();
+    logoASupprimer = true;
+    afficherApercuLogo(null);
+}
+
+function extensionDepuisType(type) {
+    if (type === "image/png") {
+        return "png";
+    }
+
+    if (type === "image/webp") {
+        return "webp";
+    }
+
+    return "jpg";
+}
+
+async function preparerLogo() {
+    const champ =
+        document.getElementById("fichierLogo");
+
+    const fichier = champ.files?.[0] || null;
+
+    if (logoASupprimer) {
+        return {
+            path: null,
+            nouveauPath: null,
+            ancienPath: logoPathActuel
+        };
+    }
+
+    if (!fichier) {
+        return {
+            path: logoPathActuel,
+            nouveauPath: null,
+            ancienPath: null
+        };
+    }
+
+    if (!TYPES_LOGO_AUTORISES.includes(fichier.type)) {
+        throw new Error(
+            "Le format du logo n'est pas accepté."
+        );
+    }
+
+    if (fichier.size > TAILLE_MAX_LOGO) {
+        throw new Error(
+            "Le logo dépasse la taille maximale de 2 Mo."
+        );
+    }
+
+    const ancienLogo = logoPathActuel;
+    const extension = extensionDepuisType(fichier.type);
+    const nouveauPath =
+        utilisateurId + "/logo-" + Date.now() + "." + extension;
+
+    const { error } =
+        await clientSupabase.storage
+            .from("logos-entreprises")
+            .upload(
+                nouveauPath,
+                fichier,
+                {
+                    cacheControl: "3600",
+                    contentType: fichier.type,
+                    upsert: false
+                }
+            );
+
+    if (error) {
+        throw error;
+    }
+
+    return {
+        path: nouveauPath,
+        nouveauPath,
+        ancienPath: ancienLogo
+    };
+}
+
+async function chargerParametres() {
+    const resultats =
+        await appelerSupabase(
+            "parametres?select=*&user_id=eq." +
+            encodeURIComponent(utilisateurId) +
+            "&order=created_at.asc&limit=1"
+        );
+
+    if (
+        !Array.isArray(resultats) ||
+        !resultats[0]
+    ) {
+        parametresId = null;
+        return;
+    }
+
+    const parametres =
+        resultats[0];
+
+    parametresId =
+        parametres.id;
+
+    logoPathActuel =
+        parametres.logo_path || null;
+
+    afficherLogoEnregistre();
+
+    remplir(
+        "nomEntreprise",
+        parametres.nom_entreprise
+    );
+
+    remplir(
+        "adresseEntreprise",
+        parametres.adresse
+    );
+
+    remplir(
+        "codePostal",
+        parametres.code_postal
+    );
+
+    remplir(
+        "ville",
+        parametres.ville
+    );
+
+    remplir(
+        "telephoneEntreprise",
+        parametres.telephone
+    );
+
+    remplir(
+        "emailEntreprise",
+        parametres.email
+    );
+
+    remplir(
+        "siret",
+        parametres.siret
+    );
+
+    remplir(
+        "tva",
+        parametres.numero_tva
+    );
+
+    remplir(
+        "tauxTVA",
+        parametres.taux_tva ?? 20
+    );
+
+    remplir(
+        "site",
+        parametres.site
+    );
+}
+
+function afficherMessagePaiement(texte, type = "succes") {
+    const zone =
+        document.getElementById("messagePaiement");
+
+    zone.textContent = texte;
+    zone.style.display = "block";
+    zone.style.background =
+        type === "erreur" ? "#fef3f2" : "#ecfdf3";
+    zone.style.color =
+        type === "erreur" ? "#b42318" : "#067647";
+    zone.style.border =
+        type === "erreur"
+            ? "1px solid #fecdca"
+            : "1px solid #abefc6";
+}
+
+function adapterFormulairePaiement() {
+    const type = valeur("typePaiement");
+    const typesAvecLien = [
+        "carte",
+        "paypal",
+        "sumup",
+        "autre"
+    ];
+
+    document.getElementById("zoneLienPaiement").style.display =
+        typesAvecLien.includes(type) ? "block" : "none";
+
+    document.getElementById("zoneVirement").style.display =
+        type === "virement" ? "block" : "none";
+
+    document.getElementById("zoneCheque").style.display =
+        type === "cheque" ? "block" : "none";
+
+    const nom = document.getElementById("nomPaiement");
+
+    if (!nom.value.trim()) {
+        nom.value = LIBELLES_PAIEMENT[type] || "";
+    }
+}
+
+function reinitialiserFormulairePaiement() {
+    moyenPaiementEnEditionId = null;
+
+    remplir("typePaiement", "carte");
+    remplir("nomPaiement", "Carte bancaire");
+    remplir("lienPaiement", "");
+    remplir("titulaireCompte", "");
+    remplir("ibanPaiement", "");
+    remplir("bicPaiement", "");
+    remplir("ordreCheque", "");
+    remplir("adresseCheque", "");
+    remplir("instructionsPaiement", "");
+
+    document.getElementById("paiementActif").checked = true;
+    document.getElementById("boutonEnregistrerPaiement").textContent =
+        "Ajouter ce moyen";
+    document.getElementById("boutonAnnulerPaiement").style.display =
+        "none";
+
+    adapterFormulairePaiement();
+}
+
+function detailsMoyenPaiement(moyen) {
+    const details = [];
+
+    if (moyen.lien_paiement) {
+        details.push(moyen.lien_paiement);
+    }
+
+    if (moyen.titulaire_compte) {
+        details.push("Titulaire : " + moyen.titulaire_compte);
+    }
+
+    if (moyen.iban) {
+        details.push("IBAN : " + moyen.iban);
+    }
+
+    if (moyen.bic) {
+        details.push("BIC : " + moyen.bic);
+    }
+
+    if (moyen.ordre_cheque) {
+        details.push("Ordre : " + moyen.ordre_cheque);
+    }
+
+    if (moyen.adresse_cheque) {
+        details.push("Adresse : " + moyen.adresse_cheque);
+    }
+
+    if (moyen.instructions) {
+        details.push(moyen.instructions);
+    }
+
+    return details.join(" · ") || "Aucune instruction complémentaire.";
+}
+
+function afficherMoyensPaiement() {
+    const zone =
+        document.getElementById("listePaiements");
+
+    zone.innerHTML = "";
+
+    if (!moyensPaiement.length) {
+        const vide = document.createElement("div");
+        vide.className = "paiement-vide";
+        vide.textContent =
+            "Aucun moyen de paiement configuré pour le moment.";
+        zone.appendChild(vide);
+        return;
+    }
+
+    moyensPaiement.forEach(function(moyen) {
+        const carte = document.createElement("div");
+        carte.className = "paiement-item";
+
+        const contenu = document.createElement("div");
+        contenu.className = "paiement-contenu";
+
+        const titre = document.createElement("div");
+        titre.className = "paiement-titre";
+
+        const nom = document.createElement("span");
+        nom.textContent = moyen.nom_affiche;
+
+        const type = document.createElement("span");
+        type.textContent =
+            "(" + (LIBELLES_PAIEMENT[moyen.type] || moyen.type) + ")";
+        type.style.color = "#667085";
+        type.style.fontWeight = "600";
+
+        const badge = document.createElement("span");
+        badge.className =
+            "paiement-badge" + (moyen.actif ? "" : " inactif");
+        badge.textContent = moyen.actif ? "Actif" : "Inactif";
+
+        titre.append(nom, type, badge);
+
+        const details = document.createElement("div");
+        details.className = "paiement-details";
+        details.textContent = detailsMoyenPaiement(moyen);
+
+        contenu.append(titre, details);
+
+        const actions = document.createElement("div");
+        actions.className = "paiement-actions";
+
+        const boutonModifier = document.createElement("button");
+        boutonModifier.type = "button";
+        boutonModifier.className = "bouton-secondaire";
+        boutonModifier.textContent = "Modifier";
+        boutonModifier.addEventListener("click", function() {
+            modifierMoyenPaiement(moyen.id);
+        });
+
+        const boutonEtat = document.createElement("button");
+        boutonEtat.type = "button";
+        boutonEtat.className = "bouton-secondaire";
+        boutonEtat.textContent = moyen.actif ? "Désactiver" : "Activer";
+        boutonEtat.addEventListener("click", function() {
+            changerEtatMoyenPaiement(moyen.id, !moyen.actif);
+        });
+
+        const boutonSupprimer = document.createElement("button");
+        boutonSupprimer.type = "button";
+        boutonSupprimer.className = "bouton-danger";
+        boutonSupprimer.textContent = "Supprimer";
+        boutonSupprimer.addEventListener("click", function() {
+            supprimerMoyenPaiement(moyen.id);
+        });
+
+        actions.append(
+            boutonModifier,
+            boutonEtat,
+            boutonSupprimer
+        );
+
+        carte.append(contenu, actions);
+        zone.appendChild(carte);
+    });
+}
+
+async function chargerMoyensPaiement() {
+    const donnees = await appelerSupabase(
+        "moyens_paiement?select=*&user_id=eq." +
+        encodeURIComponent(utilisateurId) +
+        "&order=ordre.asc,created_at.asc"
+    );
+
+    moyensPaiement = Array.isArray(donnees) ? donnees : [];
+    afficherMoyensPaiement();
+}
+
+function modifierMoyenPaiement(id) {
+    const moyen = moyensPaiement.find(
+        function(item) {
+            return item.id === id;
+        }
+    );
+
+    if (!moyen) {
+        return;
+    }
+
+    moyenPaiementEnEditionId = moyen.id;
+
+    remplir("typePaiement", moyen.type);
+    remplir("nomPaiement", moyen.nom_affiche);
+    remplir("lienPaiement", moyen.lien_paiement);
+    remplir("titulaireCompte", moyen.titulaire_compte);
+    remplir("ibanPaiement", moyen.iban);
+    remplir("bicPaiement", moyen.bic);
+    remplir("ordreCheque", moyen.ordre_cheque);
+    remplir("adresseCheque", moyen.adresse_cheque);
+    remplir("instructionsPaiement", moyen.instructions);
+
+    document.getElementById("paiementActif").checked =
+        moyen.actif !== false;
+
+    document.getElementById("boutonEnregistrerPaiement").textContent =
+        "Enregistrer les modifications";
+    document.getElementById("boutonAnnulerPaiement").style.display =
+        "inline-block";
+
+    adapterFormulairePaiement();
+    document.getElementById("typePaiement").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+async function enregistrerMoyenPaiement() {
+    const bouton =
+        document.getElementById("boutonEnregistrerPaiement");
+
+    const type = valeur("typePaiement");
+    const nomAffiche = valeur("nomPaiement");
+    const lienPaiement = valeur("lienPaiement");
+    const typesAvecLien = ["carte", "paypal", "sumup", "autre"];
+    const typesLienObligatoire = ["carte", "paypal", "sumup"];
+
+    if (!nomAffiche) {
+        afficherMessagePaiement(
+            "Indiquez le nom qui sera affiché au client.",
+            "erreur"
+        );
+        return;
+    }
+
+    if (typesLienObligatoire.includes(type) && !lienPaiement) {
+        afficherMessagePaiement(
+            "Indiquez le lien HTTPS de ce moyen de paiement.",
+            "erreur"
+        );
+        return;
+    }
+
+    if (lienPaiement) {
+        try {
+            const url = new URL(lienPaiement);
+
+            if (url.protocol !== "https:") {
+                throw new Error("Protocole invalide");
+            }
+        } catch (_) {
+            afficherMessagePaiement(
+                "Le lien de paiement doit être une adresse HTTPS valide.",
+                "erreur"
+            );
+            return;
+        }
+    }
+
+    if (
+        type === "virement" &&
+        (!valeur("titulaireCompte") || !valeur("ibanPaiement"))
+    ) {
+        afficherMessagePaiement(
+            "Indiquez le titulaire du compte et l'IBAN.",
+            "erreur"
+        );
+        return;
+    }
+
+    if (type === "cheque" && !valeur("ordreCheque")) {
+        afficherMessagePaiement(
+            "Indiquez l'ordre du chèque.",
+            "erreur"
+        );
+        return;
+    }
+
+    const existant = moyensPaiement.find(
+        function(item) {
+            return item.id === moyenPaiementEnEditionId;
+        }
+    );
+
+    const donnees = {
+        user_id: utilisateurId,
+        type,
+        nom_affiche: nomAffiche,
+        lien_paiement:
+            typesAvecLien.includes(type) && lienPaiement
+                ? lienPaiement
+                : null,
+        titulaire_compte:
+            type === "virement" ? valeur("titulaireCompte") : null,
+        iban:
+            type === "virement" ? valeur("ibanPaiement") : null,
+        bic:
+            type === "virement" ? valeur("bicPaiement") || null : null,
+        ordre_cheque:
+            type === "cheque" ? valeur("ordreCheque") : null,
+        adresse_cheque:
+            type === "cheque" ? valeur("adresseCheque") || null : null,
+        instructions: valeur("instructionsPaiement") || null,
+        actif: document.getElementById("paiementActif").checked,
+        ordre:
+            existant?.ordre ??
+            (moyensPaiement.length
+                ? Math.max(...moyensPaiement.map(function(item) {
+                    return Number(item.ordre) || 0;
+                })) + 1
+                : 0),
+        updated_at: new Date().toISOString()
+    };
+
+    bouton.disabled = true;
+    bouton.textContent = "Enregistrement…";
+
+    try {
+        if (moyenPaiementEnEditionId) {
+            await appelerSupabase(
+                "moyens_paiement?id=eq." +
+                encodeURIComponent(moyenPaiementEnEditionId) +
+                "&user_id=eq." +
+                encodeURIComponent(utilisateurId),
+                {
+                    method: "PATCH",
+                    headers: { "Prefer": "return=minimal" },
+                    body: JSON.stringify(donnees)
+                }
+            );
+        } else {
+            await appelerSupabase(
+                "moyens_paiement",
+                {
+                    method: "POST",
+                    headers: { "Prefer": "return=minimal" },
+                    body: JSON.stringify(donnees)
+                }
+            );
+        }
+
+        afficherMessagePaiement(
+            moyenPaiementEnEditionId
+                ? "Moyen de paiement modifié."
+                : "Moyen de paiement ajouté."
+        );
+
+        reinitialiserFormulairePaiement();
+        await chargerMoyensPaiement();
+
+    } catch (erreur) {
+        console.error(erreur);
+        afficherMessagePaiement(
+            "Impossible d'enregistrer ce moyen : " + erreur.message,
+            "erreur"
+        );
+
+    } finally {
+        bouton.disabled = false;
+        bouton.textContent = moyenPaiementEnEditionId
+            ? "Enregistrer les modifications"
+            : "Ajouter ce moyen";
+    }
+}
+
+async function changerEtatMoyenPaiement(id, actif) {
+    try {
+        await appelerSupabase(
+            "moyens_paiement?id=eq." +
+            encodeURIComponent(id) +
+            "&user_id=eq." +
+            encodeURIComponent(utilisateurId),
+            {
+                method: "PATCH",
+                headers: { "Prefer": "return=minimal" },
+                body: JSON.stringify({
+                    actif,
+                    updated_at: new Date().toISOString()
+                })
+            }
+        );
+
+        await chargerMoyensPaiement();
+    } catch (erreur) {
+        console.error(erreur);
+        afficherMessagePaiement(
+            "Impossible de modifier ce moyen : " + erreur.message,
+            "erreur"
+        );
+    }
+}
+
+async function supprimerMoyenPaiement(id) {
+    const moyen = moyensPaiement.find(
+        function(item) {
+            return item.id === id;
+        }
+    );
+
+    if (!moyen || !confirm(
+        "Supprimer le moyen de paiement « " + moyen.nom_affiche + " » ?"
+    )) {
+        return;
+    }
+
+    try {
+        await appelerSupabase(
+            "moyens_paiement?id=eq." +
+            encodeURIComponent(id) +
+            "&user_id=eq." +
+            encodeURIComponent(utilisateurId),
+            {
+                method: "DELETE",
+                headers: { "Prefer": "return=minimal" }
+            }
+        );
+
+        if (moyenPaiementEnEditionId === id) {
+            reinitialiserFormulairePaiement();
+        }
+
+        afficherMessagePaiement("Moyen de paiement supprimé.");
+        await chargerMoyensPaiement();
+
+    } catch (erreur) {
+        console.error(erreur);
+        afficherMessagePaiement(
+            "Impossible de supprimer ce moyen : " + erreur.message,
+            "erreur"
+        );
+    }
+}
+
+async function enregistrerParametres() {
+    const bouton =
+        document.getElementById(
+            "boutonEnregistrer"
+        );
+
+    bouton.disabled = true;
+    bouton.textContent =
+        "Enregistrement…";
+
+    let resultatLogo = null;
+    let parametresSauvegardes = false;
+
+    try {
+        resultatLogo =
+            await preparerLogo();
+
+        const donnees = {
+            user_id:
+                utilisateurId,
+
+        nom_entreprise:
+            valeur("nomEntreprise"),
+
+        adresse:
+            valeur("adresseEntreprise"),
+
+        code_postal:
+            valeur("codePostal"),
+
+        ville:
+            valeur("ville"),
+
+        telephone:
+            valeur("telephoneEntreprise"),
+
+        email:
+            valeur("emailEntreprise"),
+
+        siret:
+            valeur("siret"),
+
+        numero_tva:
+            valeur("tva"),
+
+        taux_tva:
+            nombreOuZero("tauxTVA"),
+
+            site:
+                valeur("site"),
+
+            logo_path:
+                resultatLogo.path,
+
+            updated_at:
+                new Date().toISOString()
+        };
+
+        if (parametresId) {
+            await appelerSupabase(
+                "parametres?id=eq." +
+                encodeURIComponent(parametresId) +
+                "&user_id=eq." +
+                encodeURIComponent(utilisateurId),
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Prefer":
+                            "return=minimal"
+                    },
+                    body:
+                        JSON.stringify(
+                            donnees
+                        )
+                }
+            );
+        } else {
+            const insertion =
+                await appelerSupabase(
+                    "parametres",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Prefer":
+                                "return=representation"
+                        },
+                        body:
+                            JSON.stringify(
+                                donnees
+                            )
+                    }
+                );
+
+            if (
+                Array.isArray(insertion) &&
+                insertion[0]
+            ) {
+                parametresId =
+                    insertion[0].id;
+            }
+        }
+
+        afficherMessage(
+            "Paramètres enregistrés dans Supabase."
+        );
+
+        parametresSauvegardes = true;
+        logoPathActuel = resultatLogo.path;
+        logoASupprimer = false;
+
+        document.getElementById("fichierLogo").value = "";
+        nettoyerUrlApercuLocale();
+
+        afficherLogoEnregistre();
+
+        if (
+            resultatLogo.ancienPath &&
+            resultatLogo.ancienPath !== resultatLogo.path
+        ) {
+            const { error: erreurSuppression } =
+                await clientSupabase.storage
+                    .from("logos-entreprises")
+                    .remove([resultatLogo.ancienPath]);
+
+            if (erreurSuppression) {
+                console.warn(
+                    "Ancien logo non supprimé :",
+                    erreurSuppression
+                );
+            }
+        }
+
+    } catch (erreur) {
+        console.error(erreur);
+
+        if (
+            !parametresSauvegardes &&
+            resultatLogo?.nouveauPath
+        ) {
+            const { error: erreurNettoyage } =
+                await clientSupabase.storage
+                    .from("logos-entreprises")
+                    .remove([resultatLogo.nouveauPath]);
+
+            if (erreurNettoyage) {
+                console.warn(
+                    "Nouveau logo temporaire non supprimé :",
+                    erreurNettoyage
+                );
+            }
+        }
+
+        afficherMessage(
+            "Impossible d'enregistrer les paramètres : " +
+            erreur.message,
+            "erreur"
+        );
+
+    } finally {
+        bouton.disabled = false;
+        bouton.textContent =
+            "Enregistrer";
+    }
+}
+
+async function sauvegarderParametres() {
+    await enregistrerParametres();
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+        try {
+            const connecte =
+                await verifierUtilisateur();
+
+            if (!connecte) {
+                return;
+            }
+
+            await Promise.all([
+                chargerParametres(),
+                chargerMoyensPaiement()
+            ]);
+
+            reinitialiserFormulairePaiement();
+
+        } catch (erreur) {
+            console.error(erreur);
+
+            afficherMessage(
+                "Impossible de charger les paramètres : " +
+                erreur.message,
+                "erreur"
+            );
+        }
+    }
+);
+</script>
+
+</body>
+
+</html>
